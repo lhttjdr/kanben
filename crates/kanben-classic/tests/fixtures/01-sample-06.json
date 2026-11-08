@@ -1,0 +1,402 @@
+{
+ "input": "段之間要空〬行〪。不空〬行〪者為段內\n平擡。可多空〬行〪。",
+ "after": {
+  "調距": {
+   "仿宋": 0,
+   "楷": 0,
+   "明": 0,
+   "夾注": -0.25,
+   "注中注": 0,
+   "注中小字": -1,
+   "敘": 0,
+   "跋": 0,
+   "正文": 0
+  },
+  "行尾空白長": 0.2,
+  "每行格數": 22,
+  "正文字號": 30
+ },
+ "calls": [
+  {
+   "fn": "寫眉批",
+   "args": [
+    "段之間要空〬行〪。不空〬行〪者為段內\n平擡。可多空〬行〪。",
+    "tentou"
+   ],
+   "ret": "段之間要空〬行〪。不空〬行〪者為段內\n平擡。可多空〬行〪。",
+   "tentou": ""
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    "段之間要空〬行〪。不空〬行〪者為段內\n平擡。可多空〬行〪。"
+   ],
+   "ret": "段之間要空〬行〪。不空〬行〪者為段內\n平擡。可多空〬行〪。"
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    "段之間要空〬行〪。不空〬行〪者為段內\n平擡。可多空〬行〪。"
+   ],
+   "ret": "段之間要空〬行〪。不空〬行〪者為段內\n平擡。可多空〬行〪。"
+  },
+  {
+   "fn": "分段",
+   "args": [
+    "段之間要空〬行〪。不空〬行〪者為段內\n平擡。可多空〬行〪。"
+   ],
+   "ret": "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+   ],
+   "ret": "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+   ],
+   "ret": "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+   ],
+   "ret": "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+   ],
+   "ret": "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+   ],
+   "ret": "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+   ],
+   "ret": "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+   ],
+   "ret": "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+   ],
+   "ret": "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+   ],
+   "ret": "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+   ],
+   "ret": "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+   ],
+   "ret": "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    "段之間要空〬行〪。不空〬行〪者為段內\n平擡。可多空〬行〪。"
+   ],
+   "ret": "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "分段",
+   "args": [
+    ""
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    true,
+    "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>"
+   ],
+   "ret": "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>",
+   "補遺字": null,
+   "拼字": null
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    "<p>段之間要空〬行〪<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空〬行〪者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空〬行〪<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>"
+   ],
+   "ret": "<p>段之間要空〬行〪<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空〬行〪者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空〬行〪<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>"
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>"
+   ],
+   "ret": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>"
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "inMain",
+    "標點色"
+   ],
+   "before": {
+    "main": "<p>段之間要空〬行〪。不空〬行〪者為段內<br>平擡。可多空〬行〪。</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "tentou"
+   ],
+   "before": {
+    "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "單行夾注",
+   "args": [
+    "dhgd"
+   ],
+   "before": {
+    "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "度行",
+   "args": [],
+   "before": {
+    "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "寫旁句",
+   "args": [],
+   "before": {
+    "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "雙行夾注",
+   "args": [],
+   "before": {
+    "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    false,
+    "inMain"
+   ],
+   "before": {
+    "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "增刪絲欄",
+   "args": [],
+   "before": {
+    "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "對齊眉批",
+   "args": [],
+   "before": {
+    "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+    "tentou": ""
+   }
+  }
+ ],
+ "final": {
+  "main": "<p>段之間要空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>不空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span>者為段內<br>平擡<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>可多空<span class=\"sigaugxieng fkDept\">〬</span>行<span class=\"sigaugxieng fkLevel lrtb\">〪</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span></p>",
+  "tentou": ""
+ }
+}

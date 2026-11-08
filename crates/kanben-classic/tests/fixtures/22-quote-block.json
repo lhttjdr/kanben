@@ -1,0 +1,402 @@
+{
+ "input": "‘‘‘\n引詩一章\n’’’\n\n文中‘‘‘引語’’’繼續",
+ "after": {
+  "調距": {
+   "仿宋": 0,
+   "楷": 0,
+   "明": 0,
+   "夾注": -0.25,
+   "注中注": 0,
+   "注中小字": -1,
+   "敘": 0,
+   "跋": 0,
+   "正文": 0
+  },
+  "行尾空白長": 0.2,
+  "每行格數": 22,
+  "正文字號": 30
+ },
+ "calls": [
+  {
+   "fn": "寫眉批",
+   "args": [
+    "‘‘‘\n引詩一章\n’’’\n\n文中‘‘‘引語’’’繼續",
+    "tentou"
+   ],
+   "ret": "‘‘‘\n引詩一章\n’’’\n\n文中‘‘‘引語’’’繼續",
+   "tentou": ""
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    "‘‘‘\n引詩一章\n’’’\n\n文中‘‘‘引語’’’繼續"
+   ],
+   "ret": "‘‘‘\n引詩一章\n’’’\n\n文中‘‘‘引語’’’繼續"
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    "‘‘‘\n引詩一章\n’’’\n\n文中‘‘‘引語’’’繼續"
+   ],
+   "ret": "‘‘‘\n引詩一章\n’’’\n\n文中‘‘‘引語’’’繼續"
+  },
+  {
+   "fn": "分段",
+   "args": [
+    "‘‘‘\n引詩一章\n’’’\n\n文中‘‘‘引語’’’繼續"
+   ],
+   "ret": "<p>‘‘‘<br>引詩一章<br>’’’</p><p>文中‘‘‘引語’’’繼續</p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p>‘‘‘<br>引詩一章<br>’’’</p><p>文中‘‘‘引語’’’繼續</p>"
+   ],
+   "ret": "<p>‘‘‘<br>引詩一章<br>’’’</p><p>文中‘‘‘引語’’’繼續</p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p>‘‘‘<br>引詩一章<br>’’’</p><p>文中‘‘‘引語’’’繼續</p>"
+   ],
+   "ret": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+   ],
+   "ret": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+   ],
+   "ret": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+   ],
+   "ret": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+   ],
+   "ret": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+   ],
+   "ret": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+   ],
+   "ret": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+   ],
+   "ret": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+   ],
+   "ret": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+   ],
+   "ret": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    "‘‘‘\n引詩一章\n’’’\n\n文中‘‘‘引語’’’繼續"
+   ],
+   "ret": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "分段",
+   "args": [
+    ""
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    true,
+    "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+   ],
+   "ret": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+   "補遺字": null,
+   "拼字": null
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+   ],
+   "ret": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+   ],
+   "ret": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>"
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "inMain",
+    "標點色"
+   ],
+   "before": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "tentou"
+   ],
+   "before": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "單行夾注",
+   "args": [
+    "dhgd"
+   ],
+   "before": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "度行",
+   "args": [],
+   "before": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "寫旁句",
+   "args": [],
+   "before": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "雙行夾注",
+   "args": [],
+   "before": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    false,
+    "inMain"
+   ],
+   "before": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "增刪絲欄",
+   "args": [],
+   "before": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "對齊眉批",
+   "args": [],
+   "before": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+    "tentou": ""
+   }
+  }
+ ],
+ "final": {
+  "main": "<blockquote><p><br>引詩一章<br></p></blockquote><p>文中<q>引語</q>繼續</p>",
+  "tentou": ""
+ }
+}

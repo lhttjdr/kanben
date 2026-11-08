@@ -1,0 +1,402 @@
+{
+ "input": "〚列〛甲\n乙\n丙\n\n〚集〛子\n丑\n\n〚列］\n第一\n\n第二\n［列〛",
+ "after": {
+  "調距": {
+   "仿宋": 0,
+   "楷": 0,
+   "明": 0,
+   "夾注": -0.25,
+   "注中注": 0,
+   "注中小字": -1,
+   "敘": 0,
+   "跋": 0,
+   "正文": 0
+  },
+  "行尾空白長": 0.2,
+  "每行格數": 22,
+  "正文字號": 30
+ },
+ "calls": [
+  {
+   "fn": "寫眉批",
+   "args": [
+    "〚列〛甲\n乙\n丙\n\n〚集〛子\n丑\n\n〚列］\n第一\n\n第二\n［列〛",
+    "tentou"
+   ],
+   "ret": "〚列〛甲\n乙\n丙\n\n〚集〛子\n丑\n\n〚列］\n第一\n\n第二\n［列〛",
+   "tentou": ""
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    "〚列〛甲\n乙\n丙\n\n〚集〛子\n丑\n\n〚列］\n第一\n\n第二\n［列〛"
+   ],
+   "ret": "〚列〛甲\n乙\n丙\n\n〚集〛子\n丑\n\n〚列］\n第一\n\n第二\n［列〛"
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    "〚列〛甲\n乙\n丙\n\n〚集〛子\n丑\n\n〚列］\n第一\n\n第二\n［列〛"
+   ],
+   "ret": "〚列〛甲\n乙\n丙\n\n〚集〛子\n丑\n\n〚列］\n第一\n\n第二\n［列〛"
+  },
+  {
+   "fn": "分段",
+   "args": [
+    "〚列〛甲\n乙\n丙\n\n〚集〛子\n丑\n\n〚列］\n第一\n\n第二\n［列〛"
+   ],
+   "ret": "<p>〚列〛甲<br>乙<br>丙</p><p>〚集〛子<br>丑</p><p>〚列］<br>第一</p><p>第二<br>［列〛</p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p>〚列〛甲<br>乙<br>丙</p><p>〚集〛子<br>丑</p><p>〚列］<br>第一</p><p>第二<br>［列〛</p>"
+   ],
+   "ret": "<p>〚列〛甲<br>乙<br>丙</p><p>〚集〛子<br>丑</p><p>〚列］<br>第一</p><p>第二<br>［列〛</p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p>〚列〛甲<br>乙<br>丙</p><p>〚集〛子<br>丑</p><p>〚列］<br>第一</p><p>第二<br>［列〛</p>"
+   ],
+   "ret": "<p>〚列〛甲<br>乙<br>丙</p><p>〚集〛子<br>丑</p><p>〚列］<br>第一</p><p>第二<br>［列〛</p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p>〚列〛甲<br>乙<br>丙</p><p>〚集〛子<br>丑</p><p>〚列］<br>第一</p><p>第二<br>［列〛</p>"
+   ],
+   "ret": "<p>〚列〛甲<br>乙<br>丙</p><p>〚集〛子<br>丑</p><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p>〚列〛甲<br>乙<br>丙</p><p>〚集〛子<br>丑</p><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+   ],
+   "ret": "<p>〚列〛甲<br>乙<br>丙</p><p>〚集〛子<br>丑</p><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p>〚列〛甲<br>乙<br>丙</p><p>〚集〛子<br>丑</p><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+   ],
+   "ret": "<p>〚列〛甲<br>乙<br>丙</p><p>〚集〛子<br>丑</p><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p>〚列〛甲<br>乙<br>丙</p><p>〚集〛子<br>丑</p><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+   ],
+   "ret": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+   ],
+   "ret": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+   ],
+   "ret": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+   ],
+   "ret": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+   ],
+   "ret": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+   ],
+   "ret": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    "〚列〛甲\n乙\n丙\n\n〚集〛子\n丑\n\n〚列］\n第一\n\n第二\n［列〛"
+   ],
+   "ret": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "分段",
+   "args": [
+    ""
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    true,
+    "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+   ],
+   "ret": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+   "補遺字": null,
+   "拼字": null
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+   ],
+   "ret": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+   ],
+   "ret": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>"
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "inMain",
+    "標點色"
+   ],
+   "before": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "tentou"
+   ],
+   "before": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "單行夾注",
+   "args": [
+    "dhgd"
+   ],
+   "before": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "度行",
+   "args": [],
+   "before": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "寫旁句",
+   "args": [],
+   "before": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "雙行夾注",
+   "args": [],
+   "before": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    false,
+    "inMain"
+   ],
+   "before": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "增刪絲欄",
+   "args": [],
+   "before": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "對齊眉批",
+   "args": [],
+   "before": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+    "tentou": ""
+   }
+  }
+ ],
+ "final": {
+  "main": "<ol class=\"單兒 段單兒\"><li>甲</li><li>乙</li><li>丙</li></ol><ul class=\"單兒 段單兒\"><li>子</li><li>丑</li></ul><ol class=\"單兒 分段單兒\"><li>第一</li><li>第二</li></ol>",
+  "tentou": ""
+ }
+}

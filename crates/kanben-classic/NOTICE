@@ -1,0 +1,2 @@
+本 crate 是哂蟹齋排版器（https://vert.neocities.org/type/set/，哂蟹齋）文本處理部分的 Rust 移植，
+經作者許可。函數名、正則與輸出均照原版；tests/corpus/00-sample.txt 及其分段取自原版的示例文本。

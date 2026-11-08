@@ -1,0 +1,402 @@
+{
+ "input": "┌表題┐\n├甲├乙│\n├丙├丁│\n└──┘",
+ "after": {
+  "調距": {
+   "仿宋": 0,
+   "楷": 0,
+   "明": 0,
+   "夾注": -0.25,
+   "注中注": 0,
+   "注中小字": -1,
+   "敘": 0,
+   "跋": 0,
+   "正文": 0
+  },
+  "行尾空白長": 0.2,
+  "每行格數": 22,
+  "正文字號": 30
+ },
+ "calls": [
+  {
+   "fn": "寫眉批",
+   "args": [
+    "┌表題┐\n├甲├乙│\n├丙├丁│\n└──┘",
+    "tentou"
+   ],
+   "ret": "┌表題┐\n├甲├乙│\n├丙├丁│\n└──┘",
+   "tentou": ""
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    "┌表題┐\n├甲├乙│\n├丙├丁│\n└──┘"
+   ],
+   "ret": "┌表題┐\n├甲├乙│\n├丙├丁│\n└──┘"
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    "┌表題┐\n├甲├乙│\n├丙├丁│\n└──┘"
+   ],
+   "ret": "<table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table>"
+  },
+  {
+   "fn": "分段",
+   "args": [
+    "<table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table>"
+   ],
+   "ret": "<p><table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table></p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p><table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table></p>"
+   ],
+   "ret": "<p><table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table></p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p><table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table></p>"
+   ],
+   "ret": "<p><table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table></p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p><table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table></p>"
+   ],
+   "ret": "<p><table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table></p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p><table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table></p>"
+   ],
+   "ret": "<p><table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table></p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p><table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table></p>"
+   ],
+   "ret": "<p><table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table></p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table>"
+   ],
+   "ret": "<table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table>"
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    "<table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table>"
+   ],
+   "ret": "<table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table>"
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    "<table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table>"
+   ],
+   "ret": "<table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table>"
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    "<table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table>"
+   ],
+   "ret": "<table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table>"
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    "<table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table>"
+   ],
+   "ret": "<table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table>"
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    "<table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table>"
+   ],
+   "ret": "<table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table>"
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    "┌表題┐\n├甲├乙│\n├丙├丁│\n└──┘"
+   ],
+   "ret": "<table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table>"
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "分段",
+   "args": [
+    ""
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    true,
+    "<table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table>"
+   ],
+   "ret": "<table><caption>表題</caption><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></table>",
+   "補遺字": null,
+   "拼字": null
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>"
+   ],
+   "ret": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>"
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>"
+   ],
+   "ret": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>"
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "inMain",
+    "標點色"
+   ],
+   "before": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "tentou"
+   ],
+   "before": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "單行夾注",
+   "args": [
+    "dhgd"
+   ],
+   "before": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "度行",
+   "args": [],
+   "before": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "寫旁句",
+   "args": [],
+   "before": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "雙行夾注",
+   "args": [],
+   "before": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    false,
+    "inMain"
+   ],
+   "before": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "增刪絲欄",
+   "args": [],
+   "before": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "對齊眉批",
+   "args": [],
+   "before": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+    "tentou": ""
+   }
+  }
+ ],
+ "final": {
+  "main": "<table><caption>表題</caption><tbody><tr><td>甲</td><td>乙</td></tr><tr><td>丙</td><td>丁</td></tr></tbody></table>",
+  "tentou": ""
+ }
+}

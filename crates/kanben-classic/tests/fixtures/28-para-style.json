@@ -1,0 +1,402 @@
+{
+ "input": "({字色:朱;首縮進:2})設色段\n\n({字色:朱,黛綠})兩色\n\n({⇥})靠尾",
+ "after": {
+  "調距": {
+   "仿宋": 0,
+   "楷": 0,
+   "明": 0,
+   "夾注": -0.25,
+   "注中注": 0,
+   "注中小字": -1,
+   "敘": 0,
+   "跋": 0,
+   "正文": 0
+  },
+  "行尾空白長": 0.2,
+  "每行格數": 22,
+  "正文字號": 30
+ },
+ "calls": [
+  {
+   "fn": "寫眉批",
+   "args": [
+    "({字色:朱;首縮進:2})設色段\n\n({字色:朱,黛綠})兩色\n\n({⇥})靠尾",
+    "tentou"
+   ],
+   "ret": "({字色:朱;首縮進:2})設色段\n\n({字色:朱,黛綠})兩色\n\n({⇥})靠尾",
+   "tentou": ""
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    "({字色:朱;首縮進:2})設色段\n\n({字色:朱,黛綠})兩色\n\n({⇥})靠尾"
+   ],
+   "ret": "({字色:朱;首縮進:2})設色段\n\n({字色:朱,黛綠})兩色\n\n({⇥})靠尾"
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    "({字色:朱;首縮進:2})設色段\n\n({字色:朱,黛綠})兩色\n\n({⇥})靠尾"
+   ],
+   "ret": "({字色:朱;首縮進:2})設色段\n\n({字色:朱,黛綠})兩色\n\n({⇥})靠尾"
+  },
+  {
+   "fn": "分段",
+   "args": [
+    "({字色:朱;首縮進:2})設色段\n\n({字色:朱,黛綠})兩色\n\n({⇥})靠尾"
+   ],
+   "ret": "<p>({字色:朱;首縮進:2})設色段</p><p>({字色:朱,黛綠})兩色</p><p>({⇥})靠尾</p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p>({字色:朱;首縮進:2})設色段</p><p>({字色:朱,黛綠})兩色</p><p>({⇥})靠尾</p>"
+   ],
+   "ret": "<p>({字色:朱;首縮進:2})設色段</p><p>({字色:朱,黛綠})兩色</p><p>({⇥})靠尾</p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p>({字色:朱;首縮進:2})設色段</p><p>({字色:朱,黛綠})兩色</p><p>({⇥})靠尾</p>"
+   ],
+   "ret": "<p>({字色:朱;首縮進:2})設色段</p><p>({字色:朱,黛綠})兩色</p><p>({⇥})靠尾</p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p>({字色:朱;首縮進:2})設色段</p><p>({字色:朱,黛綠})兩色</p><p>({⇥})靠尾</p>"
+   ],
+   "ret": "<p>({字色:朱;首縮進:2})設色段</p><p>({字色:朱,黛綠})兩色</p><p>({⇥})靠尾</p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p>({字色:朱;首縮進:2})設色段</p><p>({字色:朱,黛綠})兩色</p><p>({⇥})靠尾</p>"
+   ],
+   "ret": "<p>({字色:朱;首縮進:2})設色段</p><p>({字色:朱,黛綠})兩色</p><p>({⇥})靠尾</p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p>({字色:朱;首縮進:2})設色段</p><p>({字色:朱,黛綠})兩色</p><p>({⇥})靠尾</p>"
+   ],
+   "ret": "<p>({字色:朱;首縮進:2})設色段</p><p>({字色:朱,黛綠})兩色</p><p>({⇥})靠尾</p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p>({字色:朱;首縮進:2})設色段</p><p>({字色:朱,黛綠})兩色</p><p>({⇥})靠尾</p>"
+   ],
+   "ret": "<p>({字色:朱;首縮進:2})設色段</p><p>({字色:朱,黛綠})兩色</p><p>({⇥})靠尾</p>"
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    "<p>({字色:朱;首縮進:2})設色段</p><p>({字色:朱,黛綠})兩色</p><p>({⇥})靠尾</p>"
+   ],
+   "ret": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>"
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>"
+   ],
+   "ret": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>"
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>"
+   ],
+   "ret": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>"
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>"
+   ],
+   "ret": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>"
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>"
+   ],
+   "ret": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>"
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    "({字色:朱;首縮進:2})設色段\n\n({字色:朱,黛綠})兩色\n\n({⇥})靠尾"
+   ],
+   "ret": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>"
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "分段",
+   "args": [
+    ""
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    true,
+    "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>"
+   ],
+   "ret": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+   "補遺字": null,
+   "拼字": null
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>"
+   ],
+   "ret": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>"
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>"
+   ],
+   "ret": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>"
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "inMain",
+    "標點色"
+   ],
+   "before": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "tentou"
+   ],
+   "before": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "單行夾注",
+   "args": [
+    "dhgd"
+   ],
+   "before": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "度行",
+   "args": [],
+   "before": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "寫旁句",
+   "args": [],
+   "before": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "雙行夾注",
+   "args": [],
+   "before": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    false,
+    "inMain"
+   ],
+   "before": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "增刪絲欄",
+   "args": [],
+   "before": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "對齊眉批",
+   "args": [],
+   "before": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+    "tentou": ""
+   }
+  }
+ ],
+ "final": {
+  "main": "<p style=\"color:var(--朱);margin-top:2em;\">設色段</p><p style=\"color:transparent; background:repeating-linear-gradient(to left,var(--朱) calc(var(--行寬)*0) calc(var(--行寬)*1),var(--黛綠) calc(var(--行寬)*1) calc(var(--行寬)*2)); -webkit-background-clip:text; background-clip:text;\">兩色</p><p style=\"text-align:right; margin-bottom:0.2em\">靠尾</p>",
+  "tentou": ""
+ }
+}

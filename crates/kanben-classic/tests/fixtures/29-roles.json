@@ -1,0 +1,402 @@
+{
+ "input": "〚序〛序文\n\n〚跋〛跋文\n\n〚注〛注段\n\n〚綱〛綱\n\n〚按〛按語\n\n〚撰者〛某甲撰\n\n〚落款〛某年某月",
+ "after": {
+  "調距": {
+   "仿宋": 0,
+   "楷": 0,
+   "明": 0,
+   "夾注": -0.25,
+   "注中注": 0,
+   "注中小字": -1,
+   "敘": 0,
+   "跋": 0,
+   "正文": 0
+  },
+  "行尾空白長": 0.2,
+  "每行格數": 22,
+  "正文字號": 30
+ },
+ "calls": [
+  {
+   "fn": "寫眉批",
+   "args": [
+    "〚序〛序文\n\n〚跋〛跋文\n\n〚注〛注段\n\n〚綱〛綱\n\n〚按〛按語\n\n〚撰者〛某甲撰\n\n〚落款〛某年某月",
+    "tentou"
+   ],
+   "ret": "〚序〛序文\n\n〚跋〛跋文\n\n〚注〛注段\n\n〚綱〛綱\n\n〚按〛按語\n\n〚撰者〛某甲撰\n\n〚落款〛某年某月",
+   "tentou": ""
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    "〚序〛序文\n\n〚跋〛跋文\n\n〚注〛注段\n\n〚綱〛綱\n\n〚按〛按語\n\n〚撰者〛某甲撰\n\n〚落款〛某年某月"
+   ],
+   "ret": "〚序〛序文\n\n〚跋〛跋文\n\n〚注〛注段\n\n〚綱〛綱\n\n〚按〛按語\n\n〚撰者〛某甲撰\n\n〚落款〛某年某月"
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    "〚序〛序文\n\n〚跋〛跋文\n\n〚注〛注段\n\n〚綱〛綱\n\n〚按〛按語\n\n〚撰者〛某甲撰\n\n〚落款〛某年某月"
+   ],
+   "ret": "〚序〛序文\n\n〚跋〛跋文\n\n〚注〛注段\n\n〚綱〛綱\n\n〚按〛按語\n\n〚撰者〛某甲撰\n\n〚落款〛某年某月"
+  },
+  {
+   "fn": "分段",
+   "args": [
+    "〚序〛序文\n\n〚跋〛跋文\n\n〚注〛注段\n\n〚綱〛綱\n\n〚按〛按語\n\n〚撰者〛某甲撰\n\n〚落款〛某年某月"
+   ],
+   "ret": "<p>〚序〛序文</p><p>〚跋〛跋文</p><p>〚注〛注段</p><p>〚綱〛綱</p><p>〚按〛按語</p><p>〚撰者〛某甲撰</p><p>〚落款〛某年某月</p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p>〚序〛序文</p><p>〚跋〛跋文</p><p>〚注〛注段</p><p>〚綱〛綱</p><p>〚按〛按語</p><p>〚撰者〛某甲撰</p><p>〚落款〛某年某月</p>"
+   ],
+   "ret": "<p>〚序〛序文</p><p>〚跋〛跋文</p><p>〚注〛注段</p><p>〚綱〛綱</p><p>〚按〛按語</p><p>〚撰者〛某甲撰</p><p>〚落款〛某年某月</p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p>〚序〛序文</p><p>〚跋〛跋文</p><p>〚注〛注段</p><p>〚綱〛綱</p><p>〚按〛按語</p><p>〚撰者〛某甲撰</p><p>〚落款〛某年某月</p>"
+   ],
+   "ret": "<p>〚序〛序文</p><p>〚跋〛跋文</p><p>〚注〛注段</p><p>〚綱〛綱</p><p>〚按〛按語</p><p>〚撰者〛某甲撰</p><p>〚落款〛某年某月</p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p>〚序〛序文</p><p>〚跋〛跋文</p><p>〚注〛注段</p><p>〚綱〛綱</p><p>〚按〛按語</p><p>〚撰者〛某甲撰</p><p>〚落款〛某年某月</p>"
+   ],
+   "ret": "<p>〚序〛序文</p><p>〚跋〛跋文</p><p>〚注〛注段</p><p>〚綱〛綱</p><p>〚按〛按語</p><p>〚撰者〛某甲撰</p><p>〚落款〛某年某月</p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p>〚序〛序文</p><p>〚跋〛跋文</p><p>〚注〛注段</p><p>〚綱〛綱</p><p>〚按〛按語</p><p>〚撰者〛某甲撰</p><p>〚落款〛某年某月</p>"
+   ],
+   "ret": "<p>〚序〛序文</p><p>〚跋〛跋文</p><p>〚注〛注段</p><p>〚綱〛綱</p><p>〚按〛按語</p><p>〚撰者〛某甲撰</p><p>〚落款〛某年某月</p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p>〚序〛序文</p><p>〚跋〛跋文</p><p>〚注〛注段</p><p>〚綱〛綱</p><p>〚按〛按語</p><p>〚撰者〛某甲撰</p><p>〚落款〛某年某月</p>"
+   ],
+   "ret": "<p>〚序〛序文</p><p>〚跋〛跋文</p><p>〚注〛注段</p><p>〚綱〛綱</p><p>〚按〛按語</p><p>〚撰者〛某甲撰</p><p>〚落款〛某年某月</p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p>〚序〛序文</p><p>〚跋〛跋文</p><p>〚注〛注段</p><p>〚綱〛綱</p><p>〚按〛按語</p><p>〚撰者〛某甲撰</p><p>〚落款〛某年某月</p>"
+   ],
+   "ret": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>"
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>"
+   ],
+   "ret": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>"
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>"
+   ],
+   "ret": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>"
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>"
+   ],
+   "ret": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>"
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>"
+   ],
+   "ret": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>"
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>"
+   ],
+   "ret": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>"
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    "〚序〛序文\n\n〚跋〛跋文\n\n〚注〛注段\n\n〚綱〛綱\n\n〚按〛按語\n\n〚撰者〛某甲撰\n\n〚落款〛某年某月"
+   ],
+   "ret": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>"
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "分段",
+   "args": [
+    ""
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    true,
+    "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>"
+   ],
+   "ret": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+   "補遺字": null,
+   "拼字": null
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>"
+   ],
+   "ret": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>"
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>"
+   ],
+   "ret": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>"
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "inMain",
+    "標點色"
+   ],
+   "before": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "tentou"
+   ],
+   "before": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "單行夾注",
+   "args": [
+    "dhgd"
+   ],
+   "before": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "度行",
+   "args": [],
+   "before": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "寫旁句",
+   "args": [],
+   "before": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "雙行夾注",
+   "args": [],
+   "before": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    false,
+    "inMain"
+   ],
+   "before": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "增刪絲欄",
+   "args": [],
+   "before": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "對齊眉批",
+   "args": [],
+   "before": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+    "tentou": ""
+   }
+  }
+ ],
+ "final": {
+  "main": "<p class=\"sio4\">序文</p><p class=\"buad8\">跋文</p><p class=\"註\">注段</p><p class=\"綱\">綱</p><p class=\"按\">按語</p><div class=\"撰者\" style=\"margin-bottom:0.2em\">某甲撰</div><div class=\"落款\" style=\"margin-bottom:0.2em\">某年某月</div>",
+  "tentou": ""
+ }
+}

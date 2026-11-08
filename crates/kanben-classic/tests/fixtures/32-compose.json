@@ -1,0 +1,422 @@
+{
+ "input": "[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字",
+ "after": {
+  "調距": {
+   "仿宋": 0,
+   "楷": 0,
+   "明": 0,
+   "夾注": -0.25,
+   "注中注": 0,
+   "注中小字": -1,
+   "敘": 0,
+   "跋": 0,
+   "正文": 0
+  },
+  "行尾空白長": 0.2,
+  "每行格數": 22,
+  "正文字號": 30
+ },
+ "calls": [
+  {
+   "fn": "寫眉批",
+   "args": [
+    "[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字",
+    "tentou"
+   ],
+   "ret": "[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字",
+   "tentou": ""
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    "[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字"
+   ],
+   "ret": "[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字"
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    "[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字"
+   ],
+   "ret": "[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字"
+  },
+  {
+   "fn": "分段",
+   "args": [
+    "[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字"
+   ],
+   "ret": "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+   ],
+   "ret": "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+   ],
+   "ret": "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+   ],
+   "ret": "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+   ],
+   "ret": "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+   ],
+   "ret": "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+   ],
+   "ret": "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+   ],
+   "ret": "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+   ],
+   "ret": "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+   ],
+   "ret": "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+   ],
+   "ret": "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+   ],
+   "ret": "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    "[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字"
+   ],
+   "ret": "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "分段",
+   "args": [
+    ""
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    true,
+    "<p>[[?⿰木鬼¿]][[?⿱艹⿰氵去¿]]𠀀𪚥字</p>"
+   ],
+   "ret": "<p>塀塀凞凞字</p>",
+   "補遺字": [
+    "𠀀",
+    "𪚥"
+   ],
+   "拼字": [
+    "⿰木鬼",
+    "⿱艹⿰氵去"
+   ]
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    "<p>塀塀凞凞字</p>"
+   ],
+   "ret": "<p>塀塀凞凞字</p>"
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    "<p>塀塀凞凞字</p>"
+   ],
+   "ret": "<p>塀塀凞凞字</p>"
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "inMain",
+    "標點色"
+   ],
+   "before": {
+    "main": "<p>塀塀凞凞字</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>塀塀凞凞字</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "tentou"
+   ],
+   "before": {
+    "main": "<p>塀塀凞凞字</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>塀塀凞凞字</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "單行夾注",
+   "args": [
+    "dhgd"
+   ],
+   "before": {
+    "main": "<p>塀塀凞凞字</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>塀塀凞凞字</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "度行",
+   "args": [],
+   "before": {
+    "main": "<p>塀塀凞凞字</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>塀塀凞凞字</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "寫旁句",
+   "args": [],
+   "before": {
+    "main": "<p>塀塀凞凞字</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>塀塀凞凞字</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "雙行夾注",
+   "args": [],
+   "before": {
+    "main": "<p>塀塀凞凞字</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>塀塀凞凞字</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "構字",
+   "args": [
+    "⿰木鬼"
+   ],
+   "ret": "<i class=\"charComp\"><span class=\"cc_LR_L\">木</span><span class=\"cc_LR_R\">鬼</span></i>"
+  },
+  {
+   "fn": "構字",
+   "args": [
+    "⿱艹⿰氵去"
+   ],
+   "ret": "<i class=\"charComp\">艹氵去</i>"
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    false,
+    "inMain"
+   ],
+   "before": {
+    "main": "<p>塀塀凞凞字</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p><i class=\"charComp\"><span class=\"cc_LR_L\">木</span><span class=\"cc_LR_R\">鬼</span></i><i class=\"charComp\">艹氵去</i><span class=\"extGK_FS\">𠀀</span><span class=\"extGK_FS\">𪚥</span>字</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "增刪絲欄",
+   "args": [],
+   "before": {
+    "main": "<p><i class=\"charComp\"><span class=\"cc_LR_L\">木</span><span class=\"cc_LR_R\">鬼</span></i><i class=\"charComp\">艹氵去</i><span class=\"extGK_FS\">𠀀</span><span class=\"extGK_FS\">𪚥</span>字</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p><i class=\"charComp\"><span class=\"cc_LR_L\">木</span><span class=\"cc_LR_R\">鬼</span></i><i class=\"charComp\">艹氵去</i><span class=\"extGK_FS\">𠀀</span><span class=\"extGK_FS\">𪚥</span>字</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "對齊眉批",
+   "args": [],
+   "before": {
+    "main": "<p><i class=\"charComp\"><span class=\"cc_LR_L\">木</span><span class=\"cc_LR_R\">鬼</span></i><i class=\"charComp\">艹氵去</i><span class=\"extGK_FS\">𠀀</span><span class=\"extGK_FS\">𪚥</span>字</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p><i class=\"charComp\"><span class=\"cc_LR_L\">木</span><span class=\"cc_LR_R\">鬼</span></i><i class=\"charComp\">艹氵去</i><span class=\"extGK_FS\">𠀀</span><span class=\"extGK_FS\">𪚥</span>字</p>",
+    "tentou": ""
+   }
+  }
+ ],
+ "final": {
+  "main": "<p><i class=\"charComp\"><span class=\"cc_LR_L\">木</span><span class=\"cc_LR_R\">鬼</span></i><i class=\"charComp\">艹氵去</i><span class=\"extGK_FS\">𠀀</span><span class=\"extGK_FS\">𪚥</span>字</p>",
+  "tentou": ""
+ }
+}

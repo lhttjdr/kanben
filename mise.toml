@@ -7,8 +7,11 @@ description = "运行全部测试"
 run = "cargo test --workspace"
 
 [tasks.build]
-description = "编译 wasm 到 web/pkg"
-run = "wasm-pack build crates/kanben-wasm --target web --release --out-dir ../../web/pkg --no-typescript"
+description = "编译 wasm 到 web/pkg 与 web/classic/pkg"
+run = [
+  "wasm-pack build crates/kanben-wasm --target web --release --out-dir ../../web/pkg --no-typescript",
+  "wasm-pack build crates/kanben-classic-wasm --target web --release --out-dir ../../web/classic/pkg --no-typescript",
+]
 
 [tasks.serve]
 description = "本地预览编辑器 http://localhost:8765"
@@ -26,3 +29,7 @@ run = ["cargo fmt --all --check", "cargo clippy --workspace --all-targets -- -D 
 [tasks.fonts]
 description = "下载开源字體并切片到 web/fonts（需要 uv）"
 run = "uv run --with uharfbuzz==0.57.0 --with fonttools==4.60.1 --with brotli==1.1.0 tools/fonts.py"
+
+[tasks.classic-record]
+description = "在对照版里重录原版各函数的输入输出（需先 mise run serve，并有无头 Chromium 在 9335 端口）"
+run = "node tools/classic/record.mjs 9335 http://localhost:8765/ref/type/set/ crates/kanben-classic/tests/corpus crates/kanben-classic/tests/fixtures"

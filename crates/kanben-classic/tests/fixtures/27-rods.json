@@ -1,0 +1,411 @@
+{
+ "input": "〚筭］〡〢〣與-12.5及〩〇［筭〛〚碼子］〤〥［碼子〛〚數卦］六七八［數卦〛",
+ "after": {
+  "調距": {
+   "仿宋": 0,
+   "楷": 0,
+   "明": 0,
+   "夾注": -0.25,
+   "注中注": 0,
+   "注中小字": -1,
+   "敘": 0,
+   "跋": 0,
+   "正文": 0
+  },
+  "行尾空白長": 0.2,
+  "每行格數": 22,
+  "正文字號": 30
+ },
+ "calls": [
+  {
+   "fn": "寫眉批",
+   "args": [
+    "〚筭］〡〢〣與-12.5及〩〇［筭〛〚碼子］〤〥［碼子〛〚數卦］六七八［數卦〛",
+    "tentou"
+   ],
+   "ret": "〚筭］〡〢〣與-12.5及〩〇［筭〛〚碼子］〤〥［碼子〛〚數卦］六七八［數卦〛",
+   "tentou": ""
+  },
+  {
+   "fn": "縱中橫碼",
+   "args": [
+    "-12.5",
+    4,
+    "〡〢〣與-12.5及〩〇"
+   ],
+   "ret": "＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>"
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    "〚筭］〡〢〣與-12.5及〩〇［筭〛〚碼子］〤〥［碼子〛〚數卦］六七八［數卦〛"
+   ],
+   "ret": "<data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data>"
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    "<data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data>"
+   ],
+   "ret": "<data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data>"
+  },
+  {
+   "fn": "分段",
+   "args": [
+    "<data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data>"
+   ],
+   "ret": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+   ],
+   "ret": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+   ],
+   "ret": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+   ],
+   "ret": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+   ],
+   "ret": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+   ],
+   "ret": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+   ],
+   "ret": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+   ],
+   "ret": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+   ],
+   "ret": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+   ],
+   "ret": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+   ],
+   "ret": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+   ],
+   "ret": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    "〚筭］〡〢〣與-12.5及〩〇［筭〛〚碼子］〤〥［碼子〛〚數卦］六七八［數卦〛"
+   ],
+   "ret": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "分段",
+   "args": [
+    ""
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    true,
+    "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+   ],
+   "ret": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+   "補遺字": null,
+   "拼字": null
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+   ],
+   "ret": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+   ],
+   "ret": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>"
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "inMain",
+    "標點色"
+   ],
+   "before": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "tentou"
+   ],
+   "before": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "單行夾注",
+   "args": [
+    "dhgd"
+   ],
+   "before": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "度行",
+   "args": [],
+   "before": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "寫旁句",
+   "args": [],
+   "before": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "雙行夾注",
+   "args": [],
+   "before": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    false,
+    "inMain"
+   ],
+   "before": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "增刪絲欄",
+   "args": [],
+   "before": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "對齊眉批",
+   "args": [],
+   "before": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+    "tentou": ""
+   }
+  }
+ ],
+ "final": {
+  "main": "<p><data class=\"cnumDr cnumDrV\" style=\"font-stretch:40%\">〡〢〣</data>與＼<span class=\"lrtb o2d\">12</span>又<span class=\"lrtb o1d\">5</span>及<data class=\"cnumDr cnumDrH\" style=\"font-stretch:60%\">〩〇</data><data class=\"cnumMZ\">〤〥</data><data class=\"divine3\">六七八</data></p>",
+  "tentou": ""
+ }
+}

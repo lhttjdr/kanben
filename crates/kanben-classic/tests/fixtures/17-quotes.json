@@ -1,0 +1,402 @@
+{
+ "input": "曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻",
+ "after": {
+  "調距": {
+   "仿宋": 0,
+   "楷": 0,
+   "明": 0,
+   "夾注": -0.25,
+   "注中注": 0,
+   "注中小字": -1,
+   "敘": 0,
+   "跋": 0,
+   "正文": 0
+  },
+  "行尾空白長": 0.2,
+  "每行格數": 22,
+  "正文字號": 30
+ },
+ "calls": [
+  {
+   "fn": "寫眉批",
+   "args": [
+    "曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻",
+    "tentou"
+   ],
+   "ret": "曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻",
+   "tentou": ""
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    "曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻"
+   ],
+   "ret": "曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻"
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    "曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻"
+   ],
+   "ret": "曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻"
+  },
+  {
+   "fn": "分段",
+   "args": [
+    "曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻"
+   ],
+   "ret": "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+   ],
+   "ret": "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+   ],
+   "ret": "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+   ],
+   "ret": "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+   ],
+   "ret": "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+   ],
+   "ret": "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+   ],
+   "ret": "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+   ],
+   "ret": "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+   ],
+   "ret": "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+   ],
+   "ret": "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+   ],
+   "ret": "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+   ],
+   "ret": "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    "曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻"
+   ],
+   "ret": "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "分段",
+   "args": [
+    ""
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    true,
+    "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>"
+   ],
+   "ret": "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>",
+   "補遺字": null,
+   "拼字": null
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>…〻</p>"
+   ],
+   "ret": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>…〻</p>"
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>…〻</p>"
+   ],
+   "ret": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>…〻</p>"
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "inMain",
+    "標點色"
+   ],
+   "before": {
+    "main": "<p>曰：「天『地』人」。又「『雙』」與『「反」』，（括號）（連）。…〻</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "tentou"
+   ],
+   "before": {
+    "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "單行夾注",
+   "args": [
+    "dhgd"
+   ],
+   "before": {
+    "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "度行",
+   "args": [],
+   "before": {
+    "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "寫旁句",
+   "args": [],
+   "before": {
+    "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "雙行夾注",
+   "args": [],
+   "before": {
+    "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    false,
+    "inMain"
+   ],
+   "before": {
+    "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "增刪絲欄",
+   "args": [],
+   "before": {
+    "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "對齊眉批",
+   "args": [],
+   "before": {
+    "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+    "tentou": ""
+   }
+  }
+ ],
+ "final": {
+  "main": "<p>曰<span class=\"jmhgbd hgbdSysMd\" lang=\"zh-Hans-CN\">：</span><span class=\"hgbdSysQt1\">「</span>天<span class=\"hgbdSysQt1\">『</span>地<span class=\"hgbdSysQt2\">』</span>人<span class=\"hgbdSysQt2\">」</span><span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span>又<span class=\"hgbd2Qt1\"><span>「</span>『</span>雙<span class=\"hgbd2Qt2\"><span>』</span><span>」</span></span>與『「反」』<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">，</span>（括號<span style=\"letter-spacing: -1em\">）</span>（連）<span class=\"jmhgbd hgbdSysSm\" lang=\"zh-Hans-CN\">。</span><span style=\"display:inline-block\">…</span><span style=\"display:inline-block\">〻</span></p>",
+  "tentou": ""
+ }
+}

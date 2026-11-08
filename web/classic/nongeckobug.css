@@ -1,0 +1,4 @@
+/* 哂蟹齋排版器（https://vert.neocities.org/type/set/）原文件，經作者許可收錄；路徑已改為相對路徑。 */
+:root {writing-mode:horizontal-tb; direction:rtl}
+body > * {writing-mode:vertical-rl; direction:ltr}
+#content_blk,#冊䈎 {height: calc(100vh - 10rem)}

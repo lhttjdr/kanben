@@ -1,0 +1,12 @@
+[package]
+name = "kanben-classic"
+description = "哂蟹齋排版器文本處理部分的 Rust 移植（經作者許可），輸出與原版逐字相同"
+version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+fancy-regex = "0.20"
+
+[dev-dependencies]
+serde_json = "1"

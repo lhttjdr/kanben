@@ -1,0 +1,409 @@
+{
+ "input": "臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終",
+ "after": {
+  "調距": {
+   "仿宋": 0,
+   "楷": 0,
+   "明": 0,
+   "夾注": -0.25,
+   "注中注": 0,
+   "注中小字": -1,
+   "敘": 0,
+   "跋": 0,
+   "正文": 0
+  },
+  "行尾空白長": 0.2,
+  "每行格數": 22,
+  "正文字號": 30
+ },
+ "calls": [
+  {
+   "fn": "寫眉批",
+   "args": [
+    "臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終",
+    "tentou"
+   ],
+   "ret": "臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終",
+   "tentou": ""
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    "臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終"
+   ],
+   "ret": "臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終"
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    "臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終"
+   ],
+   "ret": "臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終"
+  },
+  {
+   "fn": "分段",
+   "args": [
+    "臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終"
+   ],
+   "ret": "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+   ],
+   "ret": "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+   ],
+   "ret": "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+   ],
+   "ret": "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+   ],
+   "ret": "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+   ],
+   "ret": "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+   ],
+   "ret": "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+   ],
+   "ret": "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+   ],
+   "ret": "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+   ],
+   "ret": "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+   ],
+   "ret": "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+   ],
+   "ret": "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    "臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終"
+   ],
+   "ret": "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "分段",
+   "args": [
+    ""
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": "<p></p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p></p>"
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    true,
+    "<p>臣光曰((=分，扶問翻。〔【注】〕「引」‹人名›《書》[〖框〗]{（刪）}{［增］}=))終</p>"
+   ],
+   "ret": "<p>臣光曰<small class=\"grebdriuo\">分︐扶問翻︒︹︻注︼︺﹁引﹂﹤人名﹥︽書︾[框]{︵刪︶}{﹇增﹈}</small>終</p>",
+   "補遺字": null,
+   "拼字": null
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    "<p>臣光曰<small class=\"grebdriuo\">分︐扶問翻︒︹︻注︼︺﹁引﹂﹤人名﹥︽書︾[框]{︵刪︶}{﹇增﹈}</small>終</p>"
+   ],
+   "ret": "<p>臣光曰<small class=\"grebdriuo\">分︐扶問翻︒︹︻注︼︺﹁引﹂﹤人名﹥︽書︾[框]{︵刪︶}{﹇增﹈}</small>終</p>"
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    "<p>臣光曰<small class=\"grebdriuo\">分︐扶問翻︒︹︻注︼︺﹁引﹂﹤人名﹥︽書︾[框]{︵刪︶}{﹇增﹈}</small>終</p>"
+   ],
+   "ret": "<p>臣光曰<small class=\"grebdriuo\">分︐扶問翻︒︹︻注︼︺﹁引﹂﹤人名﹥︽書︾[框]{︵刪︶}{﹇增﹈}</small>終</p>"
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "inMain",
+    "標點色"
+   ],
+   "before": {
+    "main": "<p>臣光曰<small class=\"grebdriuo\">分︐扶問翻︒︹︻注︼︺﹁引﹂﹤人名﹥︽書︾[框]{︵刪︶}{﹇增﹈}</small>終</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>臣光曰<small class=\"grebdriuo\">分︐扶問翻︒︹︻注︼︺﹁引﹂﹤人名﹥︽書︾[框]{︵刪︶}{﹇增﹈}</small>終</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    ""
+   ],
+   "ret": ""
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "tentou"
+   ],
+   "before": {
+    "main": "<p>臣光曰<small class=\"grebdriuo\">分︐扶問翻︒︹︻注︼︺﹁引﹂﹤人名﹥︽書︾[框]{︵刪︶}{﹇增﹈}</small>終</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>臣光曰<small class=\"grebdriuo\">分︐扶問翻︒︹︻注︼︺﹁引﹂﹤人名﹥︽書︾[框]{︵刪︶}{﹇增﹈}</small>終</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "單行夾注",
+   "args": [
+    "dhgd"
+   ],
+   "before": {
+    "main": "<p>臣光曰<small class=\"grebdriuo\">分︐扶問翻︒︹︻注︼︺﹁引﹂﹤人名﹥︽書︾[框]{︵刪︶}{﹇增﹈}</small>終</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>臣光曰<small class=\"grebdriuo\">分︐扶問翻︒︹︻注︼︺﹁引﹂﹤人名﹥︽書︾[框]{︵刪︶}{﹇增﹈}</small>終</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "度行",
+   "args": [],
+   "before": {
+    "main": "<p>臣光曰<small class=\"grebdriuo\">分︐扶問翻︒︹︻注︼︺﹁引﹂﹤人名﹥︽書︾[框]{︵刪︶}{﹇增﹈}</small>終</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>臣光曰<small class=\"grebdriuo\">分︐扶問翻︒︹︻注︼︺﹁引﹂﹤人名﹥︽書︾[框]{︵刪︶}{﹇增﹈}</small>終</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "寫旁句",
+   "args": [],
+   "before": {
+    "main": "<p>臣光曰<small class=\"grebdriuo\">分︐扶問翻︒︹︻注︼︺﹁引﹂﹤人名﹥︽書︾[框]{︵刪︶}{﹇增﹈}</small>終</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>臣光曰<small class=\"grebdriuo\">分︐扶問翻︒︹︻注︼︺﹁引﹂﹤人名﹥︽書︾[框]{︵刪︶}{﹇增﹈}</small>終</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "點字下",
+   "args": [
+    "分︐扶問翻︒︹︻注︼︺﹁引﹂﹤人名﹥︽書︾[框]{︵刪︶}{﹇增﹈}"
+   ],
+   "ret": "分<span class=\"gdzhbd zzbdSm\">︐</span>扶問翻<span class=\"gdzhbd zzbdSm\">︒</span><i class=\"hideCopy\">〔</i><cite class=\"im6grug\"><span>注</span></cite><i class=\"hideCopy\">〕</i><span class=\"zzbdQt1\">﹁</span>引<span class=\"zzbdQt2\">﹂</span><i class=\"hideCopy\">‹</i><u class=\"juenmeng\"><span>人名</span></u><i class=\"hideCopy\">›</i><i class=\"hideCopy\">《</i><u class=\"xiomeng\"><span>書</span></u><i class=\"hideCopy\">》</i><i class=\"hideCopy\">[</i><cite class=\"mhVang\"><span>框</span></cite><i class=\"hideCopy\">]</i><del>刪</del><ins>增</ins>"
+  },
+  {
+   "fn": "雙行夾注",
+   "args": [],
+   "before": {
+    "main": "<p>臣光曰<small class=\"grebdriuo\">分︐扶問翻︒︹︻注︼︺﹁引﹂﹤人名﹥︽書︾[框]{︵刪︶}{﹇增﹈}</small>終</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>臣光曰<span class=\"beforegd\"></span><small class=\"grebdriuo sht_gd\" style=\"height: 7.625em;\" data-jdgs=\"6\">分<span class=\"gdzhbd zzbdSm\">︐</span>扶問翻<span class=\"gdzhbd zzbdSm\">︒</span><i class=\"hideCopy\">〔</i><cite class=\"im6grug\"><span>注</span></cite><i class=\"hideCopy\">〕</i><span class=\"zzbdQt1\">﹁</span>引<span class=\"zzbdQt2\">﹂</span><i class=\"hideCopy\">‹</i><u class=\"juenmeng\"><span>人名</span></u><i class=\"hideCopy\">›</i><i class=\"hideCopy\">《</i><u class=\"xiomeng\"><span>書</span></u><i class=\"hideCopy\">》</i><i class=\"hideCopy\">[</i><cite class=\"mhVang\"><span>框</span></cite><i class=\"hideCopy\">]</i><del>刪</del><ins>增</ins></small>終</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    false,
+    "inMain"
+   ],
+   "before": {
+    "main": "<p>臣光曰<span class=\"beforegd\"></span><small class=\"grebdriuo sht_gd\" style=\"height: 7.625em;\" data-jdgs=\"6\">分<span class=\"gdzhbd zzbdSm\">︐</span>扶問翻<span class=\"gdzhbd zzbdSm\">︒</span><i class=\"hideCopy\">〔</i><cite class=\"im6grug\"><span>注</span></cite><i class=\"hideCopy\">〕</i><span class=\"zzbdQt1\">﹁</span>引<span class=\"zzbdQt2\">﹂</span><i class=\"hideCopy\">‹</i><u class=\"juenmeng\"><span>人名</span></u><i class=\"hideCopy\">›</i><i class=\"hideCopy\">《</i><u class=\"xiomeng\"><span>書</span></u><i class=\"hideCopy\">》</i><i class=\"hideCopy\">[</i><cite class=\"mhVang\"><span>框</span></cite><i class=\"hideCopy\">]</i><del>刪</del><ins>增</ins></small>終</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>臣光曰<span class=\"beforegd\"></span><small class=\"grebdriuo sht_gd\" style=\"height: 7.625em;\" data-jdgs=\"6\">分<span class=\"gdzhbd zzbdSm\">，</span>扶問翻<span class=\"gdzhbd zzbdSm\">。</span><i class=\"hideCopy\">〔</i><cite class=\"im6grug\"><span>注</span></cite><i class=\"hideCopy\">〕</i><span class=\"zzbdQt1\">「</span>引<span class=\"zzbdQt2\">」</span><i class=\"hideCopy\">‹</i><u class=\"juenmeng\"><span>人名</span></u><i class=\"hideCopy\">›</i><i class=\"hideCopy\">《</i><u class=\"xiomeng\"><span>書</span></u><i class=\"hideCopy\">》</i><i class=\"hideCopy\">[</i><cite class=\"mhVang\"><span>框</span></cite><i class=\"hideCopy\">]</i><del>刪</del><ins>增</ins></small>終</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "增刪絲欄",
+   "args": [],
+   "before": {
+    "main": "<p>臣光曰<span class=\"beforegd\"></span><small class=\"grebdriuo sht_gd\" style=\"height: 7.625em;\" data-jdgs=\"6\">分<span class=\"gdzhbd zzbdSm\">，</span>扶問翻<span class=\"gdzhbd zzbdSm\">。</span><i class=\"hideCopy\">〔</i><cite class=\"im6grug\"><span>注</span></cite><i class=\"hideCopy\">〕</i><span class=\"zzbdQt1\">「</span>引<span class=\"zzbdQt2\">」</span><i class=\"hideCopy\">‹</i><u class=\"juenmeng\"><span>人名</span></u><i class=\"hideCopy\">›</i><i class=\"hideCopy\">《</i><u class=\"xiomeng\"><span>書</span></u><i class=\"hideCopy\">》</i><i class=\"hideCopy\">[</i><cite class=\"mhVang\"><span>框</span></cite><i class=\"hideCopy\">]</i><del>刪</del><ins>增</ins></small>終</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>臣光曰<span class=\"beforegd\"></span><small class=\"grebdriuo sht_gd\" style=\"height: 7.625em;\" data-jdgs=\"6\">分<span class=\"gdzhbd zzbdSm\">，</span>扶問翻<span class=\"gdzhbd zzbdSm\">。</span><i class=\"hideCopy\">〔</i><cite class=\"im6grug\"><span>注</span></cite><i class=\"hideCopy\">〕</i><span class=\"zzbdQt1\">「</span>引<span class=\"zzbdQt2\">」</span><i class=\"hideCopy\">‹</i><u class=\"juenmeng\"><span>人名</span></u><i class=\"hideCopy\">›</i><i class=\"hideCopy\">《</i><u class=\"xiomeng\"><span>書</span></u><i class=\"hideCopy\">》</i><i class=\"hideCopy\">[</i><cite class=\"mhVang\"><span>框</span></cite><i class=\"hideCopy\">]</i><del>刪</del><ins>增</ins></small>終</p>",
+    "tentou": ""
+   }
+  },
+  {
+   "fn": "對齊眉批",
+   "args": [],
+   "before": {
+    "main": "<p>臣光曰<span class=\"beforegd\"></span><small class=\"grebdriuo sht_gd\" style=\"height: 7.625em;\" data-jdgs=\"6\">分<span class=\"gdzhbd zzbdSm\">，</span>扶問翻<span class=\"gdzhbd zzbdSm\">。</span><i class=\"hideCopy\">〔</i><cite class=\"im6grug\"><span>注</span></cite><i class=\"hideCopy\">〕</i><span class=\"zzbdQt1\">「</span>引<span class=\"zzbdQt2\">」</span><i class=\"hideCopy\">‹</i><u class=\"juenmeng\"><span>人名</span></u><i class=\"hideCopy\">›</i><i class=\"hideCopy\">《</i><u class=\"xiomeng\"><span>書</span></u><i class=\"hideCopy\">》</i><i class=\"hideCopy\">[</i><cite class=\"mhVang\"><span>框</span></cite><i class=\"hideCopy\">]</i><del>刪</del><ins>增</ins></small>終</p>",
+    "tentou": ""
+   },
+   "after": {
+    "main": "<p>臣光曰<span class=\"beforegd\"></span><small class=\"grebdriuo sht_gd\" style=\"height: 7.625em;\" data-jdgs=\"6\">分<span class=\"gdzhbd zzbdSm\">，</span>扶問翻<span class=\"gdzhbd zzbdSm\">。</span><i class=\"hideCopy\">〔</i><cite class=\"im6grug\"><span>注</span></cite><i class=\"hideCopy\">〕</i><span class=\"zzbdQt1\">「</span>引<span class=\"zzbdQt2\">」</span><i class=\"hideCopy\">‹</i><u class=\"juenmeng\"><span>人名</span></u><i class=\"hideCopy\">›</i><i class=\"hideCopy\">《</i><u class=\"xiomeng\"><span>書</span></u><i class=\"hideCopy\">》</i><i class=\"hideCopy\">[</i><cite class=\"mhVang\"><span>框</span></cite><i class=\"hideCopy\">]</i><del>刪</del><ins>增</ins></small>終</p>",
+    "tentou": ""
+   }
+  }
+ ],
+ "final": {
+  "main": "<p>臣光曰<span class=\"beforegd\"></span><small class=\"grebdriuo sht_gd\" style=\"height: 7.625em;\" data-jdgs=\"6\">分<span class=\"gdzhbd zzbdSm\">，</span>扶問翻<span class=\"gdzhbd zzbdSm\">。</span><i class=\"hideCopy\">〔</i><cite class=\"im6grug\"><span>注</span></cite><i class=\"hideCopy\">〕</i><span class=\"zzbdQt1\">「</span>引<span class=\"zzbdQt2\">」</span><i class=\"hideCopy\">‹</i><u class=\"juenmeng\"><span>人名</span></u><i class=\"hideCopy\">›</i><i class=\"hideCopy\">《</i><u class=\"xiomeng\"><span>書</span></u><i class=\"hideCopy\">》</i><i class=\"hideCopy\">[</i><cite class=\"mhVang\"><span>框</span></cite><i class=\"hideCopy\">]</i><del>刪</del><ins>增</ins></small>終</p>",
+  "tentou": ""
+ }
+}

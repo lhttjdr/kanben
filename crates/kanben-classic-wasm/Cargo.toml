@@ -1,0 +1,13 @@
+[package]
+name = "kanben-classic-wasm"
+description = "哂蟹齋排版器文本處理的 wasm 接口"
+version.workspace = true
+edition.workspace = true
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+kanben-classic = { path = "../kanben-classic" }
+wasm-bindgen = "0.2"

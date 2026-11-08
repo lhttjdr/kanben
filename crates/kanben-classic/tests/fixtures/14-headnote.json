@@ -1,0 +1,402 @@
+{
+ "input": "天地玄黃(?〈眉批文字〉¿)宇宙洪荒(?〈第二條〉2¿)日月盈昃",
+ "after": {
+  "調距": {
+   "仿宋": 0,
+   "楷": 0,
+   "明": 0,
+   "夾注": -0.25,
+   "注中注": 0,
+   "注中小字": -1,
+   "敘": 0,
+   "跋": 0,
+   "正文": 0
+  },
+  "行尾空白長": 0.2,
+  "每行格數": 22,
+  "正文字號": 30
+ },
+ "calls": [
+  {
+   "fn": "寫眉批",
+   "args": [
+    "天地玄黃(?〈眉批文字〉¿)宇宙洪荒(?〈第二條〉2¿)日月盈昃",
+    "tentou"
+   ],
+   "ret": "天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃",
+   "tentou": "<div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div>"
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    "天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃"
+   ],
+   "ret": "天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃"
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    "天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃"
+   ],
+   "ret": "天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃"
+  },
+  {
+   "fn": "分段",
+   "args": [
+    "天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃"
+   ],
+   "ret": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+   ],
+   "ret": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+   ],
+   "ret": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+   ],
+   "ret": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+   ],
+   "ret": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+   ],
+   "ret": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+   ],
+   "ret": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+   ],
+   "ret": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+   ],
+   "ret": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+   ],
+   "ret": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+   ],
+   "ret": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+   ],
+   "ret": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    "天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃"
+   ],
+   "ret": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+  },
+  {
+   "fn": "數碼",
+   "args": [
+    "<div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div>"
+   ],
+   "ret": "<div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div>"
+  },
+  {
+   "fn": "畫表格",
+   "args": [
+    "<div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div>"
+   ],
+   "ret": "<div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div>"
+  },
+  {
+   "fn": "分段",
+   "args": [
+    "<div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div>"
+   ],
+   "ret": "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+  },
+  {
+   "fn": "分節",
+   "args": [
+    "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+   ],
+   "ret": "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+  },
+  {
+   "fn": "引詩文",
+   "args": [
+    "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+   ],
+   "ret": "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+  },
+  {
+   "fn": "分段單兒",
+   "args": [
+    "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+   ],
+   "ret": "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+  },
+  {
+   "fn": "插圖",
+   "args": [
+    "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+   ],
+   "ret": "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+  },
+  {
+   "fn": "尾注",
+   "args": [
+    "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+   ],
+   "ret": "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+  },
+  {
+   "fn": "特殊段",
+   "args": [
+    "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+   ],
+   "ret": "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+  },
+  {
+   "fn": "渲染段",
+   "args": [
+    "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+   ],
+   "ret": "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+  },
+  {
+   "fn": "兼行",
+   "args": [
+    "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+   ],
+   "ret": "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+  },
+  {
+   "fn": "旁字",
+   "args": [
+    "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+   ],
+   "ret": "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+  },
+  {
+   "fn": "提取旁句",
+   "args": [
+    "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+   ],
+   "ret": "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+  },
+  {
+   "fn": "字樣",
+   "args": [
+    "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+   ],
+   "ret": "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+  },
+  {
+   "fn": "toHTML",
+   "args": [
+    "<div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div>"
+   ],
+   "ret": "<p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div></p>"
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    true,
+    "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+   ],
+   "ret": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+   "補遺字": null,
+   "拼字": null
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+   ],
+   "ret": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+   ],
+   "ret": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>"
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "inMain",
+    "標點色"
+   ],
+   "before": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   },
+   "after": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   }
+  },
+  {
+   "fn": "圈點抹",
+   "args": [
+    "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   ],
+   "ret": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+  },
+  {
+   "fn": "陰文和墨圍",
+   "args": [
+    "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   ],
+   "ret": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+  },
+  {
+   "fn": "點行間",
+   "args": [
+    "tentou"
+   ],
+   "before": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   },
+   "after": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   }
+  },
+  {
+   "fn": "單行夾注",
+   "args": [
+    "dhgd"
+   ],
+   "before": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   },
+   "after": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   }
+  },
+  {
+   "fn": "度行",
+   "args": [],
+   "before": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   },
+   "after": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   }
+  },
+  {
+   "fn": "寫旁句",
+   "args": [],
+   "before": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   },
+   "after": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   }
+  },
+  {
+   "fn": "雙行夾注",
+   "args": [],
+   "before": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   },
+   "after": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   }
+  },
+  {
+   "fn": "punctuateVH",
+   "args": [
+    "grebdriuo",
+    false,
+    "inMain"
+   ],
+   "before": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   },
+   "after": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   }
+  },
+  {
+   "fn": "增刪絲欄",
+   "args": [],
+   "before": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   },
+   "after": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   }
+  },
+  {
+   "fn": "對齊眉批",
+   "args": [],
+   "before": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\">第二條</div><p></p>"
+   },
+   "after": {
+    "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+    "tentou": "<p></p><div id=\"mp0\" class=\"miipei\" style=\"right: 1306px;\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\" style=\"right: 1306px;\">第二條</div><p></p>"
+   }
+  }
+ ],
+ "final": {
+  "main": "<p>天地玄黃<span class=\"rsvnote\"></span>宇宙洪荒<span class=\"rsvnote\"></span>日月盈昃</p>",
+  "tentou": "<p></p><div id=\"mp0\" class=\"miipei\" style=\"right: 1306px;\">眉批文字</div><div id=\"mp1\" class=\"miipei mpstl2\" style=\"right: 1306px;\">第二條</div><p></p>"
+ }
+}
