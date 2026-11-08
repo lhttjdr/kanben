@@ -87,7 +87,7 @@ impl Default for Options {
             punct: PunctStyle::Judou,
             punct_color: Color::Red,
             title_mark: TitleMark::Wavy,
-            font: Font::Fangsong,
+            font: Font::Mincho,
             numbers: true,
             title: String::new(),
             volume: String::new(),
@@ -100,6 +100,42 @@ impl Default for Options {
 }
 
 /// `\setup` 可用的键，用于报错提示。
+impl Options {
+    /// 工具栏要显示的几项设定的当前值（`键=值`，与 `\\setup` 写法相同）。
+    pub fn summary(&self) -> Vec<(&'static str, String)> {
+        vec![
+            (
+                "format",
+                match self.format {
+                    Format::Leaves => "leaves",
+                    Format::Scroll => "scroll",
+                }
+                .into(),
+            ),
+            (
+                "punct",
+                match self.punct {
+                    PunctStyle::Judou => "judou",
+                    PunctStyle::Grid => "grid",
+                    PunctStyle::Bare => "bare",
+                }
+                .into(),
+            ),
+            (
+                "title-mark",
+                match self.title_mark {
+                    TitleMark::Wavy => "wavy",
+                    TitleMark::Bracket => "bracket",
+                }
+                .into(),
+            ),
+            ("font", self.font.name().into()),
+            ("columns", self.columns.to_string()),
+            ("cells", self.cells.to_string()),
+        ]
+    }
+}
+
 pub const KEYS: &str =
     "columns, cells, format, punct, punct-color, title-mark, font, numbers, column-width, head";
 

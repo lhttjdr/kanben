@@ -78,6 +78,8 @@ pub enum Deco {
         y1: f32,
         wavy: bool,
         color: Option<Color>,
+        /// 綫宽（字）。
+        width: f32,
     },
     /// 圈點。
     Mark {

@@ -15,6 +15,7 @@ pub struct Typeset {
     pages: Vec<String>,
     diagnostics: String,
     title: String,
+    settings: String,
 }
 
 #[wasm_bindgen]
@@ -40,6 +41,21 @@ impl Typeset {
     pub fn title(&self) -> String {
         self.title.clone()
     }
+
+    /// 实际生效的设定（源码 + 覆盖项），JSON 对象，如 `{"format":"scroll",…}`。
+    #[wasm_bindgen(getter)]
+    pub fn settings(&self) -> String {
+        self.settings.clone()
+    }
+}
+
+fn settings_json(o: &kanben::layout::Options) -> String {
+    let fields: Vec<String> = o
+        .summary()
+        .into_iter()
+        .map(|(k, v)| format!("\"{k}\":\"{v}\""))
+        .collect();
+    format!("{{{}}}", fields.join(","))
 }
 
 /// 排版。`overrides` 每行一个 `键=值`（同 `\\setup`），覆盖源码里的设定。
@@ -54,6 +70,7 @@ pub fn typeset(src: &str, overrides: &str) -> Typeset {
     Typeset {
         diagnostics: diagnostics_json(src, &out.diagnostics),
         title: out.options.title.clone(),
+        settings: settings_json(&out.options),
         pages: out.pages,
     }
 }

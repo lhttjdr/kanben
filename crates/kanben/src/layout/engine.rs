@@ -10,9 +10,13 @@ use crate::syntax::ast::{AttrKind, Block, Color, Document, Inline, Shape};
 use crate::syntax::span::{Diagnostic, Span};
 
 // 尺寸（单位：字）。
-const NOTE_SIZE: f32 = 0.52;
-const NOTE_STRETCH: f32 = 1.3;
-const NOTE_X: f32 = 0.26;
+// 雙行夾注：0.8 字号（原版写了 75% 字宽，但常用字体没有窄体，实际渲染就是 0.8 见方），
+// 左右两小行的中线在 +0.45 / -0.35，每行比正文字心高 0.062（加上字形本身上移，墨迹比正文高约 0.09）。这些都是照原版实测的。
+const NOTE_SIZE: f32 = 0.8;
+const NOTE_STRETCH: f32 = 1.0;
+const NOTE_R: f32 = 0.45;
+const NOTE_L: f32 = -0.35;
+const NOTE_DROP: f32 = -0.062;
 const SINGLE_SIZE: f32 = 0.62;
 const SIDE_SIZE: f32 = 0.36;
 const SIDE_STEP: f32 = 0.42;
@@ -57,8 +61,6 @@ struct Anchor {
     x: f32,
     y: f32,
     size: f32,
-    half_w: f32,
-    ext: f32,
     posts: usize,
 }
 
@@ -395,8 +397,8 @@ impl<'d> Engine<'d> {
                     self.ensure_room();
                     let slot = Slot {
                         col: self.col,
-                        x: if left { -NOTE_X } else { NOTE_X },
-                        y: self.row as f32 + 0.5,
+                        x: if left { NOTE_L } else { NOTE_R },
+                        y: self.row as f32 + 0.5 + NOTE_DROP,
                         size: NOTE_SIZE,
                         stretch: NOTE_STRETCH,
                         half_w: NOTE_SIZE / 2.0,
@@ -538,16 +540,16 @@ impl<'d> Engine<'d> {
             let tail = rest.split_off(take);
             for (i, u) in rest.into_iter().enumerate() {
                 let (offset, x) = if hang && i >= 2 * k {
-                    (k, if i == 2 * k { NOTE_X } else { -NOTE_X })
+                    (k, if i == 2 * k { NOTE_R } else { NOTE_L })
                 } else if i < right_n {
-                    (i, NOTE_X)
+                    (i, NOTE_R)
                 } else {
-                    (i - right_n, -NOTE_X)
+                    (i - right_n, NOTE_L)
                 };
                 let y = if hang && i >= 2 * k {
                     self.cells() as f32 + HANG
                 } else {
-                    (self.row + offset as i32) as f32 + 0.5
+                    (self.row + offset as i32) as f32 + 0.5 + NOTE_DROP
                 };
                 let slot = Slot {
                     col: self.col,
@@ -676,7 +678,11 @@ impl<'d> Engine<'d> {
         // 前引號先于字输出，这样 SVG 里文字的先后就是阅读顺序，复制出来不乱。
         for (i, p) in pre.iter().enumerate() {
             // 前引號：字的右上角，几个就往下错开。
-            let (x, y) = (s.x + s.half_w, s.y - s.ext * 0.5 + i as f32 * s.size * 0.12);
+            // 前引號（┐）：照原版，墨迹中心在字心右 0.30、上 0.33。
+            let (x, y) = (
+                s.x + 0.3 * s.size,
+                s.y - 0.33 * s.size + i as f32 * s.size * 0.12,
+            );
             self.punct(p, s.col, x, y, s.size);
         }
         let placed = self.put(&unit.cell, s);
@@ -685,8 +691,6 @@ impl<'d> Engine<'d> {
             x: s.x,
             y: s.y,
             size: s.size,
-            half_w: s.half_w,
-            ext: s.ext,
             posts: 0,
         };
         for p in &unit.post {
@@ -700,14 +704,15 @@ impl<'d> Engine<'d> {
 
     fn post(&mut self, t: &Tok, a: Anchor) {
         // 後引號在字的左下角；句讀在字的右侧、贴着字格下沿，几个就往下错开。
+        // 句讀墨迹中心的位置，照原版实测：正文在字心右 0.65、下 0.33；
+        // 夾注小字在右 0.2、下 0.54。後引號（└）在左下：左 0.25、下 0.32。
         let close = t.text.chars().next().is_some_and(is_close_quote);
+        let note = a.size < 0.9;
         let (x, y) = if close {
-            (a.x - a.half_w, a.y + a.ext * 0.5)
+            (a.x - 0.25 * a.size, a.y + 0.32 * a.size)
         } else {
-            (
-                a.x + a.half_w + a.size * 0.1,
-                a.y + a.ext * 0.5 - a.size * 0.12 + a.posts as f32 * a.size * 0.22,
-            )
+            let (dx, dy) = if note { (0.2, 0.542) } else { (0.65, 0.33) };
+            (a.x + dx, a.y + dy + a.posts as f32 * 0.22)
         };
         self.punct(t, a.col, x, y, a.size);
         if let Some(last) = &mut self.last
@@ -830,13 +835,19 @@ impl<'d> Engine<'d> {
     fn finish(mut self) -> Layout {
         for s in std::mem::take(&mut self.segs) {
             let deco = match s.kind {
+                // 專名號：照原版，朱色粗綫，在字心左 0.485，上缩 0.175、下缩 0.215。
                 MarkKind::Name | MarkKind::Title => Deco::Line {
                     col: s.col,
-                    x: s.x - s.half_w - LINE_GAP,
-                    y0: s.y0 + 0.04,
-                    y1: s.y1 - 0.04,
+                    x: s.x - s.half_w * 0.97,
+                    y0: s.y0 + 0.175 * s.half_w * 2.0,
+                    y1: s.y1 - 0.215 * s.half_w * 2.0,
                     wavy: s.kind == MarkKind::Title,
-                    color: None,
+                    color: Some(self.o.punct_color),
+                    width: if s.kind == MarkKind::Title {
+                        0.03
+                    } else {
+                        0.098 * s.half_w * 2.0
+                    },
                 },
                 MarkKind::Stroke => Deco::Line {
                     col: s.col,
@@ -845,6 +856,7 @@ impl<'d> Engine<'d> {
                     y1: s.y1 - 0.04,
                     wavy: false,
                     color: Some(Color::Red),
+                    width: 0.035,
                 },
                 MarkKind::Delete => Deco::Line {
                     col: s.col,
@@ -853,6 +865,7 @@ impl<'d> Engine<'d> {
                     y1: s.y1 - 0.1,
                     wavy: false,
                     color: Some(Color::Red),
+                    width: 0.035,
                 },
                 MarkKind::Inverse(e) | MarkKind::Frame(e) => {
                     // 正文的框默认贴着界行；窄式和小字的框只包住字。
@@ -1144,7 +1157,7 @@ mod feature_tests {
             .filter(|g| g.role == Role::Note)
             .map(|g| (g.x, g.y))
             .collect();
-        assert_eq!(notes, [(-0.26, 1.5), (-0.26, 2.5)]);
+        assert_eq!(notes, [(-0.35, 1.438), (-0.35, 2.438)]);
         assert_eq!(l.glyphs.last().unwrap().y, 3.5);
     }
 

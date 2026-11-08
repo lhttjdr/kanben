@@ -14,7 +14,7 @@ const U: f32 = 100.0;
 /// 屏幕上一个字多少像素（SVG 的默认尺寸）。
 const PX: f32 = 28.0;
 /// 字号相对字格的比例，留一点字间距。
-const FONT: f32 = 0.92;
+const FONT: f32 = 1.0;
 /// 组字部件相对其格子的放大比例。
 const COMPOSE_FILL: f32 = 1.12;
 
@@ -233,9 +233,19 @@ fn vertical_text(s: &mut String, text: &str, x: f32, mut y: f32, size: f32) -> f
     y
 }
 
+/// 浏览器竖排时直立的汉字比字格中线偏右、偏上一点；照原版实测补上，
+/// 墨迹才和原版重合（正文右 0.09、上 0.035，字号越小按比例越小）。
+const GLYPH_DX: f32 = 0.09;
+const GLYPH_DY: f32 = -0.035;
+
 fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
-    let x = cx + g.x;
-    let y = top + g.y;
+    let (dx, dy) = match g.role {
+        Role::Punct => (0.0, 0.0),
+        Role::Main => (GLYPH_DX * g.size, GLYPH_DY * g.size),
+        _ => (0.0, GLYPH_DY * g.size),
+    };
+    let x = cx + g.x + dx;
+    let y = top + g.y + dy;
     let size = g.size * FONT;
     let mut class = String::new();
     if let Some(c) = g.color {
@@ -351,10 +361,13 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
     }
 }
 
-/// 句讀：按古書的样子画成小圈、小點、小鉤，不借字体里的標點字形
-/// （那些字形在字身里偏向一角，缩小后位置不准）。原字作透明文字留给复制。
+/// 句讀：画成小圈、小點、小鉤，不借字体里的標點字形（那些字形偏在字身一角）。
+/// (x, y) 是墨迹的中心，由排版器按原版实测定好；这里只管画形状，尺寸也照原版：
+/// 。外径 0.25，，约 0.22×0.24，、约 0.24×0.26，：的点径 0.12，「」约 0.44×0.26。
+/// 原字作透明文字留给复制。
 fn judou(s: &mut String, g: &Glyph, x: f32, y: f32) {
-    let z = g.size;
+    // 夾注（0.8 字号）的標點按比例缩小。
+    let z = g.size.min(1.0);
     let color = g.color.map_or("c-red", |c| c.css_class());
     let _ = write!(
         s,
@@ -364,74 +377,119 @@ fn judou(s: &mut String, g: &Glyph, x: f32, y: f32) {
         n(z * 0.3),
         escape(&g.text)
     );
-    let w = n(z * 0.032);
-    let mut path = |d: String, filled: bool| {
-        let class = if filled { "f" } else { "s" };
-        let _ = write!(s, r#"<path class="{class}" d="{d}" stroke-width="{w}"/>"#);
-    };
     let pt = |dx: f32, dy: f32| format!("{} {}", n(x + dx * z), n(y + dy * z));
-    let dot = |dx: f32, dy: f32, r: f32| {
+    let mut stroke = |d: String, w: f32| {
+        let _ = write!(
+            s,
+            r#"<path class="s" d="{d}" stroke-width="{}"/>"#,
+            n(w * z)
+        );
+    };
+    let circle = |dx: f32, dy: f32, r: f32| {
         format!(
             "M{} a{r} {r} 0 1 0 {d} 0 a{r} {r} 0 1 0 -{d} 0",
-            pt(dx - r / z, dy),
-            r = n(r),
-            d = n(2.0 * r)
+            pt(dx - r, dy),
+            r = n(r * z),
+            d = n(2.0 * r * z)
         )
     };
+    // 逗號：圆头在右上，尾向左下甩出，宽略大于高。
     let comma = |dy: f32| {
-        format!(
-            "{} M{} Q{} {}",
-            dot(0.0, dy - 0.04, 0.026 * z),
-            pt(0.022, dy - 0.04),
-            pt(0.03, dy + 0.03),
-            pt(-0.03, dy + 0.06)
+        (
+            circle(0.03, dy - 0.045, 0.03),
+            format!(
+                "M{} Q{} {}",
+                pt(0.075, dy - 0.03),
+                pt(0.06, dy + 0.07),
+                pt(-0.1, dy + 0.095)
+            ),
         )
-    };
-    let corner = |a: (f32, f32), b: (f32, f32), c: (f32, f32)| {
-        format!("M{} L{} L{}", pt(a.0, a.1), pt(b.0, b.1), pt(c.0, c.1))
     };
     match g.text.chars().next().unwrap_or(' ') {
-        '。' | '︒' | '．' | '.' => path(dot(0.0, -0.06, 0.07 * z), false),
+        '。' | '︒' | '．' | '.' => stroke(circle(-0.025, 0.02, 0.11), 0.03),
         '，' | '︐' | ',' => {
-            path(comma(-0.06), false);
-            path(dot(0.0, -0.1, 0.026 * z), true);
+            let (head, tail) = comma(0.0);
+            stroke(head, 0.07);
+            stroke(tail, 0.04);
         }
-        '、' | '︑' => path(
-            format!("M{} L{}", pt(-0.035, -0.14), pt(0.03, -0.05)),
-            false,
-        ),
+        '、' | '︑' => stroke(format!("M{} L{}", pt(-0.13, -0.06), pt(0.04, 0.1)), 0.085),
         '：' | '︓' | ':' => {
-            path(dot(0.0, -0.2, 0.03 * z), true);
-            path(dot(0.0, -0.06, 0.03 * z), true);
+            stroke(circle(0.025, -0.24, 0.03), 0.06);
+            stroke(circle(0.025, 0.01, 0.03), 0.06);
         }
         '；' | '︔' | ';' => {
-            path(dot(0.0, -0.22, 0.03 * z), true);
-            path(comma(-0.06), false);
-            path(dot(0.0, -0.1, 0.026 * z), true);
+            stroke(circle(0.02, -0.24, 0.03), 0.06);
+            let (head, tail) = comma(0.06);
+            stroke(head, 0.07);
+            stroke(tail, 0.04);
         }
-        // 前引號：右上角的「┐」；雙引號再套一层。
-        '「' | '﹁' | '“' | '‘' => {
-            path(corner((-0.2, 0.06), (-0.04, 0.06), (-0.04, 0.22)), false)
-        }
+        // 前引號 ┐、後引號 └；雙引號在里面再套一层。
+        '「' | '﹁' | '“' | '‘' => stroke(
+            format!(
+                "M{} L{} L{}",
+                pt(-0.205, -0.115),
+                pt(0.205, -0.115),
+                pt(0.205, 0.115)
+            ),
+            0.045,
+        ),
         '『' | '﹃' => {
-            path(corner((-0.2, 0.06), (-0.04, 0.06), (-0.04, 0.22)), false);
-            path(corner((-0.2, 0.12), (-0.1, 0.12), (-0.1, 0.22)), false);
+            stroke(
+                format!(
+                    "M{} L{} L{}",
+                    pt(-0.205, -0.115),
+                    pt(0.205, -0.115),
+                    pt(0.205, 0.115)
+                ),
+                0.04,
+            );
+            stroke(
+                format!(
+                    "M{} L{} L{}",
+                    pt(-0.205, -0.03),
+                    pt(0.12, -0.03),
+                    pt(0.12, 0.115)
+                ),
+                0.04,
+            );
         }
-        // 後引號：左下角的「└」。
-        '」' | '﹂' | '”' | '’' => {
-            path(corner((0.04, -0.22), (0.04, -0.06), (0.2, -0.06)), false)
-        }
+        '」' | '﹂' | '”' | '’' => stroke(
+            format!(
+                "M{} L{} L{}",
+                pt(-0.205, -0.115),
+                pt(-0.205, 0.115),
+                pt(0.205, 0.115)
+            ),
+            0.045,
+        ),
         '』' | '﹄' => {
-            path(corner((0.04, -0.22), (0.04, -0.06), (0.2, -0.06)), false);
-            path(corner((0.1, -0.22), (0.1, -0.12), (0.2, -0.12)), false);
+            stroke(
+                format!(
+                    "M{} L{} L{}",
+                    pt(-0.205, -0.115),
+                    pt(-0.205, 0.115),
+                    pt(0.205, 0.115)
+                ),
+                0.04,
+            );
+            stroke(
+                format!(
+                    "M{} L{} L{}",
+                    pt(-0.12, -0.115),
+                    pt(-0.12, 0.03),
+                    pt(0.205, 0.03)
+                ),
+                0.04,
+            );
         }
+        // 問號、嘆號等：与字心齐平，用字形。
         other => {
             let _ = write!(
                 s,
                 r#"<text class="f" x="{}" y="{}" font-size="{}">{}</text>"#,
-                n(x),
-                n(y - 0.12 * z),
-                n(z * 0.34),
+                n(x - 0.017 * z),
+                n(y - 0.288 * z),
+                n(z * 0.85),
                 escape(&other.to_string())
             );
         }
@@ -663,6 +721,7 @@ fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
             y1,
             wavy,
             color,
+            width,
             ..
         } => {
             let x = cx + x;
@@ -687,14 +746,16 @@ fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
                 }
                 let _ = write!(
                     s,
-                    r#"<path class="line {class}" d="{path}" stroke-width="3"/>"#
+                    r#"<path class="line {class}" d="{path}" stroke-width="{}"/>"#,
+                    n(width)
                 );
             } else {
                 let _ = write!(
                     s,
-                    r#"<line class="line {class}" x1="{x}" y1="{}" x2="{x}" y2="{}" stroke-width="3.5"/>"#,
+                    r#"<line class="line {class}" x1="{x}" y1="{}" x2="{x}" y2="{}" stroke-width="{}"/>"#,
                     n(y0),
                     n(y1),
+                    n(width),
                     x = n(x)
                 );
             }

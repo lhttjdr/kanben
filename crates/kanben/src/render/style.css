@@ -2,20 +2,20 @@
   --kb-ink-c: var(--kb-ink, #111);
   --kb-paper-c: var(--kb-paper, #eeeada);
   --kb-rule-c: var(--kb-rule, #7c1823);
-  --kb-red-c: var(--kb-red, #b0281a);
+  --kb-red-c: var(--kb-red, #dd3b44);
   --kb-blue-c: var(--kb-blue, #2b4f8a);
   --kb-green-c: var(--kb-green, #2f6b45);
   --kb-ochre-c: var(--kb-ochre, #9a6a1c);
   --kb-gray-c: var(--kb-gray, #8a8178);
 }
-/* 字體：fangsong（仿宋，默认）、mincho（明朝）、system（系統字體）。
+/* 字體：mincho（明朝，默认）、fangsong（仿宋）、system（系統字體）。
    KB 系列是开源字體（OFL）一字一档的网页字体，由 web/fontload.js 按需登记；没有加载时退回系統字體。
    页面可用 --kb-font 整体覆盖。 */
 .kb {
   --kb-sys: "Noto Serif CJK TC", "Source Han Serif TC", "Noto Serif TC", "Songti TC", "SimSun", serif;
-  --kb-face: "KB Fangsong", "KB Mincho", var(--kb-sys);
+  --kb-face: "KB Mincho", var(--kb-sys);
 }
-.kb.f-mincho { --kb-face: "KB Mincho", var(--kb-sys); }
+.kb.f-fangsong { --kb-face: "KB Fangsong", "KB Mincho", var(--kb-sys); }
 .kb.f-system { --kb-face: var(--kb-sys); }
 .kb text {
   font-family: var(--kb-font, var(--kb-face));

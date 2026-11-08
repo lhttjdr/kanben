@@ -25,11 +25,44 @@ const controls = {
 };
 const fit = $("opt-fit");
 
+// 工具栏改的设定直接写进源码的 \setup[…]，源码和工具栏永远一致。
+// 只有「字數隨窗口」算出的字數不写进源码，作为覆盖项传给排版。
+let fitCellsValue = "";
+
 function overrides() {
-  return Object.entries(controls)
-    .filter(([, el]) => el.value.trim() !== "")
-    .map(([k, el]) => `${k}=${el.value.trim()}`)
-    .join("\n");
+  return fit.checked && fitCellsValue ? `cells=${fitCellsValue}` : "";
+}
+
+/** 把 `key=value` 写进源码第一个 \setup[…]；没有就在开头的注释之后加一行。 */
+function writeSetup(key, value) {
+  const text = source.value;
+  const m = text.match(/^([ \t]*\\setup\[)([^\]]*)(\])/m);
+  let next;
+  if (m) {
+    const args = m[2].split(",").map((a) => a.trim()).filter(Boolean);
+    const i = args.findIndex((a) => a.split("=")[0].trim() === key);
+    if (i >= 0) args[i] = `${key}=${value}`;
+    else args.push(`${key}=${value}`);
+    next = text.slice(0, m.index) + m[1] + args.join(", ") + m[3] + text.slice(m.index + m[0].length);
+  } else {
+    const lines = text.split("\n");
+    let at = 0;
+    while (at < lines.length && /^\s*(%|\\(book|volume|studio)\{)/.test(lines[at])) at++;
+    lines.splice(at, 0, `\\setup[${key}=${value}]`);
+    next = lines.join("\n");
+  }
+  source.value = next;
+  saveDraft(next);
+  render();
+}
+
+/** 工具栏显示实际生效的值。 */
+function showSettings(settings) {
+  for (const [k, el] of Object.entries(controls)) {
+    if (k === "cells" && fit.checked) continue;
+    if (document.activeElement === el && el.tagName === "INPUT") continue;
+    if (settings[k] !== undefined) el.value = settings[k];
+  }
 }
 
 /// 页面高度跟着预览区走；字數隨窗口时由 wasm 按这个高度算字數。
@@ -41,9 +74,9 @@ function applyFit() {
   const h = pageHeight();
   document.documentElement.style.setProperty("--page-h", `${h}px`);
   if (!fit.checked) return false;
-  const others = overrides().split("\n").filter((l) => !l.startsWith("cells=")).join("\n");
-  const cells = String(fitCells(source.value, others, h, CELL_PX));
-  if (controls.cells.value === cells) return false;
+  const cells = String(fitCells(source.value, "", h, CELL_PX));
+  if (fitCellsValue === cells) return false;
+  fitCellsValue = cells;
   controls.cells.value = cells;
   return true;
 }
@@ -91,6 +124,7 @@ function render() {
     (errors ? ` · ${errors} 處錯誤` : "") +
     (warnings ? ` · ${warnings} 處提示` : "");
   document.title = result.title ? `${result.title} · 刊本` : "刊本排版";
+  showSettings(JSON.parse(result.settings));
   result.free();
 }
 
@@ -138,10 +172,15 @@ $("kb-style").textContent = style();
 source.value = loadDraft() ?? example();
 
 source.addEventListener("input", schedule);
-for (const el of Object.values(controls)) el.addEventListener("change", render);
+for (const [key, el] of Object.entries(controls)) {
+  el.addEventListener("change", () => {
+    const value = el.value.trim();
+    if (value !== "") writeSetup(key, value);
+  });
+}
 fit.addEventListener("change", () => {
   controls.cells.disabled = fit.checked;
-  if (!fit.checked) controls.cells.value = "";
+  fitCellsValue = "";
   render();
 });
 

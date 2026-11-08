@@ -8,7 +8,7 @@
 - **解析**：先按通用形式解析，再查命令表；出错带行列号。
 - **排版**：按字格计算坐标，结果确定，不依赖浏览器测量，可单元测试。夾注、眉批、分葉都在 Rust 里算好位置。
 - **输出**：SVG，每葉一页，文字仍可搜索、复制。
-- **字體**：正文仿宋或明朝，批注楷書，都是开源字體（OFL），切片成网页字体按需加载；算籌、圈點等由引擎直接画出，不靠字体。
+- **字體**：正文明朝（默认）或仿宋，批注楷書，都是开源字體（OFL），切片成网页字体按需加载；算籌、圈點等由引擎直接画出，不靠字体。
 
 语法说明见 [docs/語法.md](docs/語法.md)，示例见 [examples/通鑑.kb](examples/通鑑.kb)。
 
@@ -76,8 +76,8 @@ SVG 不内嵌样式，页面里引入一次 `style()` 即可；要用开源字�
 
 | 用途 | 字體 | 网页字体名 |
 |---|---|---|
-| 正文（`font=fangsong`，默认） | [朱雀仿宋](https://github.com/TrionesType/zhuque) | KB Fangsong |
-| 正文（`font=mincho`） | [源樣明體](https://github.com/ButTaiwan/genyo-font) | KB Mincho |
+| 正文（`font=mincho`，默认） | [源樣明體](https://github.com/ButTaiwan/genyo-font) | KB Mincho |
+| 正文（`font=fangsong`） | [朱雀仿宋](https://github.com/TrionesType/zhuque) | KB Fangsong |
 | 旁批、眉批 | [霞鶩文楷](https://github.com/lxgw/LxgwWenKai) | KB Kai |
 
 三种都是 SIL Open Font License 1.1。`tools/fonts.py` 把每种字体切成一字一个的小文件，`web/fontload.js` 只为页面上出现的字登记字体，所以一页只下载用到的那些字（通常几百 KB）。切字属于 OFL 所说的修改版，所以改了字体名，每种字体的授权文件放在 `web/fonts/<名>/OFL.txt`。
