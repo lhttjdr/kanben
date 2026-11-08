@@ -1,0 +1,20 @@
+/* 哂蟹齋排版器（https://vert.neocities.org/type/set/）原文件，經作者許可收錄；路徑已改為相對路徑。 */
+:root {--原字色:#000}
+body {background-color:#eee; font-family:Noto Sans CJK KR,等线,微軟正黑體,宋体; user-select:none}
+ul {list-style-type:none; font-size:1.5em; line-height:2em; cursor:default; padding-top:0.5em; margin-right:0.1em; margin-left:0.1em}
+li {word-break:keep-all}
+li:not(.禁用) {color:inherit}
+.禁用,#書內搜,#闔齋索,#朗讀 {color:#80808080}
+.選中 {color:purple; box-shadow:inset 0 0 0.2em 0 #08f;}
+#卷內尋,#書內搜,#闔齋索 {height:33.33%; float:left; overflow:hidden}
+#fontSz>a:hover,#行距>a:not(.禁用):hover,#色彩>a:hover,#選項調疊敘:hover,#選項收展夾注:hover,#卷內尋:hover,#重排:hover,#裝釘:hover,#定版:hover {background-color:lightblue !important; transition:all 0.3s}
+#白紙黑字鈕 {background-color:#fff; color:#000}
+#原色鈕 {background-color:var(--紙色三); color:var(--原字色)}
+#黑紙白字鈕 {background-color:rgb(31,31,31); color:#ddd}
+#暗色鈕 {background-color:#000; color:rgb(62,62,62)}
+.hasub>a {display:inline-block; padding:0.5em 0; line-height:1.8em}
+.hasub>a:first-child {border-top:1px solid #fff; margin-top:0.5em}
+.hasub>a:not(:first-child) {border-top:1px dashed #fff}
+@supports (backdrop-filter:blur(4px)){
+  body {background-color:rgba(239,239,239,0.9)}
+}

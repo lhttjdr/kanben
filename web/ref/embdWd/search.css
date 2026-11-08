@@ -1,0 +1,39 @@
+/* 哂蟹齋排版器（https://vert.neocities.org/type/set/）原文件，經作者許可收錄；路徑已改為相對路徑。 */
+:root {--搜索欄界面字號:1.6rem}
+html,body {width:100%}
+body {background-color:#eee; margin:0; font-size:var(--搜索欄界面字號); font-family:Noto Sans CJK KR,等线,微軟正黑體,宋体}
+body>div {height:100%; width:100%; display:flex; align-items:center; overflow:hidden}
+body>div>div {padding:0.25em 2px; word-break:keep-all;white-space:nowrap; overflow:hidden}
+body>div>div:not(#搜索框) {user-select:none}
+#題 {line-height:1.2}
+#搜索框 {background-color:#f0f0f0; flex:20% 1 1; width:1.6em; line-height:1.6em; border-radius:0.1em; border:1px solid #ccc; transition:border-color 0.2s; position:relative}
+#搜索框::selection {background-color:var(--湖水藍)}
+#搜索框:focus {border-color:#08f; box-shadow:#08f 0 0 2px 0; outline:none}
+#歬一條,#後一條 {font-size:1em; margin:0; padding:2px 3px; height:1.5em; border:none; border-radius:2px; background-color:transparent; vertical-align:-webkit-baseline-middle; transition:all 0.1s; writing-mode:horizontal-tb}
+#後一條 {transform:scaleX(-1)}
+#歬一條>span,#後一條>span {background:url("../圖形/右鏃.svg") no-repeat; background-size:1em; filter:invert(0.5); display:inline-block; height:100%; width:100%; position:relative; left:0.1em}
+#歬一條>span {background-position:right center}
+#後一條>span {background-position:left center}
+#歬一條:focus,#後一條:focus {outline:none}
+#歬一條:hover,#後一條:hover {background-color:#ddd;}
+#歬一條:active,#後一條:active {background-color:#bbb;}
+input[type="checkbox"] {height:var(--搜索欄界面字號); width:var(--搜索欄界面字號); vertical-align:-webkit-baseline-middle}
+/*#異體容器 {position:relative}
+#異體子項 {position:absolute; top:0; left:100%; height:12em; width:auto}
+#異體子項 label {float:left; height:50%}*/
+#總符合數 {border-bottom:2px solid #333; padding:0 0.1em}
+#總符合數,#現敘號 {letter-spacing:-1px;}
+#搜全書鈕,#搜全齋鈕 {font-size:0.9em; margin:0.25em 0; padding:4px 1px}
+#搜全書鈕>span,#搜全齋鈕>span {line-height:1.6em}
+#隱 {margin:auto 0 2rem 0; font-size:1em}
+button {word-break:keep-all;white-space:nowrap; font-family:inherit}
+.不可用 {color:gray}
+.選項圖標 {width:2em}
+@media screen and (min-height:1000px) {
+	.選項圖標 {display:none}
+	.選項名 {display:inline}
+}
+@media screen and (max-height:999px) {
+	.選項圖標 {display:inline}
+	.選項名,#搜全書鈕,#搜全齋鈕 {display:none}
+}

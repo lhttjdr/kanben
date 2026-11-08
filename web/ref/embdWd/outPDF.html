@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<!-- 哂蟹齋排版器（https://vert.neocities.org/type/set/）原文件，經作者許可收錄；路徑已改為相對路徑。 -->
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>定版（輸出 PDF）</title>
+		<link href="../style.css" rel="stylesheet" type="text/css" media="all">
+		<link href="outPDFw.css?日=丙申" rel="stylesheet" type="text/css" media="all">
+		<script src="ocut.js" defer></script>
+	</head>
+	<body onselectstart="return false">
+		<div id="wttlbar">定版</div>
+		<main>
+			<div>每面 <input type="number" max="30" min="4" step="1" value="10" pattern="\d*" id="每面行數" class="cnumDr cnumDrV"> 行</div>
+			<div class="選魚尾">魚尾樣式　正在設計<br>
+			　<img src="../圖形/1.svg"></div>
+			<div>版心頂欄文字 <input type="text" size="6" maxlength="8" value="" placeholder="書名" id="版心頂欄字"></div>
+			<div>版心底欄文字 <input type="text" size="6" maxlength="8" value="哂蟹齋" placeholder="版權" id="版心底欄字"></div>
+			<div><button id="okbtn">切䈎</button><button id="canclbtn">罷了</button></div>
+		</main>
+	</body>
+</html>

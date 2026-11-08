@@ -1,0 +1,378 @@
+/* 哂蟹齋排版器（https://vert.neocities.org/type/set/）原文件，經作者許可收錄；路徑已改為相對路徑。 */
+@font-face {font-family: "琵琶譜字"; src: url(z6h2/唐琵琶譜毛做做體.otf)}
+:root {--基礎字號:initial; --劉海高:2; font-size:var(--基礎字號); --韵抹1:var(--竹篁綠);--韵抹2:var(--桃紅);--韵抹3:var(--清水藍);--韵抹4:var(--鼬黃);--韵抹5:var(--淡牽牛紫);--韵抹6:var(--橘橙);--韵抹7:var(--槐花黃綠);--韵抹8:var(--海天藍);--韵抹9:var(--鹿角椶);--韵抹0:var(--蔥綠); --絲欄色:var(--棗赤); --墨圍色:var(--絲欄色); --陰文底色:#DD3B44; --標點色:#DD3B44;--透明標色:#DD3B4477;--圈發色:#B49436; --校注圈點色:#9198e5; --着重圈點色:var(--靛青); --段後注敘號抹色:rgba(198,223,200,0.5); --卷尾注敘號抹色:var(--釉藍); --旁注字色:var(--鷃藍); --增抹色:#f3f3f37f; --刪抹色:rgba(238,238,238,0.7); --校抹色:var(--蜜黃); --眉批色:var(--銀朱,#900); --題籤紙色:#fcfcf9; --隨顯牋色:rgba(147,213,220,0.9); --鏈接色:var(--正青); --正文倒角深:0.2em;--小倒角深:0.14em;--夾注倒角深:0.14em; --字離框頂:0.5em; --小圖預設高:8em; --小圖預設寬:calc(var(--行寬)*10); --版內文寬:calc(var(--行寬)*10)}
+body {background-color: var(--褾緣色); min-width:92vw; overflow:auto}
+h1,h2,h3,h4,h5,h6 {font-size:1em; line-height:inherit; margin-right:0; margin-left:0; padding:0}
+h1 {font-weight:800} th {font-weight:normal}
+h2{margin-top:1em; font-weight:750} h3{margin-top:2em; font-weight:700} h4{margin-top:3em; font-weight:650} h5{margin-top:4em; font-weight:600} h6{margin-top:5em; font-weight:550}
+h2 .mpnote{position:relative; bottom:1em}
+h3 .mpnote{position:relative; bottom:2em}
+h4 .mpnote{position:relative; bottom:3em}
+h5 .mpnote{position:relative; bottom:4em}
+h6 .mpnote{position:relative; bottom:5em}
+p {margin:0}
+/*article p::before {content:''; margin:-0.5em -0.3em 0 -0.3em; padding:0.5em 0.3em 0 0.3em; background-color:var(--絲欄色)}*/ /* 因不能辨別段之性質，暫不行之 */
+ins {text-decoration:none; background-color:var(--增抹色)}
+del {opacity:0.6; text-decoration:line-through solid var(--正赤); background-color:var(--刪抹色); user-select:none}
+#tentou {font-family: 行楷-簡,行楷-繁,var(--楷體)}
+dd {margin-inline-start:0}
+.colateTC {background-color:inherit; color:var(--淡栗椶)}/* 校注之字 */
+.colateMS {background:linear-gradient(0.25turn, transparent 20%, var(--校抹色) 20% 80%, transparent 80%)}
+.colateOO {/*border-image-source:radial-gradient(circle closest-side at 90% 50%, transparent 40%, #9198e5 40% 100%, transparent); border-image-slice:43.75% 20% 43.75% 0; border-image-repeat:repeat; border-image-width:0 0.2em 0 0*/background:radial-gradient(circle closest-side at 90% 0.5em, transparent 40%, var(--校注圈點色) 40% 100%, transparent) repeat-y}
+.colateOF {background:radial-gradient(circle closest-side at 92% 0.5em, var(--校注圈點色) 0% 100%, transparent) repeat-y}
+.strROO {background:radial-gradient(circle closest-side at 90% 0.5em, transparent 40%, var(--着重圈點色) 40% 100%, transparent) repeat-y}
+.strROF {background:radial-gradient(circle closest-side at 92% 0.5em, var(--着重圈點色) 0% 100%, transparent) repeat-y}
+.colateOO,.colateOF, .strROO,.strROF {background-color:inherit; color:inherit; padding-right:0.2em; margin-right:-0.2em; background-size:1.2em 1em}
+.pCmtN, .gCmtN {display:inline-block; height:0; position:relative; bottom:1em; right:calc(0.35em + var(--行寬)/2); letter-spacing:0; vertical-align:bottom; font-size:0.5em; word-break:keep-all; white-space:nowrap; font-family:Noto Sans CJK KR,sans-serif; font-weight:500}
+.grebdriuo .pCmtN, .grebdriuo .gCmtN {right:calc(0.25em + var(--跨註行寬)/2)}
+.pCmtN>span {background-color:var(--段後注敘號抹色); color:var(--靛青); border-radius:0.3em; position:relative; z-index:3; cursor:help; transition:all 0.5s}
+.pCmtN>span:hover {background-color:var(--靛青); color:var(--段後注敘號抹色)}
+.pCmtAfN{color:var(--靛青); background:linear-gradient(-135deg, transparent var(--正文倒角深), var(--靛青) var(--正文倒角深) calc(var(--正文倒角深) + 1px), transparent calc(var(--正文倒角深) + 1px)) top right,linear-gradient(-45deg, transparent var(--正文倒角深), var(--靛青) var(--正文倒角深) calc(var(--正文倒角深) + 1px), transparent calc(var(--正文倒角深) + 1px)) bottom right,linear-gradient(45deg, transparent var(--正文倒角深), var(--靛青) var(--正文倒角深) calc(var(--正文倒角深) + 1px), transparent calc(var(--正文倒角深) + 1px)) bottom left,linear-gradient(135deg, transparent var(--正文倒角深), var(--靛青) var(--正文倒角深) calc(var(--正文倒角深) + 1px), transparent calc(var(--正文倒角深) + 1px)) top left,linear-gradient(0deg, var(--靛青) 0 1px, transparent 1px) bottom center, linear-gradient(180deg, var(--靛青) 0 1px, transparent 1px) top center;
+ background-size:65% 50%; background-repeat:no-repeat !important; padding:0 calc((var(--行寬) - 1em)/2)}
+.gCmtN>span {background-color:var(--卷尾注敘號抹色); color:var(--主字色); position:relative; z-index:3}
+.pCmnt, .gCmnt {margin:0; padding:0}
+.pCmnt li, .gCmnt li {margin-top:2em; text-indent:-1em}
+.pCmnt {list-style-type:none/*trad-chinese-informal*/}
+.gCmnt {/*list-style-type:碼子*/}
+.pCmnt::before {content:'校勘記'; margin-top:1em; display:block}
+#隨顯校注 {position:fixed; top:3rem; height:14vh; width:auto; min-width:3em; max-width:18em; padding:0.5em; font-size:1.4em; line-height:1.5em; background-color:var(--隨顯牋色); border:1px solid var(--蔥綠); box-shadow:0 0 0.3em 0.1em rgba(127,127,127,0.5); overflow:hidden; text-overflow:ellipsis; z-index:103}
+#隨顯校注 dt {font-family:Noto Sans CJK KR,sans-serif; font-weight:500}
+#隨顯校注 dd {font-family:Noto Serif CJK KR,sans-serif; font-weight:300}
+.hideCopy {display:inline-block; height:0;width:0; line-height:1; opacity:0; position:relative; z-index:-10}
+.charComp {display:inline-block; height:1em; width:1em; letter-spacing:-1em; position:relative}
+.grebdriuo .charComp {padding-bottom:0.25em}
+.charComp .cc_LR_L {left:-0.05em; top:0; transform:scaleX(0.4); transform-origin:center left}
+.charComp .cc_LR_R {right:-0.05em; top:0; transform:scaleX(0.6); transform-origin:center right}
+.charComp .cc_TB_T {left:0; top:-0.05em; transform:scaleY(0.5); transform-origin:top center}
+.charComp .cc_TB_B {left:0; bottom:-0.05em; transform:scaleY(0.5); transform-origin:bottom center}
+.charComp .cc_TLBR_TL {left:0; left:0}
+.charComp .cc_TLBR_BR {right:0; top:0; transform:scale(0.8); transform-origin:bottom right}
+.charComp .cc_LR_L, .charComp .cc_LR_R, .charComp .cc_TB_T, .charComp .cc_TB_B, .charComp .cc_TLBR_TL, .charComp .cc_TLBR_BR {position:absolute; letter-spacing:0}
+.beforegd {font-size:0; padding-bottom:1px; margin-bottom:-1px}
+.rubyStc {display:inline-block; font-size:0.5em; height:0; width:1em; padding-bottom:1px; margin-bottom:-1px; position:relative}
+.rubyStc>span {position:absolute; right:calc(-0.3em - var(--行寬)*1.5); width:auto; color:var(--旁注字色); z-index:-1}
+.rubyStc>span>span {background-color:var(--紙色)}
+.rubyGap {bottom:0.5em}
+.rubyGap>span {letter-spacing:1em}
+.gdHeadflt {float:left; width:calc(var(--跨註行寬)*2)}
+.gdTailflt {float:right; height:100%; width:calc(100% - var(--跨註行寬)*2)}
+.pCmtAfN+.beforegd+.long_gd .gdTailflt {width:100%}
+.sprAftgd {display:inline-block; width:1em; position:relative; z-index:-3}
+.long_gd {display:block; height:calc(100% + 0.2em); margin:0 calc(-2*var(--跨註行寬)) -0.2em}
+.long_gd:last-child {margin-left:0}
+.long_gd>span {position:absolute; top:0.12em; right:0; height:100%; width:100%}
+.sht_gd {display:inline-block; margin-bottom:-0.125em; width:calc(var(--跨註行寬)*2); top:0.1em}
+.ig_gd {display:inline-block; height:1.45em; margin-bottom:-0.2em; width:calc(var(--跨註行寬)*2); top:0.1em}
+.jmhgbd {
+	display:inline-block; box-sizing: border-box; height:0; vertical-align: bottom; position:relative; font-weight:normal; color:var(--標點色)
+} /* 正文行間標點 */
+.hgbdSysQt1 {margin-bottom: -1em; position: relative; bottom: 0.65em; letter-spacing: 0; font-family:標點符號,宋体; color:var(--標點色); vertical-align:initial}
+.hgbdSysQt2 {display: inline-block; height: 0; position: relative; bottom: 0.35em; letter-spacing: 0; font-family:標點符號,宋体; color:var(--標點色); vertical-align:initial}
+.hgbd2Qt1 {position:relative; bottom:0.75em; letter-spacing:-1em; font-family:標點符號; color:var(--標點色); vertical-align:top}
+.hgbd2Qt1>span:first-child {position:relative; bottom:0.1em; left:0.1em}
+.hgbd2Qt2 {display:inline-block; height:0; position:relative; bottom:0.25em; letter-spacing:0; font-family:標點符號,宋体; color:var(--標點色); vertical-align:top}
+.hgbd2Qt2>span:first-child {position:relative; bottom:0.1em; margin-bottom:-1em}
+.hgbd2Qt2>span:nth-child(2) {position:relative; right:0.1em}
+.hgbdSysSm {left:0.35em;bottom:0.4em; font-family:標點符號,楷体,KaiTi,宋体,PingFang SC,Source Han Sans SC,Noto Sans CJK SC}
+.hgbdSysMd {left:0.35em;bottom:0.6em; font-family:標點符號,宋体,SimSun,PingFang SC,Source Han Sans SC,Noto Sans CJK SC}
+.hgbdSysTl {left:0.4em;bottom:1em; font-family:標點符號,仿宋,FangSong,宋体,SimSun,PingFang SC,Source Han Sans SC,Noto Sans CJK SC}
+.hgbdRightEm {font-size:0.6em; left:1.2em;bottom:1.4em; font-family:標點符號,仿宋,FangSong,宋体,SimSun,PingFang SC,Source Han Sans SC,Noto Sans CJK SC; color:var(--着重圈點色); z-index:-1}
+.jmhgbd0 {letter-spacing:0; font-family: 行間標點}
+.sigrugxieng {
+  letter-spacing: 0; color:var(--圈發色); font-family: 行間標點; position:relative; z-index:-1
+}
+.sigaugxieng {
+	display:inline-block; height:0; width:0; letter-spacing: 0; color:var(--圈發色); font-family: 標點符號; position:relative; z-index:-1
+} /* 四角聲調 */
+.fkLevel,.fkRise,.fkEnter {line-height:1; vertical-align:text-bottom}
+.fkLevel {bottom:0.9em; right:0.1em}
+.fkRise {bottom:1.1em; right:0.1em}
+.fkDept {bottom:1.1em; left:0.1em; vertical-align:top}
+.fkEnter {bottom:0.9em; left:0.1em}
+.midDotPrd {display: inline-block; height: 0; position: relative; letter-spacing: 0; -webkit-text-decoration: none; text-decoration: none; font-family:標點符號,宋体,仿宋; color:var(--標點色)}
+.xiomeng {
+	-webkit-text-decoration: underline wavy var(--標點色); text-decoration: underline wavy var(--標點色); text-decoration-skip: edges; /*attr(data-cl)*/
+	/*background:radial-gradient(circle at 137.5% .5em, transparent .46875em, #DD3B4477 .46875em .625em, transparent .625em, transparent) -0.7em -0.78125em,radial-gradient(circle at -37.5% .5em, transparent .46875em, #DD3B4477 .46875em .625em, transparent .625em, transparent) .3em 0;
+background-size:1em 1.5625em; background-repeat: repeat-y;
+background:radial-gradient(circle at 137.5% .1em, transparent .08125em, #DD3B44 .08125em .125em, transparent .125em, transparent) -.1em .13125em,radial-gradient(circle at -37.5% .1em, transparent .08125em, #DD3B44 .08125em .125em, transparent .125em, transparent) .1em 0; background-size:.2em .2625em;
+*/
+}
+.xiomeng::before, .xiomeng::after {content:''; background:linear-gradient(to right, var(--紙色) 0.2em, transparent 0.2em); position:relative; right:0.6em; display:inline-block; height:3px; width:0.3em}
+.xiomeng::before {margin-bottom:-3px}
+.xiomeng::after {margin-top:-3px}
+#隨顯校注 .xiomeng::before, #隨顯校注 .xiomeng::after {background:linear-gradient(to right, var(--隨顯牋色) 0.2em, transparent 0.2em)}
+.xiomengRight {
+	-webkit-text-decoration: overline wavy var(--標點色); text-decoration: overline wavy var(--標點色); text-decoration-skip: edges;
+}
+#tentou .xiomeng, .mpnote .xiomeng {padding-left:0.1em; margin-left:-0.1em;-webkit-text-underline-offset: -0.1em; text-underline-offset: -0.1em /* 火狐 70 之前用正值右移 */; text-decoration-color: inherit}
+.grebdriuo .xiomeng, .grebdriuo .xiomengSt, .grebdriuo .xiomengEd {background:radial-gradient(circle at 137.5% .2em, transparent .1625em, var(--透明標色) .1625em .25em, transparent .25em, transparent) -.2em .2625em,radial-gradient(circle at -37.5% .2em, transparent .1625em, var(--透明標色) .1625em .25em, transparent .25em, transparent) .2em 0; background-size:.4em .525em; background-repeat:repeat-y; -webkit-text-decoration: none; text-decoration: none}
+.grebdriuo .xiomeng {padding-left:0; margin-left:0; margin-top: 0.15em; margin-bottom: 0.35em; -webkit-text-underline-offset: -0.15em; text-underline-offset: -0.15em}
+.grebdriuo .xiomeng::before, .grebdriuo .xiomeng::after {content:initial}
+.grebdriuo .xiomengSt {	border: none; margin-top: 0.15em; margin-bottom: 0.2em}
+.grebdriuo .xiomengEd {	border: none; margin-top: 0; margin-bottom: 0.35em}
+.juenmeng {
+	/* text-decoration-skip: edges*/border: none;
+	-webkit-text-decoration: none; text-decoration: none;/* margin-inline: 0.15em;*/ margin-top: 0.15em; margin-bottom: 0.15em; box-shadow: -0.05em 0 var(--標點色), inset 0.05em 0 var(--標點色)
+}
+.juenmeng>span {
+  /* margin-inline: -0.15em;*/ margin-top: -0.15em; margin-bottom: -0.15em
+}
+#tentou .juenmeng {box-shadow: -0.05em 0, inset 0.05em 0}
+#tentou .jmhgbd,#tentou .hgbdSysQt1,#tentou .hgbdSysQt2,#tentou .hgbd2Qt1,#tentou .hgbd2Qt2,#tentou .midDotPrd,.toc .jmhgbd,.toc .hgbdSysQt1,.toc .hgbdSysQt2,.toc .hgbd2Qt1,.toc .hgbd2Qt2,.toc .midDotPrd {color:inherit}
+.jmks {-webkit-text-decoration:none; text-decoration:none; padding-left:0.2em; margin-left:-0.2em; background: linear-gradient(var(--標點色) 0 0.05em, transparent 0.05em calc(100% - 0.05em), var(--標點色) calc(100% - 0.05em)) no-repeat, linear-gradient(0.25turn, var(--標點色) 0.05em, transparent 0.05em 0.15em, var(--標點色) 0.15em 0.2em, transparent 0.2em) no-repeat; background-size:0.2em calc(100% - 0.4em); background-position:left center}
+.gdzhbd, .rightLine .jmhgbd,.leftLine .jmhgbd,.rightLCmt .jmhgbd,.leftLCmt .jmhgbd,.twoLCmt .jmhgbd,.twoLine .jmhgbd {
+	display:inline-block; box-sizing: border-box; height:0; width:0; vertical-align:initial/*top !important*/; color:var(--標點色); position:relative; -webkit-text-decoration: none; text-decoration: none; font-family:Noto Sans CJK SC,宋体
+} /* 夾注字下標點 */
+.zzbdQt1, .rightLine .hgbdSysQt1,.leftLine .hgbdSysQt1,.rightLCmt .hgbdSysQt1,.leftLCmt .hgbdSysQt1,.twoLCmt .hgbdSysQt1,.twoLine .hgbdSysQt1,.dhgd .hgbdSysQt1,.pCmnt dt .hgbdSysQt1 {margin-bottom:-1em; position: relative; bottom: 0.8em; letter-spacing: 0; color:var(--標點色); font-family:標點符號,宋体;}
+.zzbdQt2, .rightLine .hgbdSysQt2,.leftLine .hgbdSysQt2,.rightLCmt .hgbdSysQt2,.leftLCmt .hgbdSysQt2,.twoLCmt .hgbdSysQt2,.twoLine .hgbdSysQt2,.dhgd .hgbdSysQt2,.pCmnt dt .hgbdSysQt2 {display: inline-block; height: 0; position: relative;  letter-spacing: 0; color:var(--標點色); font-family:標點符號,宋体;}
+.zzbdQt2, .rightLine .hgbdSysQt2,.leftLine .hgbdSysQt2,.rightLCmt .hgbdSysQt2,.leftLCmt .hgbdSysQt2,.twoLCmt .hgbdSysQt2,.twoLine .hgbdSysQt2 {bottom: 0.5em}
+.dhgd .hgbdSysQt2,.pCmnt dt .hgbdSysQt2 {bottom: 0.36em}
+.zzbd2Qt1 {position:relative; bottom:0.7em; letter-spacing:-1em; font-family:標點符號; color:var(--標點色); vertical-align:top !important}
+.zzbd2Qt1>span:first-child {position:relative; bottom:0.2em}
+.zzbd2Qt2 {display:inline-block; height:0; position:relative; bottom:0.4em; letter-spacing:0; font-family:標點符號; color:var(--標點色); vertical-align:top !important}
+.zzbd2Qt2>span:first-child {position:relative; bottom:0.2em; margin-bottom:-1em}
+.zzbdMSm, .rightLine .hgbdSysSm,.leftLine .hgbdSysSm,.rightLCmt .hgbdSysSm,.leftLCmt .hgbdSysSm,.twoLCmt .hgbdSysSm,.twoLine .hgbdSysSm {bottom:0.35em; left:0; font-family:標點符號,楷体,KaiTi,"Noto Sans CJK SC","PingFang SC"}
+.zzbdMMd, .rightLine .hgbdSysMd,.leftLine .hgbdSysMd,.rightLCmt .hgbdSysMd,.leftLCmt .hgbdSysMd,.twoLCmt .hgbdSysMd,.twoLine .hgbdSysMd {bottom:0.6em; left:0; font-family:楷体,KaiTi,"Noto Sans CJK JP",HiraKakuProN-W3}
+.zzbdSm, .rightLine .hgbdSysSm,.leftLine .hgbdSysSm,.rightLCmt .hgbdSysSm,.leftLCmt .hgbdSysSm,.twoLCmt .hgbdSysSm,.twoLine .hgbdSysSm {bottom:0.4em; left:0; font-family:標點符號,楷体,KaiTi,"Noto Sans CJK JP"}
+.zzbdMd, .rightLine .hgbdSysMd,.leftLine .hgbdSysMd,.rightLCmt .hgbdSysMd,.leftLCmt .hgbdSysMd,.twoLCmt .hgbdSysMd,.twoLine .hgbdSysMd {bottom:0.4em; left:0; font-family:標點符號,楷体,KaiTi,"Noto Sans CJK JP"; font-feature-settings:"aalt" 1}
+.zzbdTl, .rightLine .hgbdSysTl,.leftLine .hgbdSysTl,.rightLCmt .hgbdSysTl,.leftLCmt .hgbdSysTl,.twoLCmt .hgbdSysTl,.twoLine .hgbdSysTl {bottom:1em; left:0.2em; font-family:標點符號,仿宋,FangSong}
+.ryme {color:var(--桃紅,pink); display:inline-block; box-sizing:border-box; height:0; position:relative; bottom:1em/*margin-top:-1em*/; z-index:-2}
+.ryme::before {content: attr(data-韵標); letter-spacing:0; font-family:HiraMinProN-W6,"Hiragino Mincho ProN","Noto Serif CJK TC",細明體,宋体; display:inherit}
+.rightRuby::after {content: attr(data-rrt); color:var(--標點色); display:inline-block; height:0; font-size:0.5em; position:relative; left:1.5em; bottom:1.5em; letter-spacing:0; line-height:1; z-index:20; font-family:"Noto Serif CJK TC",HiraMinProN-W6,"Hiragino Mincho ProN",細明體,宋体; word-break:keep-all}
+.grebdriuo,.rightLine,.leftLine,.rightLCmt,.leftLCmt,.twoLCmt,.twoLine {font-size:0.8em; letter-spacing:0.25em; line-height:var(--跨註行寬); vertical-align:top; text-indent:0; position:relative}
+.rightLine,.leftLine,.rightLCmt,.leftLCmt,.twoLCmt,.twoLine {top:0.1em}
+.leftLine,.leftLCmt {vertical-align:bottom}
+.rightLine,.leftLine,.twoLine {font-weight:normal}
+.grebdriuo,.rightLCmt,.leftLCmt,.twoLCmt {font-family:纖體步水仿宋,"华康玉刻仿宋 W4","方正筑紫明朝宋 简繁",HYZiDianSongS_Unicode,HYZiDianSongS_Unicode_CJK_B,HYFangSong_GB18030Super-ExtB,仿宋,宋体,"HarmonyOS Sans SC","Noto Serif CJK KR"; font-weight:240; font-stretch:75%}
+.twoLCmt,.twoLine {display:inline-block}
+/* {font-family:統刊朙,Typography Old P,宋体,仿宋,纖體步水仿宋}*/
+.grebdriuo>.gdf012 {vertical-align:top; display:inline-block; margin-bottom:-0.5em}/* bottom 亦可。上同 */
+.gdf012:nth-child(3) {width:2em}
+.grebdriuo .juenmeng {
+	border: none; -webkit-text-decoration: none; text-decoration: none;/* margin-inline: 0.15em;*/ margin-top: 0.15em; margin-bottom: 0.35em; box-shadow: inset 0.2em 0 var(--透明標色)
+}
+.grebdriuo .juenmeng>span, .grebdriuo .xiomeng>span {
+  /* margin-inline: -0.15em;*/ margin-top: -0.15em; margin-bottom: -0.35em
+}
+.grebdriuo .juenmengSt {
+	border: none; -webkit-text-decoration: none; text-decoration: none; margin-top: 0.15em; margin-bottom: 0.2em; box-shadow: inset 0.2em 0 var(--透明標色)
+}
+.grebdriuo .juenmengSt>span, .grebdriuo .xiomengSt>span {
+  margin-top: -0.15em; margin-bottom: -0.2em
+}
+.grebdriuo .juenmengEd {
+	border: none; -webkit-text-decoration: none; text-decoration: none; margin-top: 0; margin-bottom: 0.35em; box-shadow: inset 0.2em 0 var(--透明標色)
+}
+.grebdriuo .juenmengEd>span, .grebdriuo .xiomengEd>span {
+  margin-top: 0; margin-bottom: -0.35em
+}
+.grebdriuo .sigaugxieng,.rightLine .sigaugxieng,.leftLine .sigaugxieng,.rightLCmt .sigaugxieng,.leftLCmt .sigaugxieng,.twoLCmt .sigaugxieng,.twoLine .sigaugxieng {bottom:1.25em}
+.dhgd {opacity:0.7}
+h1>.dhgd,h2>.dhgd {opacity:1}
+.dhgd,p.卷敘,.pCmnt dt {font-size:calc(1em - 2px); letter-spacing:2px; position:relative; top:1px; font-family: 華康玉刻仿宋 W6,方正新书宋_GB18030,"HarmonyOS Sans SC","Noto Serif CJK KR",宋体,仿宋,FangSong,Hiragino Mincho ProN; font-weight:320; text-indent:0} /* 單行夾注和校勘條目 */
+dt {display:inline}
+.dhgd .juenmeng,.pCmnt dt .juenmeng,.rightLine .juenmeng,.leftLine .juenmeng,.rightLCmt .juenmeng,.leftLCmt .juenmeng {margin-bottom: 0.2em}
+.dhgd .juenmeng>span,.pCmnt dt .juenmeng>span,.rightLine .juenmeng>span,.leftLine .juenmeng>span,.rightLCmt .juenmeng>span,.leftLCmt .juenmeng>span {margin-bottom: -0.2em}
+.dhgd .xiomeng::before, .dhgd .xiomeng::after {width:0.4em; right:0.58em}
+.dhgd .xiomeng::after {height:calc(3px + 0.1em); margin-top:calc(-3px - 0.1em)}
+.pCmnt dd {font-weight:300}
+p.卷敘>.grebdriuo {font-size:1em}
+.DRinDR {font-family:纖體步水仿宋,仿宋,HYZiDianSongS_Unicode,宋体,統刊朙,"Typography Old P","Noto Serif CJK KR"; color:var(--正青); }
+.DRinDRhf, .grebdriuo .dhgd {font-family:"FOT-筑紫Aオールド明朝 Pr6N","FOT-筑紫明朝 Pr6N","Noto Serif CJK KR",宋体,仿宋,統刊朙,Typography Old P; font-size:0.625em; letter-spacing:1em; position:relative; top:0.3em; opacity:inherit; font-weight:inherit}
+.DRinDRhf .zzbdQt1, .grebdriuo .dhgd .zzbdQt1 {bottom:1.2em}
+.DRinDRhf .zzbdQt2, .grebdriuo .dhgd .zzbdQt2 {bottom:0.9em}
+.DRinDRhf .zzbdSm, .DRinDRhf .zzbdMd, .grebdriuo .dhgd .zzbdSm, .grebdriuo .dhgd .zzbdMd {bottom:0.8em}
+.DRinDRhf .zzbdTl, .grebdriuo .dhgd .zzbdTl {bottom:1.2em}
+.DRinDRhf .juenmeng, .grebdriuo .dhgd .juenmeng {margin-bottom: 1em}
+.DRinDRhf .juenmeng>span, .grebdriuo .dhgd .juenmeng>span {margin-bottom:-1em}
+.字樣 {font-size:1.6em; display:inline-flex; height:1.25em; width:1em; font-style:normal; justify-content:center; align-content:center}
+.字樣 b {font-weight:500}
+.字樣 img+b, .字樣 picture+b {color:transparent}
+.字樣 picture, .字樣>img {z-index:-1; margin-bottom:-1em}
+.grebdriuo .字樣 {font-size:1em; height:1em; padding-bottom:0.25em}
+ruby {display: inline-flex; flex-direction: column-reverse;}
+ruby.mscScr {/*display:ruby*/vertical-align:middle}
+ruby.mscScr .leftRT {ruby-position:under}
+rt {/*display: inline; */margin-left: -0.3em; font-size: 1em; line-height:1; width:0; position:relative; left:0.5em; text-align:center}
+.mscScr>* {font-size:0.8em; line-height:1; display:flex; align-items:center; width:calc(var(--跨註行寬)*2); height:1em; margin:0; left:0; transform:translateY(0.125em)}
+.琵琶 {font-family:琵琶譜字,楷体}
+.琵琶 .hgbdRightEm {font-family:標點符號,琵琶譜字,仿宋,FangSong,宋体,SimSun,PingFang SC,Source Han Sans SC,Noto Sans CJK SC}
+.imVang {color:var(--紙色); background-color:var(--陰文底色); padding:0 calc((var(--行寬) - 1em)/2)}/* 平頭陰文 */
+.imHiuan {color:var(--紙色); background-color:var(--陰文底色); padding:0 calc((var(--行寬) - 1em)/2); border-radius:calc(var(--行寬)/2)/calc((var(--行寬) - 1em)/2)}/* 圓頭陰文 */
+.im6grug {color:var(--紙色); padding:0 calc((var(--行寬) - 1em)/2);
+ background:linear-gradient(-135deg, transparent var(--正文倒角深), var(--陰文底色) var(--正文倒角深)) top right,linear-gradient(-45deg, transparent var(--正文倒角深), var(--陰文底色) 0) bottom right,linear-gradient(45deg, transparent var(--正文倒角深), var(--陰文底色) var(--正文倒角深)) bottom left,linear-gradient(135deg, transparent var(--正文倒角深), var(--陰文底色) 0) top left;
+ background-size:51% 50% !important; background-repeat:no-repeat !important}/* 八(六)角陰文 */
+.mhVang {background:linear-gradient(0deg, var(--墨圍色) 0 1px, transparent 1px) bottom center, linear-gradient(180deg, var(--墨圍色) 0 1px, transparent 1px) top center; padding:0 calc((var(--行寬) - 1em)/2)}/* 平頭墨圍 */
+.mhHiuan {padding:0 calc((var(--行寬) - 1em)/2); border-radius:calc(var(--行寬)/2)/calc((var(--行寬) - 1em)/2); box-shadow:inset 0 1px var(--墨圍色),inset 0 -1px var(--墨圍色)}/* 圓頭墨圍 */
+.mh6grug {background:linear-gradient(-135deg, transparent var(--正文倒角深), var(--墨圍色) var(--正文倒角深) calc(var(--正文倒角深) + 1px), transparent calc(var(--正文倒角深) + 1px)) top right,linear-gradient(-45deg, transparent var(--正文倒角深), var(--墨圍色) var(--正文倒角深) calc(var(--正文倒角深) + 1px), transparent calc(var(--正文倒角深) + 1px)) bottom right,linear-gradient(45deg, transparent var(--正文倒角深), var(--墨圍色) var(--正文倒角深) calc(var(--正文倒角深) + 1px), transparent calc(var(--正文倒角深) + 1px)) bottom left,linear-gradient(135deg, transparent var(--正文倒角深), var(--墨圍色) var(--正文倒角深) calc(var(--正文倒角深) + 1px), transparent calc(var(--正文倒角深) + 1px)) top left,linear-gradient(0deg, var(--墨圍色) 0 1px, transparent 1px) bottom center, linear-gradient(180deg, var(--墨圍色) 0 1px, transparent 1px) top center;
+ background-size:65% 50%; background-repeat:no-repeat !important; padding:0 calc((var(--行寬) - 1em)/2)}/* 八(六)角墨圍 */
+.mhHiuanNR {padding:0 0.1em; border-radius:0.6em/0.3em; box-shadow:inset 0 1px var(--墨圍色),inset 0 -1px var(--墨圍色),inset 1px 0 var(--墨圍色),inset -1px 0 var(--墨圍色); margin:0 -0.1em}
+.mh8grugNR {padding:0 0.1em; margin:0.2em -0.1em; box-shadow:inset 1px 0 var(--墨圍色),inset -1px 0 var(--墨圍色)}
+.mh8grugNR>span {background:linear-gradient(-135deg, transparent var(--小倒角深), var(--墨圍色) var(--小倒角深) calc(var(--小倒角深) + 1px), transparent calc(var(--小倒角深) + 1px)) top right,linear-gradient(-45deg, transparent var(--小倒角深), var(--墨圍色) var(--小倒角深) calc(var(--小倒角深) + 1px), transparent calc(var(--小倒角深) + 1px)) bottom right,linear-gradient(45deg, transparent var(--小倒角深), var(--墨圍色) var(--小倒角深) calc(var(--小倒角深) + 1px), transparent calc(var(--小倒角深) + 1px)) bottom left,linear-gradient(135deg, transparent var(--小倒角深), var(--墨圍色) var(--小倒角深) calc(var(--小倒角深) + 1px), transparent calc(var(--小倒角深) + 1px)) top left,linear-gradient(0deg, var(--墨圍色) 0 1px, transparent 1px) bottom center, linear-gradient(180deg, var(--墨圍色) 0 1px, transparent 1px) top center;
+ background-size:65% 50%; background-repeat:no-repeat !important; padding:0 0.1em; margin:-0.2em -0.1em}
+.grebdriuo .im6grug {background:linear-gradient(-135deg, transparent var(--夾注倒角深), var(--陰文底色) var(--夾注倒角深)) top right,linear-gradient(-45deg, transparent var(--夾注倒角深), var(--陰文底色) 0) bottom right,linear-gradient(45deg, transparent var(--夾注倒角深), var(--陰文底色) var(--夾注倒角深)) bottom left,linear-gradient(135deg, transparent var(--夾注倒角深), var(--陰文底色) 0) top left}
+.grebdriuo .imVang, .grebdriuo .imHiuan, .grebdriuo .im6grug, .grebdriuo .mhVang, .grebdriuo .mh6grug, .grebdriuo .mhHiuan , .rightLCmt .imVang, .rightLCmt .imHiuan, .rightLCmt .im6grug, .rightLCmt .mhVang, .rightLCmt .mh6grug, .rightLCmt .mhHiuan , .leftLCmt .imVang, .leftLCmt .imHiuan, .leftLCmt .im6grug, .leftLCmt .mhVang, .leftLCmt .mh6grug, .leftLCmt .mhHiuan , .rightLine .imVang, .rightLine .imHiuan, .rightLine .im6grug, .rightLine .mhVang, .rightLine .mh6grug, .rightLine .mhHiuan , .leftLine .imVang, .leftLine .imHiuan, .leftLine .im6grug, .leftLine .mhVang, .leftLine .mh6grug, .leftLine .mhHiuan {padding:0 calc((var(--跨註行寬) - 1em)/2); margin:-0.125em 0 0.125em 0}
+.grebdriuo .imVang>span,.grebdriuo .imHiuan>span,.grebdriuo .im6grug>span,.grebdriuo .mhVang>span,.grebdriuo .mhHiuan>span , .rightLCmt .imVang>span,.rightLCmt .imHiuan>span,.rightLCmt .im6grug>span,.rightLCmt .mhVang>span,.rightLCmt .mhHiuan>span , .leftLCmt .imVang>span,.leftLCmt .imHiuan>span,.leftLCmt .im6grug>span,.leftLCmt .mhVang>span,.leftLCmt .mhHiuan>span , .rightLine .imVang>span,.rightLine .imHiuan>span,.rightLine .im6grug>span,.rightLine .mhVang>span,.rightLine .mhHiuan>span , .leftLine .imVang>span,.leftLine .imHiuan>span,.leftLine .im6grug>span,.leftLine .mhVang>span,.leftLine .mhHiuan>span {padding:0; margin:0.125em 0 -0.125em 0}
+.grebdriuo .mh6grug>span>span , .rightLCmt .mh6grug>span>span , .leftLCmt .mh6grug>span>span , .rightLine .mh6grug>span>span , .leftLine .mh6grug>span>span {margin:-0.075em 0 -0.325em 0}
+.grebdriuo .mh6grug>span , .rightLCmt .mh6grug>span , .leftLCmt .mh6grug>span , .rightLine .mh6grug>span , .leftLine .mh6grug>span {box-shadow:inset -1px 0 var(--墨圍色),-1px 0 var(--墨圍色); margin:0.2em 0; padding:0 calc((var(--跨註行寬) - 1em)/2)}
+.grebdriuo .mhVang, .grebdriuo .mhHiuan {box-shadow:inset 0 1px var(--墨圍色),inset 0 -1px var(--墨圍色),inset -1px 0 var(--墨圍色),-1px 0 var(--墨圍色)}
+.grebdriuo .mh6grug {background:linear-gradient(-135deg, transparent var(--夾注倒角深), var(--墨圍色) var(--夾注倒角深) calc(var(--夾注倒角深) + 1px), transparent calc(var(--夾注倒角深) + 1px)) top right,linear-gradient(-45deg, transparent var(--夾注倒角深), var(--墨圍色) var(--夾注倒角深) calc(var(--夾注倒角深) + 1px), transparent calc(var(--夾注倒角深) + 1px)) bottom right,linear-gradient(45deg, transparent var(--夾注倒角深), var(--墨圍色) var(--夾注倒角深) calc(var(--夾注倒角深) + 1px), transparent calc(var(--夾注倒角深) + 1px)) bottom left,linear-gradient(135deg, transparent var(--夾注倒角深), var(--墨圍色) var(--夾注倒角深) calc(var(--夾注倒角深) + 1px), transparent calc(var(--夾注倒角深) + 1px)) top left,linear-gradient(0deg, var(--墨圍色) 0 1px, transparent 1px) bottom center, linear-gradient(180deg, var(--墨圍色) 0 1px, transparent 1px) top center; background-size:60% 50%}
+.imVangSt,.imVangEd {color:var(--紙色); background-color:var(--陰文底色)}
+.imHiuanSt {color:var(--紙色); background-color:var(--陰文底色); border-radius:0.5em 0.5em 0 0/0.3em 0.3em 0 0}
+.imHiuanEd {color:var(--紙色); background-color:var(--陰文底色); border-radius:0 0 0.5em 0.5em/0 0 0.3em 0.3em}
+.im6grugSt {color:var(--紙色); background:linear-gradient(-135deg, transparent var(--夾注倒角深), var(--陰文底色) var(--夾注倒角深)) top right,linear-gradient(-45deg, transparent 0, var(--陰文底色) 0) bottom right,linear-gradient(45deg, transparent 0, var(--陰文底色) 0) bottom left,linear-gradient(135deg, transparent var(--夾注倒角深), var(--陰文底色) 0) top left; background-size:51% 50%; background-repeat:no-repeat}
+.im6grugEd {color:var(--紙色); background:linear-gradient(-135deg, transparent 0, var(--陰文底色) 0) top right,linear-gradient(-45deg, transparent var(--夾注倒角深), var(--陰文底色) 0) bottom right,linear-gradient(45deg, transparent var(--夾注倒角深), var(--陰文底色) var(--夾注倒角深)) bottom left,linear-gradient(135deg, transparent 0, var(--陰文底色) 0) top left; background-size:51% 50%; background-repeat:no-repeat}
+.mhHiuanSt {border-radius:0.8em/0.3em; box-shadow:inset 0 1px var(--墨圍色)}
+.mhHiuanEd {border-radius:0.8em/0.3em; box-shadow:inset 0 -1px var(--墨圍色)}
+.mh6grugSt {background:linear-gradient(-135deg, transparent var(--夾注倒角深), var(--墨圍色) var(--夾注倒角深) calc(var(--夾注倒角深) + 1px), transparent calc(var(--夾注倒角深) + 1px)) top right,linear-gradient(135deg, transparent var(--夾注倒角深), var(--墨圍色) var(--夾注倒角深) calc(var(--夾注倒角深) + 1px), transparent calc(var(--夾注倒角深) + 1px)) top left,linear-gradient(180deg, var(--墨圍色) 0 1px, transparent 1px) top center; background-size:60% 50%; background-repeat:no-repeat}
+.mh6grugEd {background:linear-gradient(-45deg, transparent var(--夾注倒角深), var(--墨圍色) var(--夾注倒角深) calc(var(--夾注倒角深) + 1px), transparent calc(var(--夾注倒角深) + 1px)) bottom right,linear-gradient(45deg, transparent var(--夾注倒角深), var(--墨圍色) var(--夾注倒角深) calc(var(--夾注倒角深) + 1px), transparent calc(var(--夾注倒角深) + 1px)) bottom left,linear-gradient(0deg, var(--墨圍色) 0 1px, transparent 1px) bottom center; background-size:60% 50%; background-repeat:no-repeat}
+ 
+.grebdriuo .imVangSt, .grebdriuo .imHiuanSt, .grebdriuo .im6grugSt, .grebdriuo .mh6grugSt, .grebdriuo .mhHiuanSt {padding:0.125em 0 0 0; margin:-0.125em 0 0 0}
+.grebdriuo .imVangEd, .grebdriuo .imHiuanEd, .grebdriuo .im6grugEd, .grebdriuo .mh6grugEd, .grebdriuo .mhHiuanEd {padding:0; margin:0 0 0.125em 0}
+.grebdriuo .imVangEd>span, .grebdriuo .imHiuanEd>span, .grebdriuo .im6grugEd>span, .grebdriuo .mh6grugEd>span, .grebdriuo .mhHiuanEd>span {padding:0; margin:0 0 -0.125em 0}
+.imCirc {color:var(--紙色); background:radial-gradient(circle closest-side at 50% 0.5em, var(--陰文底色) 100%, transparent 100%) repeat-y; background-size:1em 1em}
+.imLantn {padding:0 0.1em; color:var(--紙色); background:radial-gradient(circle closest-side at 50% 0.5em, var(--陰文底色) 0.6em, transparent 0.6em) repeat-y; background-size:1.2em 1em}/* 疊燈籠 */
+.mhCirc {background:radial-gradient(circle closest-side at 50% 0.5em, transparent 90%, var(--墨圍色) 90% 100%, transparent 100%) repeat-y; background-size:1em 1em}
+.mhLantn {padding:0 0.2em; background:radial-gradient(circle closest-side at 50% 0.5em, transparent 0.6em, var(--墨圍色) 0.6em calc(0.6em + 1px), transparent calc(0.6em + 1px)) repeat-y; background-size:1.4em 1em}
+cite {font-weight:400; font-family:南監體,方正金陵,仿宋,fangsong; letter-spacing:initial; font-feature-settings:"locl" 0,"cv01"}
+.grebdriuo cite,.rightLCmt cite,.leftLCmt cite,.rightLine cite,.leftLine cite {font-family:inherit; font-weight:inherit; letter-spacing:inherit}
+
+#gaeg,.版框 {
+	position: absolute; /*z-index: 1;*/
+	border: 2px solid var(--絲欄色);
+	width: auto; height: 100%;
+	padding: 3px;
+}
+#jiusilan,.冊䈎絲欄 {
+	box-sizing: border-box; width:100%; height:100%;
+	border-top: 1px solid var(--絲欄色); border-right: 1px solid var(--絲欄色);/*background:repeating-linear-gradient(to left, var(--銀朱,#900) 0px 1px, transparent 1px 1.6em);*/
+}
+.jienghangsen {
+	box-sizing: border-box; width:var(--行寬); height:100%;
+	border-left: 1px solid var(--絲欄色); border-bottom: 1px solid var(--絲欄色); border-right: 0; transition: border-color 0.4s
+}
+#jiusilan div.jienghangsen:hover {	box-shadow: 0 0 0.4em 1px #0af inset}
+#jiusilan div.jienghangsen {transition: box-shadow 0.3s}
+#tentou,.冊䈎天頭 {
+	position:relative;
+	height: 16%; min-width: 2em;
+	color: var(--眉批色); font-size: 0.75em;
+	line-height: 1.4em;
+}
+#tentou {float:left; word-break:break-all}
+main,.冊䈎版內 {position:relative; height:80%; float:left}
+.miipei {
+  /*position: relative; left: 1.6em; bottom: 5vh; height: 5.2em; width: 0; color: var(--銀朱,#900); font-size: 0.75em; line-height: 120%*/
+  position: absolute; top: 0
+}
+.mpstl1 {color:var(--黛綠)}/* 預設眉批樣式敘列 */
+.mpnote {
+  display:block; height:0; width:0; padding:0; margin:0; float:left; color:var(--銀朱,#900); font-size:0.75em; font-weight:normal; line-height:120%
+}
+.mpnote>span {display:inline-block; width:auto; position:relative}
+.rsvnote {font-size:0; margin-top:-1px; padding-top:1px}
+.hangbiau {
+	position:relative; top:100%; padding-top: 4px; box-sizing: border-box; width:100%; height:1.25em;
+	z-index: 1; transition: color 0.1s, text-shadow 1s;
+	line-height:calc(3.2em - var(--行寬)/2); font-size: 0.6em; color: #999; text-align: center; font-family: 華數碼,Times; user-select:none; font-variant-ligatures:contextual; font-kerning:normal
+}
+div.jienghangsen:hover .hangbiau{
+	color: #2578B5; text-shadow: 0 0 0.5em #008E59
+}
+#miun,.版內文 {
+	margin-top:var(--字離框頂); word-break:break-all/* z-index:100文字在上 */
+}
+#miun {margin-left:2em; padding-right:5px}
+#miug,#inMain,.版內文 {position: relative; z-index:0} #inMain table, fig-il img,figure img {position:relative; z-index:2}
+#inMain table {border-collapse:collapse}
+#帙,#袠 {position:fixed; height:100vh; width:100vw; top:0; left:0; z-index:500; background-image:
+	radial-gradient(circle at 100% 150%, var(--遮布波色一) 24%, var(--遮布波色二) 24% 28%, var(--遮布波色一) 28% 36%, var(--遮布波色二) 36% 40%, transparent 40%, transparent),
+	radial-gradient(circle at 0    150%, var(--遮布波色一) 24%, var(--遮布波色二) 24% 28%, var(--遮布波色一) 28% 36%, var(--遮布波色二) 36% 40%, transparent 40%, transparent),
+	radial-gradient(circle at 50% 100%, var(--遮布波色二) 10%, var(--遮布波色一) 10% 23%, var(--遮布波色二) 23% 30%, var(--遮布波色一) 30% 43%, var(--遮布波色二) 43% 50%, var(--遮布波色一) 50% 63%, var(--遮布波色二) 63% 71%, transparent 71%, transparent),
+	radial-gradient(circle at 100% 50%, var(--遮布波色二) 5%, var(--遮布波色一) 5% 15%, var(--遮布波色二) 15% 20%, var(--遮布波色一) 20% 29%, var(--遮布波色二) 29% 34%, var(--遮布波色一) 34% 44%, var(--遮布波色二) 44% 49%, transparent 49%, transparent),
+	radial-gradient(circle at 0    50%, var(--遮布波色二) 5%, var(--遮布波色一) 5% 15%, var(--遮布波色二) 15% 20%, var(--遮布波色一) 20% 29%, var(--遮布波色二) 29% 34%, var(--遮布波色一) 34% 44%, var(--遮布波色二) 44% 49%, transparent 49%, transparent);
+	background-size: 100px 50px; transition:opacity 1s}
+#題籤 {height:60%; width:12vh; position:absolute; top:8vh; left:10vh; background-color:var(--題籤紙色); padding:2em; border:0.5em solid #000; box-shadow:0 0 0 1em var(--題籤紙色), 0 0 0.3em 1em gray}
+#題章 {width:40%; position:absolute; bottom:2vh}
+caption,td,th {border:none; text-align:left; box-shadow: 0 1px var(--透明標色)}
+caption {padding:1em 0 0 0}
+td:first-child,th:first-child {padding:0 0 0.5em 0}
+td:not(:first-child),th:not(:first-child) {padding:0.5em 0}
+/* #inMain>p::first-line, article>p::first-line {box-shadow:0 -0.25em black}莫名其妙卡死火狐69.0.3 */
+/*#inMain>p::before,section>p::before {content:''; display:inline-block; height:0.3em; width:var(--行寬); margin-bottom:-0.3em; transform:translateY(calc(-1*var(--字離框頂))); background-color:var(--絲欄色)}*/
+.mlh1t,.卷內目次 a {cursor:pointer; color:var(--鏈接色); position:relative; z-index:10; transition:color 0.4s}
+.mlh1tFont {font-family: "森泽UD黎明体 Gb4","FOT-筑紫Aオールド明朝 Pr6N","FOT-筑紫明朝 Pr6N",統刊朙,Typography Old P,"HiraMinProN-W6","Hiragino Mincho ProN","秀英明朝 B JIS2004",DNPShueiMinPr6N-B,"秀英明朝 M JIS2004","DNPShueiMinPr6N-M", "游明朝",YuMincho,"ヒラギノ明朝 ProN W3","HG明朝E","ＭＳ Ｐ明朝","ＭＳ 明朝",Songti SC,宋体,細明體,"Noto Sans CJK KR",본명조,"Source Han Serif K"}
+.mlh1t:hover,.卷內目次 a:hover {color:var(--黛綠)}
+.mlh1t:active,.卷內目次 a:active {color:var(--鏈接色)}
+.ml_sh {display:inline-block; height:0; position:relative; bottom:1.1em; line-height:1em; font-size:0.7em; font-family:華數碼,sans-serif; color:gray; font-kerning:normal; font-variant-ligatures:contextual; word-break:keep-all; writing-mode:horizontal-tb; user-select:none}
+.單兒 > li {max-height:100%}
+.段單兒 > li {min-height:33.3%}
+ul.分段單兒>li {list-style-type:none}
+ul.分段單兒>li::before {content:''; margin:-0.5em calc((1.2em - var(--行寬))/2) 0 calc((1.2em - var(--行寬))/2); padding:0.5em calc((var(--行寬) - 1.2em)/2) 0 calc((var(--行寬) - 1.2em)/2); background-color:var(--絲欄色)}
+fig-il {float:left; box-sizing:border-box; margin:calc(6px - var(--字離框頂)) 0 calc(var(--字離框頂) - 6px) 0; border-bottom:1px solid var(--絲欄色); border-right:1px solid var(--絲欄色); box-shadow:-0.5px 0 var(--絲欄色); background-color:var(--紙色); height:var(--小圖預設高); width:var(--小圖預設寬); overflow:hidden}
+figure {box-sizing:border-box; margin:calc(6px - var(--字離框頂)) 0 0 0; border-left:1px solid var(--絲欄色); border-right:1px solid var(--絲欄色); width:calc(var(--行寬)*9); background-color:var(--紙色)}
+img {
+  object-fit:contain; position:relative; z-index:110; box-sizing:border-box; max-height:100%; max-width:100%/*; border-bottom:1px solid var(--絲欄色,red); margin-right:1px; margin-top:calc(6px - 0.5em); margin-bottom:calc(0.5em - 6px); top:calc(0.5em - 6px)*/
+}
+fig-il img {min-height:90%}
+figure img:only-of-type {height:100%; width:100%}
+figure iframe {height:100%; width:100%; border:none}
+.譔者,.撰者,.校者 {text-align:right; padding-bottom:2em}
+.作者 {margin-top:6em; text-indent:-2em}
+.落款 {text-align:right}
+.註 {margin-top:1em; font-weight:400}
+.綱 {font-family:統刊朙,Noto Sans CJK KR,宋体,黑体}
+.目 {margin-top:1em; font-weight:400}
+.spanRows {position:relative; background-color:var(--紙色);}
+.headup1,.headup2,.headup3 {display:inline-block; width:var(--行寬); padding-top:calc(var(--字離框頂) - 2px); background:linear-gradient(var(--紙色) 3px,var(--絲欄色) 3px 4px,var(--紙色) 4px) padding-box; border-top:2px solid var(--絲欄色); box-shadow: inset -1px 0 var(--絲欄色)/*,inset 0 3px var(--紙色),inset 0 4px var(--絲欄色)*/,-1px 0 var(--絲欄色)}
+.headup1 {height:1em; margin:calc(-1em - var(--字離框頂)) 0 -1em 0}
+.headup2 {height:2em; margin:calc(-2em - var(--字離框頂)) 0 -2em 0}
+.headup3 {height:3em; margin:calc(-3em - var(--字離框頂)) 0 -3em 0}
+#冊䈎 {background-color: #444; margin-block:0}
+#冊䈎 > div {margin-block:1em; background-color:var(--紙色); display:flex; overflow:hidden}
+#冊䈎 > div:nth-of-type(2n-1) {padding-right:1em; padding-left:calc(var(--行寬)/2)}
+#冊䈎 > div:nth-of-type(2n) {padding-left:calc(1em + 5px); padding-right:calc(var(--行寬)/2 - 4px)}
+#冊䈎 > div:nth-of-type(2n-1) .版框 {border-left:none}
+#冊䈎 > div:nth-of-type(2n) .版框 {border-right:none; margin-right:2px}
+.版心 {display:flex; box-sizing: border-box; width:var(--行寬); border-left: 1px solid var(--絲欄色); border-bottom: 1px solid var(--絲欄色); padding-top:calc(var(--字離框頂) - 6px)}
+#冊䈎 > div:nth-of-type(2n-1) .版心 {align-items:start}
+#冊䈎 > div:nth-of-type(2n) .版心 {align-items:end}
+.版心 > div:first-child {border-bottom: 1px solid var(--絲欄色)}
+.版心 > div:nth-child(2) {flex: 7 1 auto; position: relative; font-family: 倉耳聚珍長仿,仿宋}
+.版心 > div:nth-child(2) > span:first-of-type {position:absolute; top:calc(var(--行寬)*1.25); font-size:0.8em; line-height:1em}
+.版心 > div:nth-child(2) > span:last-of-type {position:absolute; bottom:calc(var(--行寬)*1.25); font-size:0.8em; line-height:1em}
+.版心 > div:last-child {flex-basis:3em; border-top: 1px solid var(--絲欄色); font-size:0.8em; line-height:1; padding-inline:0.1em}
+#冊䈎 > div:nth-of-type(2n) .版心 > div:nth-child(2) > * {left:0}
+.版心長書名 {font-size:0.8em; line-height:1; flex: 0 0 4em}
+.魚尾 {position:absolute; height:var(--行寬); width:calc(var(--行寬)/2)}
+.魚尾:first-of-type {top:0; border-top:3px solid var(--紙色)}
+#冊䈎 > div:nth-of-type(2n-1) .魚尾:first-of-type {background: linear-gradient(-135deg, var(--絲欄色) 50%, transparent 50% 55%, var(--絲欄色) 55% 60%, transparent 60%)}
+#冊䈎 > div:nth-of-type(2n) .魚尾:first-of-type {background: linear-gradient(135deg, var(--絲欄色) 50%, transparent 50% 55%, var(--絲欄色) 55% 60%, transparent 60%)}
+.魚尾:last-of-type {bottom:0; border-bottom:3px solid var(--紙色)}
+#冊䈎 > div:nth-of-type(2n-1) .魚尾:last-of-type {background: linear-gradient(-45deg, var(--絲欄色) 50%, transparent 50% 55%, var(--絲欄色) 55% 60%, transparent 60%)}
+#冊䈎 > div:nth-of-type(2n) .魚尾:last-of-type {background: linear-gradient(45deg, var(--絲欄色) 50%, transparent 50% 55%, var(--絲欄色) 55% 60%, transparent 60%)}
+#冊䈎 > div:nth-of-type(2n) .版框 {margin-right:calc(0em - var(--行寬))}
+#冊䈎 > div:nth-of-type(2n-1) .版內文 {margin-right:5px}
+#冊䈎 > div:nth-of-type(2n) .版內文 {margin-right:3px}
+.版內文 {width:var(--版內文寬); overflow:hidden}
+@media print {
+	:root {--紙色:#fff !important; --主字色:#000 !important; --褾緣色:#fff}
+	#劉海,#btm_banner,#搜索欄 {display: none}
+	#冊䈎 {background-color:#fff; padding-block:0}
+	#冊䈎 > div {break-after:page; break-inside:avoid-page; margin-block:0}
+	.grebdriuo {color:#555}
+}
+@page {
+	margin:0
+}
+@media screen and (max-aspect-ratio: 9/10) {
+	@media (max-aspect-ratio: 2/3) {
+		:root {--基礎字號:25px}
+	} @media (min-aspect-ratio: 2/3) {
+		:root {--基礎字號:15px}
+	}
+	#劉海 {height: calc(4.5em*var(--劉海高))}
+	#drager {top: calc(4.4em*var(--劉海高))}
+	#content_blk {margin: 60px 0 0 0; padding-top:10px}
+	#right_row,#left_row {display:none}
+}

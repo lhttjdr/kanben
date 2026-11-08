@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<!-- 哂蟹齋排版器（https://vert.neocities.org/type/set/）原文件，經作者許可收錄；路徑已改為相對路徑。 -->
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>查尋</title>
+		<link href="../style.css" rel="stylesheet" type="text/css" media="all">
+		<link href="search.css" rel="stylesheet" type="text/css" media="all">
+		<script src="異體字彙.js"></script>
+		<script src="mark.min.js"></script>
+		<script language="javascript" src="search.js" defer></script>
+	</head>
+	<body><div>
+		<div id="題">卷內<br>查尋</div>
+		<div id="搜索框" contenteditable="true" spellcheck="false"></div>
+		<div><button id="歬一條"><span>　</span></button><button id="後一條"><span>　</span></button></div>
+		<div title="三態：或通搜所有異體，或僅通搜宂碼及筆迹小異之全等字，或嚴格按碼位搜。見宂碼彙和異體字彙"><input type="checkbox" id="通搜否"><label for="通搜否"><img src="ico/異體圖標.svg" class="選項圖標"><span class="選項名">通搜異體字</span></label></div>
+		<div title="三態：或標點須嚴格符合，或通搜所有標點，或忽略標點"><input type="checkbox" id="標點符合否"><label for="標點符合否"><img src="ico/句逗圖標.svg" class="選項圖標"><span class="選項名">標點符合</span></label></div>
+		<div title="輸入部件或結構符以搜單字，如「直」能搜得直、值、置等字，「⿱」則得所有上下結構之字" class="不可用"><input type="checkbox" id="構件搜" disabled><label for="構件搜"><img src="ico/構件圖標.svg" class="選項圖標"><span class="選項名">按構件搜</span></label></div>
+		<div><span id="總符合數" class="lrtb">0</span><span id="現敘號" class="lrtb">0</span></div>
+		<button id="搜全書鈕" disabled="true"><span class="tbrl">↖搜全書</span></button>
+		<button id="搜全齋鈕" disabled="true"><span class="tbrl">↖️️搜全齋</span></button>
+		<button id="隱">×</button>
+	</div></body>
+</html>

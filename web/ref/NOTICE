@@ -1,0 +1,7 @@
+本目錄是哂蟹齋排版器的原樣副本，經作者許可收錄，用作刊本的對照基準。
+
+來源：https://vert.neocities.org/type/set/（哂蟹齋）
+包括頁面、腳本、樣式、圖標與字體（z6h2/ 下的 woff、woff2、otf）。
+改動：只把站內的絕對路徑改成相對路徑，使其能在子目錄下運行；並在各文件開頭加了這段來源說明。
+
+embdWd/mark.min.js 是 mark.js（https://markjs.io，© Julian Kühnel，MIT 許可證）。

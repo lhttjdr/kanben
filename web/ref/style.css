@@ -1,0 +1,176 @@
+/* 哂蟹齋排版器（https://vert.neocities.org/type/set/）原文件，經作者許可收錄；路徑已改為相對路徑。 */
+
+@font-face {font-family: "行間標點"; src: url("z6h2/行間標點.woff") format("woff")/*; unicode-range: U+2030-205F,U+3000-303F,U+FE1?,U+FE30-FE4F,U+FE50-FE6F,U+FF00-FFEF,U+16FE?*/}
+@font-face {font-family: "標點符號"; src: url("z6h2/標點符號.woff2") format("woff2"), url("z6h2/標點符號.woff") format("woff")}
+@font-face {font-family: "真書替補"; src: url("z6h2/真書替補.woff2") format("woff2"), url("z6h2/真書替補.woff") format("woff"); unicode-range: U+6617,U+9859}
+@font-face {font-family: "田楷替補"; src: url("z6h2/田楷替補.woff2") format("woff2")}
+@font-face {font-family: "華數碼"; src: url("z6h2/筭數.woff2") format("woff2"), url("z6h2/筭數.woff") format("woff"); font-stretch: 30% 120%}
+:root {writing-mode:tb-rl;writing-mode:vertical-rl; --正赤:rgb(153,22.95,33.79); --正黃:rgb(221.85,149.45,24.4); --正青:rgb(16.27,51.37,147.9);
+--銀朱:#F43E06; --黛綠:#426666; --葛巾紫:#7e2065; --孔雀綠:#229453; --靛青:#1661ab; --淡栗椶:#673424; --蜜黃:#fbb957;  --桃紅:#f0ada0; --竹篁綠:#b9dec9; --秋波藍:#8abcd1; --鼬黃:#fcb70a; --淡牽牛紫:#d1c2d3; --橘橙:#f97d1c; --槐花黃綠:#d2d97a; --海天藍:#c6e6e8;--篾黃:#f7de98; --蔥綠:#9ED900; --枯黃:#D3B17D; --湖水藍:#b0d5df; --玉兂綠:#a4cab6; --櫻艸紫:#c06f98; --清水藍:#93d5dc; --淡翠綠:#c6dfc8; --艾綠:#a4e2c6; --棗赤:#7c1823; --風信紫:#c8adc4; --釉藍:#1781b5; --紺紫:#461629; --鷃藍:#144a74; --鹿角椶:#e3bd8d; --蝶黃:#e2d849; --榴子紅:#f1908c; --玫瑰粉:#f8b37f;
+--淺黃紙:#f5f5dc; --紙色二:rgb(239,233,211); --紙色三:#EEEADA; --欄綫粗細:0.07rem; --紙色:var(--紙色三); --主字色:#000; --褾緣色:rgba(243,238,230,1); --褾內色:rgba(243,238,230,0.1); --遮布色:#93d5dc77; --遮布波色一:hsl(186,97%,26%); --遮布波色二:hsl(202,96%,21%); --信息牋背景色:var(--正赤); --信息牋飾框色:var(--篾黃); --搜得色:hsla(328,100%,54%,0.8); --當歬匹配色:hsla(195,100%,50%,0.7); --劉海列色:rgb(153,23,34); --劉海籤色:rgb(222, 149, 24); --當歬籤字色:#000; --當歬籤色:var(--紙色); --所指籤字色:var(--紺紫); --選單背景色:#eee;
+--行寬:1.6em; --跨註行寬:calc(var(--行寬)/1.6);
+--正文字型: 南監體,森泽UD黎明体（旧字形）,田楷替補,真書替補,'A-OTF 欧体楷書 Std Light',A-OTF Outai Kaisho Std,華康歐陽詢體W5,華康文徵明體W4,文鼎皇華楷體,方正新楷体_GB18030,楷体,KaiTi,'方正楷体_GB18030(S10版)',丝柳,標楷體,'漢儀楷體(GB18030超大字符集版)',HiraMinProN-W6,'Hiragino Mincho ProN','秀英明朝 B JIS2004',DNPShueiMinPr6N-B,'秀英明朝 M JIS2004',DNPShueiMinPr6N-M, 游明朝,YuMincho,'ヒラギノ明朝 ProN W3',HG明朝E,'ＭＳ Ｐ明朝','ＭＳ 明朝','HarmonyOS Sans SC','Noto Sans CJK KR';
+--楷體: 真書替補,活版字型華文正楷,"A-OTF 欧体楷書 Std Light",A-OTF Outai Kaisho Std,華康歐陽詢體W5,華康文徵明體W4,文鼎皇華楷體,方正新楷体_GB18030,楷体,KaiTi,"方正楷体_GB18030(S10版)",丝柳,標楷體,楷体_GB2312,"FZKaiS-Extended(SIP)","FZKaiT-Extended(SIP)","漢儀楷體(GB18030超大字符集版)"}
+@media screen and (max-aspect-ratio: 3/4){
+	:root {--正文字型: 'HarmonyOS Sans SC','Noto Sans CJK KR'}
+}
+@counter-style 碼子 {
+ system: numeric;
+ symbols: 〇 〡 〢 〣 〤 〥 〦 〧 〨 〩;
+ suffix: ''
+}
+body {  background-color: var(--紙色);  color: var(--主字色);  font-family: Verdana}
+/*body>* {writing-mode:vertical-rl; direction:ltr}*/
+html, body {margin: 0;/* position: relative; scroll-behavior:smooth;*/ height: 100%; overflow-y: hidden}
+/*@media screen and (min-resolution: 1.3dppx) and (max-resolution:1.7dppx) and (min-width:1000px) {
+  html, body {font-size:12.5px}
+}
+@media screen and (min-resolution: 1.71dppx) and (min-width:1000px) {
+  html, body {font-size:10px}
+}*/
+@media screen and (resolution: 1.25dppx) {
+  html, body {font-size:12px}
+}
+::selection {background-color: #7bcfa6cc}
+h1 { font-weight: normal;}
+a {  text-decoration:none}
+em {/*-webkit-text-emphasis-style:attr(data-emsym,'﹆'); text-emphasis-style:attr(data-emsym,'﹆'); */font-weight:normal; font-style:normal}
+cite,i {font-style:normal}
+strong {font-weight:inherit}
+blockquote {margin:2em 0 0 0}
+q::before,q::after {content:''}
+.tbrl {-ms-writing-mode:tb-rl; -webkit-writing-mode:vertical-rl; -o-writing-mode:vertical-rl; writing-mode:tb-rl; writing-mode:vertical-rl}
+.lrtb {-ms-writing-mode:lr-tb; -webkit-writing-mode:horizontal-tb; -o-writing-mode:horizontal-tb; writing-mode:lr-tb; writing-mode:horizontal-tb}
+.rltb {-ms-writing-mode:rl-tb; -webkit-writing-mode:horizontal-tb; -o-writing-mode:horizontal-tb; writing-mode:horizontal-tb; writing-mode:rl-tb}
+.krai3,#bookName,#curSec,#bookSrc,#infos>div,html {font-family: var(--楷體),"HiraMinProN-W6","Hiragino Mincho ProN","秀英明朝 B JIS2004",DNPShueiMinPr6N-B,"秀英明朝 M JIS2004","DNPShueiMinPr6N-M", 游明朝,YuMincho,"ヒラギノ明朝 ProN W3",HG明朝E,"ＭＳ Ｐ明朝","ＭＳ 明朝","Noto Sans CJK KR"}
+p {padding:0}
+p,.單兒 {font-weight:500; font-family:var(--正文字型); font-feature-settings:"locl" 0,"cv01"}
+.mieng2,.版心 > div:first-child,.版心 > div:last-child {font-family: "森泽UD黎明体（旧字形）","FOT-筑紫Aオールド明朝 Pr6N","FOT-筑紫明朝 Pr6N",統刊朙,Typography Old P,"HiraMinProN-W6","Hiragino Mincho ProN","秀英明朝 B JIS2004",DNPShueiMinPr6N-B,"秀英明朝 M JIS2004","DNPShueiMinPr6N-M", 游明朝,YuMincho,"ヒラギノ明朝 ProN W3",HG明朝E,"ＭＳ Ｐ明朝","ＭＳ 明朝",Songti SC,宋体,細明體,"Noto Serif CJK KR",본명조,"Source Han Serif K",活版字型華文正楷}
+.f3s5,.sio4,.buad8,.te2hra4,.按,.案 {font-family: '华康玉刻仿宋 W6',DFRareBookMagnoliaTC13-W3,FZJuZhenXinFang-R-JF,'文悦古体仿宋 (非商业用途)',仿宋,FangSong,STFangsong,'漢儀仿宋(GB18030超大字符集版)',HYFangSong_GB18030Super-ExtB,fangsong,'Noto Serif CJK KR',본명조,'Source Han Serif K'}
+.sio4,.buad8,.te2hra4,.按,.案 {font-weight:400}
+:not(.grebdriuo) .extGK_FS {font-family: 補遺今楷;}
+.grebdriuo .extGK_FS {font-family: 補遺瘦仿宋,補遺今楷; display:inline-block; height:1.25em}
+.o3d,.o4d {transform:scaleX(0.7); -ms-transform:scaleY(0.7); margin:0 -0.5em; letter-spacing:-1px}
+.o1d,.o2d {letter-spacing:0}
+.o1d,.o2d,.o3d,.o4d {font-size:0.9em; line-height:calc(10em/9); text-indent:0; font-family:Arial Narrow,Times New Roman,Times}
+.midColon {display:inline-block; height:0; position:relative; left:0.145em; bottom:0.15em; font-family:Times New Roman,Times,宋体,微軟正黑體,Noto Sans CJK SC,sans-serif}
+/*#總框 {height:100vh;width:100vw; position:fixed; top:0; right:0; overflow:auto}*/
+h1,h2,h3,caption,th {font-family: 森泽UD黎明体（旧字形）,FOT-筑紫Aオールド明朝 Pr6N,FOT-筑紫明朝 Pr6N,"HiraMinProN-W6","Hiragino Mincho ProN","秀英明朝 B JIS2004",DNPShueiMinPr6N-B,"秀英明朝 M JIS2004","DNPShueiMinPr6N-M", "游明朝",YuMincho,"ヒラギノ明朝 ProN W3","HG明朝E","ＭＳ Ｐ明朝","ＭＳ 明朝",統刊朙,Typography Old P,Songti SC,宋体,細明體,"HarmonyOS Sans SC","Noto Serif CJK KR"/*,serif*/}
+button:focus {outline:none}
+#函 {writing-mode:vertical-rl; height:100%; overflow-y:hidden; position:relative; top:0; right:0}
+#top_banner, #劉海 {
+	background-color: var(--劉海列色)/* 赤153,22.95,33.79*/; color: #9ff;
+	box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.16),0 2px 10px 0 rgba(0, 0, 0, 0.12);
+	position: fixed; top: 0em; left: 0em;
+	width: 100%; height: 1.5em;
+  display: flex; flex-direction: column; justify-content: space-around; align-content: space-around;
+  z-index: 102; transition: top 0.5s
+}
+#top_banner > button, #top_banner > a, #劉海 > button, #劉海 > a {
+  line-height: 1em; width: 1.5em; height: 3em; box-sizing: border-box; font-size: 1.5em; text-align: left; vertical-align: middle; overflow: hidden; font-family:南監體,方正北魏楷书_GB18030,Noto Sans CJK KR,微軟正黑體; font-feature-settings:"locl" 0,"cv01";
+  border: none; background: linear-gradient(to bottom, var(--劉海籤色), rgba(222, 149, 24, 0))/* 黃221.85,149.45,24.4*/; color: #065279; cursor:pointer; transition:all 0.2s
+}
+#top_banner > a, #劉海 > a {line-height: 1.5em; padding-top: 0.25em; word-break: keep-all}
+#top_banner > button:hover, #top_banner > a:hover, #劉海 > button:hover, #劉海 > a:hover {overflow:visible}
+#top_banner > a:hover, #劉海 > a:hover {white-space:nowrap}
+#top_banner > div > span, #劉海 > div > span {
+  vertical-align: middle
+}
+#top_banner > .gUnrd, #劉海 > .gUnrd {cursor:not-allowed; background:linear-gradient(to bottom, rgb(160,160,160), rgba(160,160,160,0)); color:#444}
+#top_banner > :not(.gUnrd):hover, #劉海 > :not(.gUnrd):hover {color:var(--所指籤字色); background-color:var(--紙色)}
+.手機劉海籤多者 {flex-flow:row wrap !important; place-content:start !important; overflow-x:auto}
+.手機劉海籤多者 > a, .手機劉海籤多者 > button{margin:0 0.4em}
+.手機劉海籤少者 {flex-flow:row wrap !important; justify-content:start !important}
+.當歬籤 {color:var(--當歬籤字色) !important; background-color:var(--當歬籤色) !important}
+#drager {
+  display: block; height: 60px; width: 100vw; position: fixed; top: 1.5em; right: 0;
+  background: linear-gradient(var(--劉海籤色) 50px, var(--劉海列色) 50px);
+  border-bottom: 10px solid var(--紙色); /*background-color: rgb(222, 149, 24); */opacity: 0; transition: top 0.5s, border-bottom 0.5s, background-color 0.5s, opacity 0.5s ease-in;
+}
+#drager::after {display: block; height: 50px; width: 100vw; background-color: blue}
+#right_row {
+	background: linear-gradient(to right, var(--褾內色), var(--褾緣色) 50%);
+	position: fixed; top: 1.5em; right: 0em; bottom: 1.5em;
+	width: 3em; padding-top: 1.5em; padding-bottom: 1em;
+	z-index: 101;
+	letter-spacing: 1px; line-height:1.25
+}
+#bookName,#curSec,#bookSrc {font-size:1.6em; margin-top:1em}
+#left_row {
+	background: linear-gradient(to right, var(--褾緣色) 50%, var(--褾內色));
+	position: fixed; top: 1.5em; left: 0em; bottom: 1.5em;
+	width: 4em; box-sizing: border-box; padding-right: 1em;
+	z-index: 101;
+	text-align: right; vertical-align: bottom; letter-spacing: 2px; line-height:1.2
+}
+#bookSrc {position:absolute; top:1em; left:0}
+#btm_banner {
+	background-color: #5f5f5f;
+	box-shadow: 0 -2px 4px 0 rgba(0, 0, 0, 0.16),0 2px 10px 0 rgba(0, 0, 0, 0.12);
+	position: fixed; bottom: 0em; right: 0em;
+	width: 100%; height: 1.5em;
+	color: white
+}
+#content_blk,#冊䈎 {
+	background-color: var(--紙色);
+	/*position: absolute; top: 0.75em; bottom: 0.75em; right: 2em;*/
+	margin: 0.75em 2em;
+	width: auto; min-width: 90%;
+	/*height: calc(100vh - 6em);*/
+	padding: 1em;
+	overflow:hidden;
+	font-size: 2em; font-family: 南監體,仿宋,FangSong,STFangsong,"汉仪仿宋(GB18030超大字符集版)",fangsong,文鼎皇華楷體,細明體,MingLiU,Noto Serif CJK KR,Microsoft Yahei Light; font-feature-settings: "vrtr","vkrn" 0,"locl" 0,"cv01"; font-weight:400;
+	line-height: var(--行寬); transition: filter 0.5s, color 0.4s, background-color 0.4s
+}
+.toc, .卷內目次 {
+  list-style-type: none; padding: 0; margin: 0;
+  display: flex; flex-wrap: wrap;
+}
+.toc > li, .卷內目次 > li, .toc1 ol > li {
+  /*float:left;flex-basis:50%;*/ min-height:50%; max-height:100%;
+  margin: 0; padding: 0
+}
+.toc1,.三級目次,.四級目次,.五級目次,.單兒 {list-style-type: none; padding: 0; margin: 0}
+.toc1 ol,.三級目次 ol,.四級目次 ol,.五級目次 ol {list-style-type: none; padding: 0; margin: 1em 0 0 0}
+.toc1 ol,.段單兒 {display: flex; flex-wrap: wrap}
+
+li {margin: 0; padding: 0}
+.三級目次>li>ol>li>ol>li, .四級目次>li>ol>li>ol>li>ol>li, .五級目次>li>ol>li>ol>li>ol>li>ol>li {display:inline}
+.三級目次>li>ol>li>ol>li:not(:first-child)::before, .三級目次>li>ol>li>ol>li:not(:last-child)::after, .四級目次>li>ol>li>ol>li>ol>li:not(:first-child)::before, .四級目次>li>ol>li>ol>li>ol>li:not(:last-child)::after, .五級目次>li>ol>li>ol>li>ol>li>ol>li:not(:first-child)::before, .五級目次>li>ol>li>ol>li>ol>li>ol>li:not(:last-child)::after {content:'　'; display:inline-block; height:1em}
+#infos {
+  position: fixed; right: 0; top: 0; z-index: 200; user-select: none;
+  height: 100vh; width: 100vw; display: none; background-color:var(--遮布色); backdrop-filter:blur(1px);
+}
+#infos > div {
+  position: fixed; right: 50vw; top: 40vh;
+  margin-right: -1.5em; margin-top: -3em;
+  font-size: 4em; height: 5em; width: 3em; padding-top: 1em; line-height: 3em;
+  background-color: var(--信息牋背景色); color: white;
+  border: 0.5rem solid var(--信息牋飾框色); outline: 1rem solid var(--信息牋背景色); box-shadow: 0 0 0.4rem 1rem rgba(127,127,127,0.7)
+}
+#measr {color:transparent; font-size:40px; position:absolute; height:auto; word-break:keep-all;}
+iframe#ctxmenu {display:none; position:fixed; height:18.5em; width:32.5em; z-index:1000; border:none; box-shadow:0 0 1em violet; color:gray; border-radius:4px}
+@supports (backdrop-filter:blur(6px)){
+  iframe#ctxmenu {backdrop-filter:blur(6px)}
+}
+#outPDFpan {display:none; justify-content:center; align-items:center; position:fixed; left:0; top:0; height:100vh; width:100vw; z-index:1001; background-color:rgba(200,200,200,0.8)}
+#outPDFwd {height:22em; width:27em; border:none; margin:1em; box-shadow:0 0 1em violet}
+#fgbs {height:100%; width:100%; border:none}
+#btm_banner>button {height:100%; width:20%; position:absolute; top:0; border-radius:0; border:none; background-color:transparent; background-repeat:repeat-x; font-size:1.5em; transition:all 1s}
+#prvsG, #歬翻鈕 {right:0; background-image:url("圖形/右鏃.svg"); background-size:1.2em 1.4em; background-position:0 -0.2em}
+#tGhead, #卷首鈕 {right:20%; background-image:url("圖形/右鏃抵綫.svg"); background-size:1em 1em; opacity:0.5}
+#tGtail, #卷尾鈕 {right:60%; background-image:url("圖形/右鏃抵綫.svg"); background-size:1em 1em; opacity:0.5; transform:scaleX(-1)}
+#nxtG, #後翻鈕 {right:80%; background-image:url("圖形/右鏃.svg"); background-size:1.2em 1.4em; background-position:0 -0.2em; transform:scaleX(-1)}
+#prvsG:hover,#歬翻鈕:hover, #nxtG:hover,#後翻鈕:hover {background-position-x:1.2em}
+#tGhead:hover,#卷首鈕:hover, #tGtail:hover,#卷尾鈕:hover {opacity:1}
+iframe#搜索欄 {position:fixed; top:0; right:100vw; height:100%; width:4em; z-index:110; border:none; box-shadow: 2px 0 4px 0 rgba(0, 0, 0, 0.16),2px 0 10px 0 rgba(0, 0, 0, 0.12); transition:transform 0.5s}
+.MARKfounds {background-color:var(--搜得色); box-shadow:0 0 0.2em 0 var(--葛巾紫)}
+.currentFindMatch {background-color:var(--當歬匹配色); box-shadow:0 0 0.4em 0 var(--孔雀綠)}
+.cnumDr {font-kerning:normal}
+.cnumMZ,.cnumDr {font-family: 華數碼; font-variant-ligatures: contextual; font-stretch:30%; writing-mode:horizontal-tb; line-height:1; height:1em; letter-spacing:0; word-break:keep-all}
+.cnumDrV {font-feature-settings:"ss01"}
+.cnumDrH {font-feature-settings:"ss02"}
+.num1d {font-variant-east-asian:full-width}
+.DrNegSgn {margin-bottom:-1em; display:block; text-align:center}
+.divineNum {font-family: 華數碼; font-stretch:60%}
+.divine3 {font-family: 華數碼; font-stretch:40%}

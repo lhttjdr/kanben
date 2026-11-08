@@ -1,0 +1,50 @@
+/* 哂蟹齋排版器（https://vert.neocities.org/type/set/）原文件，經作者許可收錄；路徑已改為相對路徑。 */
+:root {width:100%; --編-字大小:1.8em; --編-字距:0.1em; --編-行寬:1.5em}
+::selection {background-color: #7bcfa655}
+body {background-color: var(--選單背景色); width: 100vw}
+#函 {width:100%}
+#measr {writing-mode: vertical-rl}
+#編輯函 {position: relative}
+#編輯器,#結果 {border:1px solid var(--器框色); position: relative; box-sizing: border-box}
+#編輯器,#富編輯器 {font-size: var(--編-字大小); font-family: Noto Mono, Noto Sans CJK KR, 黑体, 等线, 微軟正黑體;font-language-override:'ZH'; font-kerning: normal; letter-spacing: var(--編-字距); line-height: var(--編-行寬); overflow-x: auto; resize: none; height:100%; padding:2px}
+#編輯器 {background-color: transparent; color: transparent; z-index: 50; caret-color: var(--主字色); cursor: vertical-text}
+#富編輯器 {background-color: var(--紙色); color: var(--主字色); border:1px solid var(--器框色); position: absolute; box-sizing: border-box; user-select: none; position: absolute; top:0; right:0; z-index: 0}
+#富編輯器>div {min-block-size: var(--編-行寬)}
+#富編輯器>div:hover {background-color: var(--編-當歬行背景色)}
+#結果 {overflow-x: auto}
+#介欄 {block-size: 5%; display:flex; align-items: center}
+#介欄 button {font-size: 2em; background-color: var(--選單背景色); color: var(--主字色); font-family: 華康玉刻仿宋 W6,楷体,Noto Sans CJK SC,等线,黑体; margin-inline: 1px; cursor: pointer; transition: all 0.3s}
+#編譯鈕 {border-radius: 50%}
+#編譯鈕:hover {background-color: hsl(158,76%,50%)}
+#right_row,#left_row {display:none}
+@media screen and (min-width: 990.1px) {
+	#編輯函 {height: 100%; width: 40%}
+	#結果函 {height: 100%; width: 55%}
+	#編輯器,#富編輯器 {width:99.9%}
+	#結果 {width:100%}
+	#劉海,#btm_banner {width: 55%}
+	#btm_banner {left:0; right:unset}
+}
+@media screen and (max-width: 990px) {
+	#函 {writing-mode: horizontal-tb}
+	#編輯函,#結果函 {writing-mode: vertical-rl; width: 100%}
+	#編輯函 {height: 35%}
+	#結果函 {height: 60%}
+	#編輯器,#富編輯器,#結果 {width: 96%}
+	#劉海,#btm_banner,#drager {display: none}
+	#content_blk {margin: 0}
+}
+.jienghangsen:nth-child(10n),p {break-after: page}
+@media print {
+	:root {--選單背景色:#fff; width:auto}
+	body,#函 {width:unset}
+	#編輯函,#介欄 {display: none}
+	#結果函 {height:100%; width:unset}
+	#結果 {border: none}
+}
+.edit_dlnote {color: var(--編-雙行夾註色)}
+.edit_1lnote {color: var(--編-單行夾註色)}
+.edit_title {color: var(--編-標題色)}
+.edit_marco {color: var(--編-起訖標記色)}
+.edit_pCmnt {color: var(--編-後註色)}
+.edit_toke {color: var(--編-令語色); opacity:0.6; font-weight:500}
