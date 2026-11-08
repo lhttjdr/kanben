@@ -7,5 +7,6 @@
 //! 需要量頁面的幾步（度行、雙行夾注的折行、增刪絲欄、對齊眉批）不在這裏。
 
 pub mod jsre;
+pub mod layout;
 pub mod marks;
 pub mod text;

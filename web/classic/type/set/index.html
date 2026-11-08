@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 刊本・原版排版器的 wasm 移植：頁面與樣式沿用原版（經作者許可，見 ../ref/NOTICE），文本處理換成 wasm。 -->
+<!-- 刊本・原版排版器的 wasm 移植：頁面與樣式沿用原版（經作者許可，見 ../ref/NOTICE）；排版流程與文本處理換成 engine.js 與 wasm。 -->
 <html>
 	<head>
 		<meta name="viewport" content="maximum-scale=0.76, user-scalable=0">
@@ -63,13 +63,9 @@
 			</div>
 		</div>
 	</div>
-	<script src="../../../ref/main.js"></script>
-	<script src="../../../ref/cb/dlNote.js"></script>
-	<script src="../../../ref/cb/ldg.js"></script>
-	<script src="../../../ref/type/set/ts.js"></script>
 	<script type="module" src="../../classic.js"></script>
-	<iframe id="ctxmenu" src="../../../ref/embdWd/cntxmn.html"></iframe>
-	<iframe id="搜索欄" src="../../../ref/embdWd/search.html"></iframe>
-	<div id="outPDFpan"><iframe id="outPDFwd" src="../../../ref/embdWd/outPDF.html"></iframe></div>
+	<iframe id="ctxmenu" data-src="embdWd/cntxmn.html"></iframe>
+	<iframe id="搜索欄" data-src="embdWd/search.html"></iframe>
+	<div id="outPDFpan"><iframe id="outPDFwd" data-src="embdWd/outPDF.html"></iframe></div>
 	</body>
 </html>

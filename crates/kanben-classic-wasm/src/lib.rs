@@ -102,3 +102,109 @@ pub fn unverticalize(inner: &str) -> String {
 pub fn compose_char(ids: &str) -> String {
     text::構字(ids)
 }
+
+use kanben_classic::layout::{self, 夾注排法};
+
+/// 一條雙行夾注的排法（見 [`layout::夾注排法`]）。`kind` 為 `ig`、`sht`、`long`。
+#[wasm_bindgen]
+pub struct NotePlan {
+    plan: 夾注排法,
+}
+
+#[wasm_bindgen]
+impl NotePlan {
+    #[wasm_bindgen(getter)]
+    pub fn kind(&self) -> String {
+        match self.plan {
+            夾注排法::不分 => "ig",
+            夾注排法::本行 { .. } => "sht",
+            夾注排法::跨行 { .. } => "long",
+        }
+        .into()
+    }
+
+    fn field(&self, f: impl Fn(&夾注排法) -> Option<&String>) -> String {
+        f(&self.plan).cloned().unwrap_or_default()
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn height(&self) -> String {
+        self.field(|p| match p {
+            夾注排法::本行 { height } => Some(height),
+            _ => None,
+        })
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn width(&self) -> String {
+        self.field(|p| match p {
+            夾注排法::跨行 { width, .. } => Some(width),
+            _ => None,
+        })
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn clip(&self) -> String {
+        self.field(|p| match p {
+            夾注排法::跨行 { clip, .. } => Some(clip),
+            _ => None,
+        })
+    }
+
+    #[wasm_bindgen(getter, js_name = headHeight)]
+    pub fn head_height(&self) -> String {
+        self.field(|p| match p {
+            夾注排法::跨行 { head_height, .. } => Some(head_height),
+            _ => None,
+        })
+    }
+
+    #[wasm_bindgen(getter, js_name = tailClip)]
+    pub fn tail_clip(&self) -> String {
+        self.field(|p| match p {
+            夾注排法::跨行 { tail_clip, .. } => Some(tail_clip),
+            _ => None,
+        })
+    }
+
+    #[wasm_bindgen(getter, js_name = afterHeight)]
+    pub fn after_height(&self) -> String {
+        self.field(|p| match p {
+            夾注排法::跨行 { after_height, .. } => Some(after_height),
+            _ => None,
+        })
+    }
+}
+
+/// 雙行夾注的字數（原版 `雙行夾注` 的 `丙`）。
+#[wasm_bindgen(js_name = noteLength)]
+pub fn note_length(inner: &str) -> usize {
+    layout::夾注字數(inner)
+}
+
+/// 雙行夾注的排法。`start` 起始格，`indent` 段首縮進格數，`cells` 每行格數。
+#[wasm_bindgen(js_name = notePlan)]
+pub fn note_plan(len: usize, start: i32, indent: i32, cells: i32) -> NotePlan {
+    NotePlan {
+        plan: layout::夾注排法(len, start.into(), indent.into(), cells.into()),
+    }
+}
+
+/// 改窗口後重新判斷雙行夾注的排法；不用改時返回 undefined。
+#[wasm_bindgen(js_name = noteReplan)]
+pub fn note_replan(
+    big: i32,
+    start: i32,
+    indent: i32,
+    cells: i32,
+    is_long: bool,
+) -> Option<NotePlan> {
+    layout::調整排法(
+        big.into(),
+        start.into(),
+        indent.into(),
+        cells.into(),
+        is_long,
+    )
+    .map(|plan| NotePlan { plan })
+}
