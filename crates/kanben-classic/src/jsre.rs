@@ -152,21 +152,86 @@ fn push_literal(out: &mut String, c: char, _in_class: bool) {
 pub struct Re {
     re: Regex,
     global: bool,
+    /// 結尾帶前瞻、主體定長的正則：先用不帶前瞻的主體快速找候選，再單獨驗前瞻。
+    /// fancy-regex 遇到前瞻就逐字回溯，長文本上很慢；這樣結果相同而快得多。
+    fast: Option<Lookahead>,
+}
+
+struct Lookahead {
+    core: Regex,
+    /// `^(?:前瞻內容)`，對候選之後的文本驗。
+    look: Regex,
+    negative: bool,
 }
 
 impl Re {
     pub fn new(src: &str, flags: &str) -> Re {
         let t = translate(src, flags);
         let re = Regex::new(&t).unwrap_or_else(|e| panic!("bad regex /{src}/ → {t}: {e}"));
+        let fast = split_lookahead(src).map(|(core, look, negative)| Lookahead {
+            core: Regex::new(&translate(core, flags)).expect("core regex"),
+            look: Regex::new(&format!(
+                "^(?:{})",
+                translate(look, &flags.replace('m', ""))
+            ))
+            .expect("lookahead regex"),
+            negative,
+        });
         Re {
             re,
             global: flags.contains('g'),
+            fast,
         }
+    }
+
+    /// 從 `at` 起找下一個匹配（照 JS：最左、首選）。
+    fn find_at<'s>(&self, s: &'s str, mut at: usize) -> Option<Captures<'s, str>> {
+        let Some(f) = &self.fast else {
+            return self.re.captures_from_pos(s, at).expect("regex failed");
+        };
+        while at <= s.len() {
+            let caps = f.core.captures_from_pos(s, at).expect("regex failed")?;
+            let m = caps.get(0).unwrap();
+            if f.look.is_match(&s[m.end()..]).expect("regex failed") != f.negative {
+                return Some(caps);
+            }
+            // 主體定長：同一起點沒有別的匹配，從下一個字再找。
+            at = m.start() + s[m.start()..].chars().next().map_or(1, char::len_utf8);
+        }
+        None
     }
 
     /// `s.replace(re, 模板)`：模板按 JS 规则展开 `$$ $& $\` $' $1…$99`。
     pub fn replace(&self, s: &str, template: &str) -> String {
-        self.replace_with(s, |caps, s| expand(template, caps, s))
+        let mut out = String::with_capacity(s.len() + s.len() / 4);
+        let mut last = 0;
+        let mut at = 0;
+        while at <= s.len() {
+            let Some(caps) = self.find_at(s, at) else {
+                break;
+            };
+            let m = caps.get(0).unwrap();
+            out.push_str(&s[last..m.start()]);
+            expand_into(&mut out, template, &caps, s);
+            last = m.end();
+            if !self.global {
+                break;
+            }
+            at = if m.end() == m.start() {
+                match s[m.end()..].chars().next() {
+                    Some(c) => {
+                        out.push_str(&s[m.end()..m.end() + c.len_utf8()]);
+                        last = m.end() + c.len_utf8();
+                        last
+                    }
+                    None => break,
+                }
+            } else {
+                m.end()
+            };
+        }
+        out.push_str(&s[last..]);
+        out
     }
 
     /// `s.replace(re, 函数)`。
@@ -179,7 +244,7 @@ impl Re {
         let mut last = 0;
         let mut at = 0;
         while at <= s.len() {
-            let Some(caps) = self.re.captures_from_pos(s, at).expect("regex failed") else {
+            let Some(caps) = self.find_at(s, at) else {
                 break;
             };
             let m = caps.get(0).unwrap();
@@ -215,9 +280,10 @@ impl Re {
         let mut v = Vec::new();
         let mut at = 0;
         while at <= s.len() {
-            let Some(m) = self.re.find_from_pos(s, at).expect("regex failed") else {
+            let Some(caps) = self.find_at(s, at) else {
                 break;
             };
+            let m = caps.get(0).unwrap();
             v.push(m.as_str().to_string());
             if !self.global {
                 break;
@@ -239,7 +305,7 @@ impl Re {
         let mut v = Vec::new();
         let mut at = 0;
         while at <= s.len() {
-            let Some(c) = self.re.captures_from_pos(s, at).expect("regex failed") else {
+            let Some(c) = self.find_at(s, at) else {
                 break;
             };
             let m = c.get(0).unwrap();
@@ -261,13 +327,132 @@ impl Re {
     }
 
     pub fn test(&self, s: &str) -> bool {
-        self.re.is_match(s).expect("regex failed")
+        self.find_at(s, 0).is_some()
     }
 
     /// 第一个匹配的起点（字节）。
     pub fn search(&self, s: &str) -> Option<usize> {
-        self.re.find(s).expect("regex failed").map(|m| m.start())
+        self.find_at(s, 0).map(|c| c.get(0).unwrap().start())
     }
+}
+
+/// 把結尾的前瞻拆出來：返回（主體, 前瞻內容, 是否否定）。
+/// 只有主體定長（只有字、轉義字、字符類、不帶量詞的捕獲組，沒有 `|` `^` `$`）
+/// 且前瞻裏沒有捕獲組時才拆；否則返回 None，照常用 fancy-regex。
+fn split_lookahead(src: &str) -> Option<(&str, &str, bool)> {
+    let (start, negative) = match (src.rfind("(?="), src.rfind("(?!")) {
+        (Some(a), Some(b)) => (a.max(b), b > a),
+        (Some(a), None) => (a, false),
+        (None, Some(b)) => (b, true),
+        (None, None) => return None,
+    };
+    if !src.ends_with(')') {
+        return None;
+    }
+    let look = &src[start + 3..src.len() - 1];
+    let core = &src[..start];
+    // 前瞻內容須平衡且沒有捕獲組。
+    if !balanced(look) || look.contains("(") && !look.split('(').skip(1).all(|p| p.starts_with('?'))
+    {
+        return None;
+    }
+    let mut chars = core.chars().peekable();
+    let mut in_class = false;
+    let mut depth = 0i32;
+    while let Some(c) = chars.next() {
+        match c {
+            '\\' => {
+                let n = chars.next()?;
+                if !in_class && n.is_ascii_digit() {
+                    return None; // 反向引用
+                }
+            }
+            '[' if !in_class => in_class = true,
+            ']' if in_class => in_class = false,
+            _ if in_class => {}
+            '(' => {
+                if chars.peek() == Some(&'?') {
+                    return None;
+                }
+                depth += 1;
+            }
+            ')' => depth -= 1,
+            '|' | '^' | '$' | '*' | '+' | '?' | '{' | '.' => return None,
+            _ => {}
+        }
+    }
+    (depth == 0 && !in_class && !core.is_empty()).then_some((core, look, negative))
+}
+
+fn balanced(s: &str) -> bool {
+    let mut depth = 0i32;
+    let mut in_class = false;
+    let mut it = s.chars();
+    while let Some(c) = it.next() {
+        match c {
+            '\\' => {
+                it.next();
+            }
+            '[' if !in_class => in_class = true,
+            ']' if in_class => in_class = false,
+            '(' if !in_class => depth += 1,
+            ')' if !in_class => {
+                depth -= 1;
+                if depth < 0 {
+                    return false;
+                }
+            }
+            _ => {}
+        }
+    }
+    depth == 0
+}
+
+/// 展開 JS 替換模板，直接寫入 `out`（逐字節掃描，`$` 與數字都是 ASCII）。
+fn expand_into(out: &mut String, template: &str, caps: &Captures<'_, str>, s: &str) {
+    let b = template.as_bytes();
+    let mut i = 0;
+    let mut last = 0;
+    let n = caps.len() - 1;
+    while i < b.len() {
+        if b[i] != b'$' || i + 1 >= b.len() {
+            i += 1;
+            continue;
+        }
+        let m = caps.get(0).unwrap();
+        let (text, used): (Option<&str>, usize) = match b[i + 1] {
+            b'$' => (Some("$"), 2),
+            b'&' => (Some(m.as_str()), 2),
+            b'`' => (Some(&s[..m.start()]), 2),
+            b'\'' => (Some(&s[m.end()..]), 2),
+            d @ b'0'..=b'9' => {
+                let one = usize::from(d - b'0');
+                let two = b
+                    .get(i + 2)
+                    .filter(|c| c.is_ascii_digit())
+                    .map(|e| one * 10 + usize::from(e - b'0'));
+                match two {
+                    Some(k) if (1..=n).contains(&k) => {
+                        (Some(caps.get(k).map_or("", |g| g.as_str())), 3)
+                    }
+                    _ if (1..=n).contains(&one) => {
+                        (Some(caps.get(one).map_or("", |g| g.as_str())), 2)
+                    }
+                    _ => (None, 1),
+                }
+            }
+            _ => (None, 1),
+        };
+        if let Some(t) = text {
+            out.push_str(&template[last..i]);
+            out.push_str(t);
+            i += used;
+            last = i;
+        } else {
+            i += used;
+        }
+    }
+    out.push_str(&template[last..]);
 }
 
 /// 展开 JS 替换模板。

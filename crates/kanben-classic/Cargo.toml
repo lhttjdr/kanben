@@ -6,7 +6,7 @@ edition.workspace = true
 publish = false
 
 [dependencies]
-fancy-regex = "0.20"
+fancy-regex = { version = "0.20", default-features = false, features = ["std", "perf"] }  # \d \s \w 已譯成 ASCII 類，不需要 Unicode 表；perf 帶字面量預篩，快兩三倍
 
 [dev-dependencies]
 serde_json = "1"

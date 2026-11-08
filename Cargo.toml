@@ -11,3 +11,15 @@ license = "MIT"
 opt-level = "s"
 lto = true
 codegen-units = 1
+
+# 原版排法的 wasm 主要是正則引擎，按體積優化。
+[profile.release.package.kanben-classic-wasm]
+opt-level = "z"
+[profile.release.package.kanben-classic]
+opt-level = "z"
+[profile.release.package.fancy-regex]
+opt-level = "z"
+[profile.release.package.regex-automata]
+opt-level = "z"
+[profile.release.package.regex-syntax]
+opt-level = "z"

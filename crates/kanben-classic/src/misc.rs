@@ -133,10 +133,11 @@ fn 籌樣式(數: String, 个位縱: bool, 負號: String) -> 籌 {
 pub fn 瀏覽器(ua: &str) -> (String, String) {
     let agent = ua.to_lowercase();
     let ver = |re: &str| -> String {
-        crate::jsre::Re::new(re, "gi")
+        // 原版帶 i 旗標；agent 已轉小寫，模式也都是小寫，不用 i（省去 Unicode 大小寫表）。
+        crate::jsre::Re::new(re, "g")
             .match_all(&agent)
             .map(|v| v.join(","))
-            .map(|s| re!(r"[^0-9.]", "gi").replace(&s, ""))
+            .map(|s| re!(r"[^0-9.]", "g").replace(&s, ""))
             .unwrap_or_default()
     };
     let has = |s: &str| agent.find(s).is_some_and(|i| i > 0);
@@ -146,7 +147,7 @@ pub fn 瀏覽器(ua: &str) -> (String, String) {
         ("IE".into(), ver(r"rv\:[\d.]+"))
     } else if agent.contains("micromessenger") {
         ("微信".into(), "未知".into())
-    } else if re!(r"\sQQ", "i").test(&agent) {
+    } else if re!(r"\sqq").test(&agent) {
         ("QQ".into(), "未知".into())
     } else if has("firefox") {
         ("火狐".into(), ver(r"firefox\/[\d.]+"))
@@ -161,8 +162,10 @@ pub fn 瀏覽器(ua: &str) -> (String, String) {
 
 /// `detectOS`
 pub fn 系統(ua: &str, platform: &str) -> &'static str {
-    let ua_has = |p: &str| crate::jsre::Re::new(p, "i").test(ua);
-    let pf_has = |p: &str| crate::jsre::Re::new(p, "i").test(platform);
+    // 原版用 /…/i；這裏把兩邊都轉成小寫再比，結果相同。
+    let (ua_l, pf_l) = (ua.to_lowercase(), platform.to_lowercase());
+    let ua_has = |p: &str| ua_l.contains(&p.to_lowercase());
+    let pf_has = |p: &str| pf_l.contains(&p.to_lowercase());
     if ua_has("OpenHarmony") {
         "鴻蒙"
     } else if ua_has("Android") || platform == "Linux armv7l" {
