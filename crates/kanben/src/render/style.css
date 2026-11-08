@@ -1,0 +1,41 @@
+.kb {
+  --kb-ink-c: var(--kb-ink, #231d18);
+  --kb-paper-c: var(--kb-paper, #f3ead6);
+  --kb-rule-c: var(--kb-rule, #5a4636);
+  --kb-red-c: var(--kb-red, #b0281a);
+  --kb-blue-c: var(--kb-blue, #2b4f8a);
+  --kb-green-c: var(--kb-green, #2f6b45);
+  --kb-ochre-c: var(--kb-ochre, #9a6a1c);
+  --kb-gray-c: var(--kb-gray, #8a8178);
+}
+.kb text {
+  font-family: var(--kb-font, "Noto Serif CJK TC", "Source Han Serif TC", "Noto Serif TC", "Songti TC", "SimSun", serif);
+  fill: var(--kb-ink-c);
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.kb .paper { fill: var(--kb-paper-c); }
+.kb .rule { stroke: var(--kb-rule-c); fill: none; }
+.kb .rule-fill { fill: var(--kb-rule-c); }
+.kb .ink { fill: var(--kb-ink-c); }
+.kb .line { stroke: var(--kb-ink-c); fill: none; stroke-linecap: round; }
+.kb .frame { stroke: var(--kb-ink-c); fill: none; }
+.kb .c-ink { fill: var(--kb-ink-c); }
+.kb .c-red { fill: var(--kb-red-c); }
+.kb .c-blue { fill: var(--kb-blue-c); }
+.kb .c-green { fill: var(--kb-green-c); }
+.kb .c-ochre { fill: var(--kb-ochre-c); }
+.kb .c-gray { fill: var(--kb-gray-c); }
+.kb .line.c-red, .kb .s-red { stroke: var(--kb-red-c); fill: none; }
+.kb .line.c-blue { stroke: var(--kb-blue-c); }
+.kb .line.c-green { stroke: var(--kb-green-c); }
+.kb .line.c-ochre { stroke: var(--kb-ochre-c); }
+.kb .line.c-gray { stroke: var(--kb-gray-c); }
+.kb .line.c-ink { stroke: var(--kb-ink-c); }
+.kb text.inv { fill: var(--kb-paper-c); }
+.kb .banxin text { fill: var(--kb-ink-c); }
+.kb .nosel, .kb .nosel text {
+  -webkit-user-select: none;
+  user-select: none;
+}
+.kb text.cp { fill: transparent; }

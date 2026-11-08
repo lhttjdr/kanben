@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>刊本排版</title>
+<link rel="stylesheet" href="app.css">
+<style id="kb-style"></style>
+</head>
+<body>
+<header class="bar">
+  <h1>刊本</h1>
+  <label>版式
+    <select id="opt-format">
+      <option value="">依源碼</option>
+      <option value="leaves">冊頁</option>
+      <option value="scroll">長卷</option>
+    </select>
+  </label>
+  <label>標點
+    <select id="opt-punct">
+      <option value="">依源碼</option>
+      <option value="judou">句讀</option>
+      <option value="grid">佔格</option>
+      <option value="bare">白文</option>
+    </select>
+  </label>
+  <label>書名號
+    <select id="opt-title">
+      <option value="">依源碼</option>
+      <option value="wavy">波綫</option>
+      <option value="bracket">括號</option>
+    </select>
+  </label>
+  <label>行數 <input id="opt-columns" type="number" min="1" max="40" placeholder="依源碼"></label>
+  <label>字數 <input id="opt-cells" type="number" min="4" max="60" placeholder="依源碼"></label>
+  <label title="按預覽區高度決定每行字數，窗口變了就重排"><input id="opt-fit" type="checkbox"> 字數隨窗口</label>
+  <span class="spacer"></span>
+  <button id="btn-example" type="button">示例</button>
+  <button id="btn-save" type="button">下載源碼</button>
+  <button id="btn-html" type="button">導出 HTML</button>
+  <button id="btn-print" type="button">打印</button>
+</header>
+
+<main>
+  <section class="editor">
+    <textarea id="source" spellcheck="false" aria-label="源碼"></textarea>
+    <div id="status" class="status" role="status"></div>
+    <ul id="diags" class="diags"></ul>
+    <details class="help">
+      <summary>語法速查</summary>
+      <p>標記只用 ASCII 符號，正文只用書裏本來的字；去掉標記即原文。</p>
+      <table>
+        <tr><th>寫法</th><th>效果</th></tr>
+        <tr><td><code>\note{…}</code> <code>\note[single]{…}</code></td><td>雙行夾注 / 單行小注</td></tr>
+        <tr><td><code>\side{…}</code> <code>\side[left]{…}</code></td><td>旁行小字</td></tr>
+        <tr><td><code>\comment{…}</code></td><td>朱色旁批</td></tr>
+        <tr><td><code>\head{…}</code></td><td>眉批（天頭）</td></tr>
+        <tr><td><code>\name{…}</code></td><td>專名號</td></tr>
+        <tr><td><code>《…》</code> <code>〈…〉</code> <code>\title{…}</code></td><td>書名號（正文標點，畫法見「書名號」選項）</td></tr>
+        <tr><td><code>\emph{…}</code> [circle dot sesame comma]</td><td>圈點</td></tr>
+        <tr><td><code>\stroke{…}</code></td><td>朱抹</td></tr>
+        <tr><td><code>\inv{…}</code> <code>\frame{…}</code> [square round hex each]</td><td>陰文、墨圍（each 為逐字圓圈）</td></tr>
+        <tr><td><code>\del{…}</code> <code>\ins{…}</code></td><td>校勘刪、增</td></tr>
+        <tr><td><code>\color[blue]{…}</code> red blue green ochre ink gray</td><td>字色</td></tr>
+        <tr><td><code>\compose{⿰木鬼}</code></td><td>IDS 組字</td></tr>
+        <tr><td><code>朝〪</code> 〪〭〫〬</td><td>四聲圈發（附前一字）</td></tr>
+        <tr><td>換行 <code>\\</code> <code>\\[2]</code></td><td>另起一行 / 另起並擡二格</td></tr>
+        <tr><td><code>\heading{…}</code> <code>\heading[2]{…}</code></td><td>標題</td></tr>
+        <tr><td><code>\indent[2]</code> <code>\raise[1]</code> <code>\bottom[1]</code></td><td>寫在行首：段首管整段，段內某行只管該行</td></tr>
+        <tr><td><code>\begin{indent}[2]</code> … <code>\end{indent}</code></td><td>環境：其中各段都低二格</td></tr>
+        <tr><td>空行 / 多空行</td><td>分段 / 版面空行</td></tr>
+        <tr><td><code>\{ \} \[ \] \%</code> <code>% 注釋</code> Tab 鍵</td><td>轉義 / 注釋 / 全角空格</td></tr>
+      </table>
+      <p>設定：<code>\book{書名}</code> <code>\volume{卷名}</code> <code>\studio{堂號}</code> <code>\setup[columns=9, cells=18, format=leaves|scroll, punct=judou|grid|bare, punct-color=red, title-mark=wavy|bracket, column-width=1.5, head=3]</code></p>
+    </details>
+  </section>
+  <section class="preview" id="preview" aria-label="版面預覽">
+    <div class="pages" id="pages"></div>
+  </section>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>

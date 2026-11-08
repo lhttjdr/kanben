@@ -1,0 +1,13 @@
+[package]
+name = "kanben-wasm"
+description = "刊本排版引擎的浏览器接口"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+kanben = { path = "../kanben" }
+wasm-bindgen = "0.2"

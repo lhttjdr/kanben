@@ -1,0 +1,24 @@
+[tools]
+rust = { version = "1.99.1", profile = "minimal", targets = "wasm32-unknown-unknown", components = "rustfmt,clippy" }
+"cargo:wasm-pack" = "0.14.0"
+
+[tasks.test]
+description = "运行全部测试"
+run = "cargo test --workspace"
+
+[tasks.build]
+description = "编译 wasm 到 web/pkg"
+run = "wasm-pack build crates/kanben-wasm --target web --release --out-dir ../../web/pkg --no-typescript"
+
+[tasks.serve]
+description = "本地预览编辑器 http://localhost:8765"
+depends = ["build"]
+run = "python3 -m http.server 8765 -d web"
+
+[tasks.example]
+description = "命令行排印示例到 examples/通鑑.html"
+run = "cargo run -q -p kanben -- examples/通鑑.kb -o examples/通鑑.html"
+
+[tasks.lint]
+description = "格式与 clippy 检查"
+run = ["cargo fmt --all --check", "cargo clippy --workspace --all-targets -- -D warnings"]
