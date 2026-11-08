@@ -71,7 +71,8 @@ fn 所有符() -> &'static Re {
 
 /// `編輯純文本.渲染` 的文本部分：返回寫入富文本框的 HTML（標題的後續段落由頁面另行標出）。
 pub fn 渲染(文本: &str) -> String {
-    let mut t = re!(r"\(\(=(.+?)(?==\)\))", "g").replace(文本, r#"((=<span class="edit_dlnote">$1</span>"#);
+    let mut t =
+        re!(r"\(\(=(.+?)(?==\)\))", "g").replace(文本, r#"((=<span class="edit_dlnote">$1</span>"#);
     t = re!(r"\(\(-(.+?)(?=-\)\))", "g").replace(&t, r#"((-<span class="edit_1lnote">$1</span>"#);
     t = re!(r"\(\(#(.+?)(?=#\)\))", "g").replace(&t, r#"((#<span class="edit_pCmnt">$1</span>"#);
     t = re!(r"〚([^〚［］〛]+?)〛", "g").replace(&t, r#"<span class="edit_toke">〚$1〛</span>"#);

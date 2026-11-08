@@ -4,11 +4,12 @@
 //! 這裏逐個函數照搬，名字與原版相同，便於對照；每個函數都用原版實錄的輸入輸出
 //! （tests/fixtures）檢驗，要求逐字相同。
 //!
-//! 需要量頁面的幾步（度行、雙行夾注的折行、增刪絲欄、對齊眉批）不在這裏。
+//! 需要量頁面的幾步（度行、雙行夾注的折行、增刪絲欄、對齊眉批）由頁面量出位置，
+//! 其中的算式在 [`layout`]；編輯器的語法著色在 [`editor`]；main.js 裏的純計算在 [`misc`]。
 
+pub mod editor;
 pub mod jsre;
 pub mod layout;
 pub mod marks;
 pub mod misc;
 pub mod text;
-pub mod editor;
