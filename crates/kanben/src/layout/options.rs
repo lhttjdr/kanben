@@ -62,6 +62,8 @@ pub struct Options {
     pub punct_color: Color,
     pub title_mark: TitleMark,
     pub font: Font,
+    /// 版框下标行號（算籌數碼）。
+    pub numbers: bool,
     /// 書名，印在版心。
     pub title: String,
     /// 卷名，印在版心。
@@ -72,6 +74,8 @@ pub struct Options {
     pub column_width: f32,
     /// 天頭高度，以字為單位（眉批排在這裏）。
     pub head: f32,
+    /// 天頭是否由用户指定；没指定而又有眉批时自动加高。
+    pub head_set: bool,
 }
 
 impl Default for Options {
@@ -79,23 +83,25 @@ impl Default for Options {
         Options {
             columns: 10,
             cells: 20,
-            format: Format::Leaves,
+            format: Format::Scroll,
             punct: PunctStyle::Judou,
             punct_color: Color::Red,
             title_mark: TitleMark::Wavy,
             font: Font::Fangsong,
+            numbers: true,
             title: String::new(),
             volume: String::new(),
             studio: String::new(),
-            column_width: 1.5,
-            head: 3.0,
+            column_width: 1.6,
+            head: 1.0,
+            head_set: false,
         }
     }
 }
 
 /// `\setup` 可用的键，用于报错提示。
 pub const KEYS: &str =
-    "columns, cells, format, punct, punct-color, title-mark, font, column-width, head";
+    "columns, cells, format, punct, punct-color, title-mark, font, numbers, column-width, head";
 
 impl Options {
     pub fn from_meta(meta: &[MetaEntry], diags: &mut Vec<Diagnostic>) -> Options {
@@ -171,8 +177,18 @@ impl Options {
                     _ => return Err(choice("fangsong, mincho, system")),
                 }
             }
+            "numbers" => {
+                self.numbers = match value {
+                    "on" => true,
+                    "off" => false,
+                    _ => return Err(choice("on, off")),
+                }
+            }
             "column-width" => self.column_width = float(1.0, 3.0)?,
-            "head" => self.head = float(0.0, 10.0)?,
+            "head" => {
+                self.head = float(0.0, 10.0)?;
+                self.head_set = true;
+            }
             k => return Err(format!("未知的設定 {k}（可用：{KEYS}）")),
         }
         Ok(())

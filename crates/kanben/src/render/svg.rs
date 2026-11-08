@@ -60,7 +60,7 @@ pub fn page(layout: &Layout, geo: &Geometry, page: i32) -> String {
     );
     match geo.format {
         Format::Leaves => leaf_frame(&mut s, geo, &layout.options, page),
-        Format::Scroll => scroll_frame(&mut s, geo),
+        Format::Scroll => scroll_frame(&mut s, geo, layout.options.numbers),
     }
 
     let top = geo.text_top();
@@ -113,16 +113,16 @@ fn hline(s: &mut String, x0: f32, x1: f32, y: f32, width: f32) {
 fn double_box(s: &mut String, x0: f32, y0: f32, x1: f32, y1: f32) {
     let _ = write!(
         s,
-        r#"<rect class="rule" x="{}" y="{}" width="{}" height="{}" stroke-width="2.5"/>"#,
+        r#"<rect class="rule" x="{}" y="{}" width="{}" height="{}" stroke-width="3"/>"#,
         n(x0),
         n(y0),
         n(x1 - x0),
         n(y1 - y0)
     );
-    let o = 0.1;
+    let o = 0.14;
     let _ = write!(
         s,
-        r#"<rect class="rule" x="{}" y="{}" width="{}" height="{}" stroke-width="7"/>"#,
+        r#"<rect class="rule" x="{}" y="{}" width="{}" height="{}" stroke-width="6.5"/>"#,
         n(x0 - o),
         n(y0 - o),
         n(x1 - x0 + 2.0 * o),
@@ -136,8 +136,15 @@ fn leaf_frame(s: &mut String, geo: &Geometry, o: &crate::layout::Options, page: 
     double_box(s, MARGIN, ft, w - MARGIN, fb);
     let (b0, b1) = geo.banxin();
     for j in 1..geo.columns {
-        vline(s, w - MARGIN - j as f32 * geo.col_w, ft, fb, 1.5);
-        vline(s, b0 - j as f32 * geo.col_w, ft, fb, 1.5);
+        vline(s, w - MARGIN - j as f32 * geo.col_w, ft, fb, 3.0);
+        vline(s, b0 - j as f32 * geo.col_w, ft, fb, 3.0);
+    }
+    if o.numbers {
+        for j in 0..geo.columns {
+            let n = j as u32 + 1;
+            col_number(s, n, w - MARGIN - (j as f32 + 0.5) * geo.col_w, fb + 0.45);
+            col_number(s, n, b0 - (j as f32 + 0.5) * geo.col_w, fb + 0.45);
+        }
     }
     vline(s, b0, ft, fb, 2.0);
     vline(s, b1, ft, fb, 2.0);
@@ -178,13 +185,33 @@ fn leaf_frame(s: &mut String, geo: &Geometry, o: &crate::layout::Options, page: 
     s.push_str("</g>");
 }
 
-fn scroll_frame(s: &mut String, geo: &Geometry) {
+fn scroll_frame(s: &mut String, geo: &Geometry, numbers: bool) {
     let w = geo.width();
     let (ft, fb) = (geo.frame_top(), geo.frame_bottom());
     double_box(s, MARGIN, ft, w - MARGIN, fb);
     for j in 1..geo.scroll_cols {
-        vline(s, w - MARGIN - j as f32 * geo.col_w, ft, fb, 1.5);
+        vline(s, w - MARGIN - j as f32 * geo.col_w, ft, fb, 3.0);
     }
+    if numbers {
+        for j in 0..geo.scroll_cols {
+            let x = w - MARGIN - (j as f32 + 0.5) * geo.col_w;
+            col_number(s, j as u32 + 1, x, fb + 0.45);
+        }
+    }
+}
+
+/// 行號：版框下方的算籌數碼，横着排，高位在左。
+fn col_number(s: &mut String, n: u32, x: f32, y: f32) {
+    let digits: Vec<u8> = n.to_string().bytes().map(|b| b - b'0').collect();
+    let size = 0.42;
+    let step = size * 0.62;
+    let x0 = x - step * (digits.len() as f32 - 1.0) / 2.0;
+    s.push_str(r#"<g class="colnum nosel">"#);
+    for (i, &d) in digits.iter().enumerate() {
+        let vertical = (digits.len() - 1 - i).is_multiple_of(2);
+        rod_lines(s, d, vertical, x0 + i as f32 * step, y, size);
+    }
+    s.push_str("</g>");
 }
 
 /// 竖排一串小字，返回结束时的 y。
@@ -211,6 +238,12 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
     let mut class = String::new();
     if let Some(c) = g.color {
         class.push_str(c.css_class());
+    }
+    if g.bold {
+        if !class.is_empty() {
+            class.push(' ');
+        }
+        class.push('b');
     }
     // 旁批、眉批用楷書。
     if matches!(g.role, Role::Side | Role::Head) {
@@ -312,6 +345,22 @@ fn rod(s: &mut String, text: &str, d: u8, vertical: bool, x: f32, y: f32, size: 
         n(size),
         escape(text)
     );
+    rod_lines(s, d, vertical, x, y, size);
+    s.push_str("</g>");
+}
+
+/// 一位算籌：一至五是并排（縱）或叠起（橫）的筹，六至九上面一筹当五；零是圈。
+fn rod_lines(s: &mut String, d: u8, vertical: bool, x: f32, y: f32, size: f32) {
+    if d == 0 {
+        let _ = write!(
+            s,
+            r#"<circle cx="{}" cy="{}" r="{}"/>"#,
+            n(x),
+            n(y),
+            n(size * 0.3)
+        );
+        return;
+    }
     let h = size * 0.36;
     let mut line = |x0: f32, y0: f32, x1: f32, y1: f32| {
         let _ = write!(
@@ -353,7 +402,6 @@ fn rod(s: &mut String, text: &str, d: u8, vertical: bool, x: f32, y: f32, size: 
                 .for_each(|p| line(-h, h * 0.2 + p * 0.45, h, h * 0.2 + p * 0.45));
         }
     }
-    s.push_str("</g>");
 }
 
 fn color_class(c: Option<crate::syntax::ast::Color>) -> &'static str {

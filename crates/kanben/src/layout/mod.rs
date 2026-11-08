@@ -35,6 +35,8 @@ pub struct Glyph {
     /// 透明：只为复制时文字完整（画成波綫的書名號的括號）。
     pub hidden: bool,
     pub role: Role,
+    /// 粗體（標題）。
+    pub bold: bool,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -120,7 +122,37 @@ pub struct Layout {
     pub decos: Vec<Deco>,
 }
 
-pub fn layout(doc: &Document, options: Options, diags: &mut Vec<Diagnostic>) -> Layout {
+/// 有眉批而天頭没指定时，天頭加高到这么多字。
+const HEAD_FOR_NOTES: f32 = 3.0;
+
+pub fn layout(doc: &Document, mut options: Options, diags: &mut Vec<Diagnostic>) -> Layout {
+    adjust(doc, &mut options);
+    layout_with(doc, options, diags)
+}
+
+/// 按内容调整版式：有眉批而天頭没指定时加高天頭。
+pub fn adjust(doc: &Document, options: &mut Options) {
+    if !options.head_set && options.head < HEAD_FOR_NOTES && has_head_notes(doc) {
+        options.head = HEAD_FOR_NOTES;
+    }
+}
+
+fn has_head_notes(doc: &Document) -> bool {
+    use crate::syntax::ast::{ElementKind, Inline};
+    fn any(nodes: &[Inline]) -> bool {
+        nodes.iter().any(|n| match n {
+            Inline::Element(e) => e.kind == ElementKind::HeadNote || any(&e.children),
+            Inline::Text { .. } => false,
+        })
+    }
+    doc.blocks.iter().any(|b| match b {
+        Block::Heading { content, .. } => any(content),
+        Block::Paragraph { lines, .. } => lines.iter().any(|l| any(&l.content)),
+        _ => false,
+    })
+}
+
+fn layout_with(doc: &Document, options: Options, diags: &mut Vec<Diagnostic>) -> Layout {
     if !doc.blocks.iter().any(|b| matches!(b, Block::Toc { .. })) {
         return engine::Engine::new(options, diags).run(doc);
     }

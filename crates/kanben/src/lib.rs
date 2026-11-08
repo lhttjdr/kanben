@@ -49,6 +49,7 @@ pub fn fit_cells(src: &str, overrides: &[(&str, &str)], available_px: f32, cell_
     for (k, v) in overrides {
         let _ = options.set(k, v);
     }
+    layout::adjust(&parsed.document, &mut options);
     let geo = render::Geometry::new(&options);
     let extra = geo.height() - options.cells as f32;
     let cells = (available_px / cell_px.max(1.0) - extra).floor();
@@ -70,9 +71,9 @@ mod tests {
 
     #[test]
     fn fit_cells_tracks_height() {
-        // 天頭 3 + 留白等约 5.6 字；840px / 30px = 28 字高 → 每行约 22 字。
+        // 天頭 1 + 留白、地腳等共 4 字；840px / 30px = 28 字高 → 每行 24 字。
         let n = fit_cells("甲", &[], 840.0, 30.0);
-        assert_eq!(n, 22);
+        assert_eq!(n, 24);
         assert!(fit_cells("甲", &[], 1680.0, 30.0) > n);
         assert_eq!(fit_cells("甲", &[], 10.0, 30.0), 4);
         assert_eq!(fit_cells("\\setup[head=0]\n甲", &[], 840.0, 30.0), 25);

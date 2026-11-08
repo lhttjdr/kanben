@@ -1,7 +1,7 @@
 .kb {
-  --kb-ink-c: var(--kb-ink, #231d18);
-  --kb-paper-c: var(--kb-paper, #f3ead6);
-  --kb-rule-c: var(--kb-rule, #5a4636);
+  --kb-ink-c: var(--kb-ink, #111);
+  --kb-paper-c: var(--kb-paper, #eeeada);
+  --kb-rule-c: var(--kb-rule, #7c1823);
   --kb-red-c: var(--kb-red, #b0281a);
   --kb-blue-c: var(--kb-blue, #2b4f8a);
   --kb-green-c: var(--kb-green, #2f6b45);
@@ -52,3 +52,6 @@
 .kb .rod line { stroke: var(--kb-ink-c); stroke-width: 6; stroke-linecap: round; }
 .kb .rod.c-red line { stroke: var(--kb-red-c); }
 .kb .rod.c-blue line { stroke: var(--kb-blue-c); }
+.kb text.b { font-weight: 700; }
+.kb .rod circle { stroke: var(--kb-ink-c); stroke-width: 6; fill: none; }
+.kb .colnum line, .kb .colnum circle { stroke: var(--kb-rule-c); stroke-width: 3; stroke-linecap: round; fill: none; opacity: 0.6; }

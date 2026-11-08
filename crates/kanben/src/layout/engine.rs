@@ -186,6 +186,9 @@ impl<'d> Engine<'d> {
                         .collect();
                     let before = self.glyphs.len();
                     self.paragraph(vec![(fmt, items)]);
+                    for g in &mut self.glyphs[before..] {
+                        g.bold = g.role == Role::Main;
+                    }
                     let col = self.glyphs.get(before).map_or(self.col, |g| g.col);
                     if after_toc {
                         heads.push((
@@ -720,6 +723,7 @@ impl<'d> Engine<'d> {
             inverse: false,
             hidden: t.hidden,
             role: Role::Punct,
+            bold: false,
         });
         self.max_col = self.max_col.max(col);
     }
@@ -786,6 +790,7 @@ impl<'d> Engine<'d> {
             inverse,
             hidden: false,
             role: s.role,
+            bold: false,
         });
         true
     }
@@ -1111,8 +1116,8 @@ mod feature_tests {
             .iter()
             .map(|g| (g.col, g.x, g.y, g.text.as_str()))
             .collect();
-        assert_eq!(g[1], (0, -0.75, 1.5, "明"));
-        assert_eq!(g[2], (0, -0.75, 2.5, "算"));
+        assert_eq!(g[1], (0, -0.8, 1.5, "明"));
+        assert_eq!(g[2], (0, -0.8, 2.5, "算"));
         let next: Vec<f32> = g.iter().filter(|g| g.0 == 1).map(|g| g.2).collect();
         assert_eq!(next, [0.5, 3.5, 4.5], "丙在第一格，丁戊跳过被佔的两格");
     }
@@ -1175,6 +1180,7 @@ mod feature_tests {
         let o = Options {
             cells: 10,
             columns: 2,
+            format: crate::layout::Format::Leaves,
             ..Options::default()
         };
         let l = run(

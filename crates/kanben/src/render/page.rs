@@ -3,9 +3,9 @@
 use crate::layout::{Format, Options};
 
 /// 版框外的留白。
-pub const MARGIN: f32 = 0.9;
+pub const MARGIN: f32 = 1.0;
 /// 版框到文字的距离。
-pub const FRAME_PAD: f32 = 0.35;
+pub const FRAME_PAD: f32 = 0.5;
 /// 地腳。
 pub const FOOT: f32 = 1.0;
 
