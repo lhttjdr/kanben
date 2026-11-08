@@ -138,3 +138,4 @@ main {
   .pages { display: block; padding: 0; width: auto; }
   .pages svg { display: block; width: 100%; height: auto; box-shadow: none; page-break-after: always; }
 }
+.status.fonts-loading::after { content: " · 字體載入中…"; }

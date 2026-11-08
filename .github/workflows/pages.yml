@@ -44,7 +44,7 @@ jobs:
           key: fonts-${{ hashFiles('tools/fonts.py') }}
 
       - name: 字體
-        run: test -f web/fonts/fonts.css || mise run fonts
+        run: test -f web/fonts/fonts.json || mise run fonts
 
       - name: 示例 HTML
         run: |

@@ -25,4 +25,4 @@ run = ["cargo fmt --all --check", "cargo clippy --workspace --all-targets -- -D 
 
 [tasks.fonts]
 description = "下载开源字體并切片到 web/fonts（需要 uv）"
-run = "uv run --with fonttools==4.60.1 --with brotli==1.1.0 tools/fonts.py"
+run = "uv run --with uharfbuzz==0.57.0 --with fonttools==4.60.1 --with brotli==1.1.0 tools/fonts.py"

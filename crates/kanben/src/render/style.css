@@ -9,7 +9,7 @@
   --kb-gray-c: var(--kb-gray, #8a8178);
 }
 /* 字體：fangsong（仿宋，默认）、mincho（明朝）、system（系統字體）。
-   KB 系列是开源字體（OFL）切片后的网页字体，见 web/fonts/fonts.css；没有加载时退回系統字體。
+   KB 系列是开源字體（OFL）一字一档的网页字体，由 web/fontload.js 按需登记；没有加载时退回系統字體。
    页面可用 --kb-font 整体覆盖。 */
 .kb {
   --kb-sys: "Noto Serif CJK TC", "Source Han Serif TC", "Noto Serif TC", "Songti TC", "SimSun", serif;

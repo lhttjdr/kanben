@@ -3,3 +3,4 @@
 /examples/*.html
 /web/fonts
 /.cache
+__pycache__/

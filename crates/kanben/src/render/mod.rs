@@ -38,15 +38,16 @@ pub fn standalone(svg: &str) -> String {
 }
 
 /// 完整的 HTML 页面，供命令行导出、打印。
-/// `font_css` 是字體样式表的地址（如 `https://…/fonts/fonts.css`）；不给则用系統字體。
-pub fn html(title: &str, pages: &[String], font_css: Option<&str>) -> String {
+/// `font_loader` 是字體加载脚本的地址（如 `https://…/fontload.js`）；不给则用系統字體。
+pub fn html(title: &str, pages: &[String], font_loader: Option<&str>) -> String {
     let mut out = String::new();
     out.push_str("<!doctype html>\n<html lang=\"zh-Hant\"><head><meta charset=\"utf-8\">");
     out.push_str("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
-    if let Some(href) = font_css {
+    if let Some(src) = font_loader {
+        // 只登记页面上用到的字，浏览器按需下载。
         out.push_str(&format!(
-            "<link rel=\"stylesheet\" href=\"{}\">",
-            svg::escape(href)
+            "<script type=\"module\">import {{ loadFonts }} from \"{}\"; loadFonts(document.body.textContent);</script>",
+            svg::escape(src)
         ));
     }
     out.push_str(&format!(

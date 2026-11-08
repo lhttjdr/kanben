@@ -1,5 +1,6 @@
 // 刊本编辑器：排版全部由 wasm 完成，这里只负责界面。
 import init, { typeset, html, style, example, fitCells, plainText } from "./pkg/kanben_wasm.js";
+import { loadFonts } from "./fontload.js";
 
 // 语法改过一次，旧草稿用不了，换个键。
 const DRAFT_KEY = "kanben:draft:v2";
@@ -76,6 +77,7 @@ function render() {
   const parts = [];
   for (let i = 0; i < result.pageCount; i++) parts.push(result.page(i));
   pages.innerHTML = parts.join("");
+  loadFonts(pages.textContent);
   preview.scrollLeft = first ? preview.scrollWidth : preview.scrollWidth - preview.clientWidth - fromRight;
   first = false;
 
@@ -167,7 +169,7 @@ $("btn-example").addEventListener("click", () => {
 });
 $("btn-save").addEventListener("click", () => download(`${baseName()}.kb`, source.value, "text/plain;charset=utf-8"));
 $("btn-html").addEventListener("click", () =>
-  download(`${baseName()}.html`, html(source.value, overrides(), new URL("fonts/fonts.css", location.href).href), "text/html;charset=utf-8"),
+  download(`${baseName()}.html`, html(source.value, overrides(), new URL("fontload.js", location.href).href), "text/html;charset=utf-8"),
 );
 $("btn-print").addEventListener("click", () => window.print());
 source.addEventListener("keydown", (e) => {
@@ -179,3 +181,7 @@ source.addEventListener("keydown", (e) => {
 });
 
 render();
+
+// 网速慢时字體要等一会儿；状态栏提示一下，免得以为切换没生效。
+const fontNote = () => status.classList.toggle("fonts-loading", document.fonts.status === "loading");
+for (const e of ["loading", "loadingdone", "loadingerror"]) document.fonts.addEventListener(e, fontNote);

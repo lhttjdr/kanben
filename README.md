@@ -55,7 +55,7 @@ mise run fonts        # 生成网页字体到 web/fonts（需要 uv，首次要�
 命令行：
 
 ```sh
-cargo run -p kanben -- 輸入.kb -o 輸出.html --svg 目錄 --font-css https://lhttjdr.github.io/kanben/fonts/fonts.css
+cargo run -p kanben -- 輸入.kb -o 輸出.html --svg 目錄 --font-loader https://lhttjdr.github.io/kanben/fontload.js
 ```
 
 浏览器：
@@ -70,7 +70,7 @@ fitCells(source, "", 900, 30);                          // 按高度算每行字
 plainText(selection.toString());                        // 复制文字：直排標點还原
 ```
 
-SVG 不内嵌样式，页面里引入一次 `style()` 即可；要用开源字體，再引入 `fonts/fonts.css`。颜色、字体都是 CSS 变量：`--kb-font` `--kb-font-kai` `--kb-ink` `--kb-paper` `--kb-red` 等。
+SVG 不内嵌样式，页面里引入一次 `style()` 即可；要用开源字體，再调用 `fontload.js` 的 `loadFonts(文字)`。颜色、字体都是 CSS 变量：`--kb-font` `--kb-font-kai` `--kb-ink` `--kb-paper` `--kb-red` 等。
 
 ## 字體
 
@@ -80,7 +80,7 @@ SVG 不内嵌样式，页面里引入一次 `style()` 即可；要用开源字�
 | 正文（`font=mincho`） | [源樣明體](https://github.com/ButTaiwan/genyo-font) | KB Mincho |
 | 旁批、眉批 | [霞鶩文楷](https://github.com/lxgw/LxgwWenKai) | KB Kai |
 
-三种都是 SIL Open Font License 1.1。切片属于 OFL 所说的修改版，所以改了字体名，每种字体的授权文件放在 `web/fonts/<名>/OFL.txt`。
+三种都是 SIL Open Font License 1.1。`tools/fonts.py` 把每种字体切成一字一个的小文件，`web/fontload.js` 只为页面上出现的字登记字体，所以一页只下载用到的那些字（通常几百 KB）。切字属于 OFL 所说的修改版，所以改了字体名，每种字体的授权文件放在 `web/fonts/<名>/OFL.txt`。
 
 ## 已知限制
 
