@@ -15,6 +15,8 @@ const U: f32 = 100.0;
 const PX: f32 = 28.0;
 /// 字号相对字格的比例，留一点字间距。
 const FONT: f32 = 0.92;
+/// 组字部件相对其格子的放大比例。
+const COMPOSE_FILL: f32 = 1.12;
 
 fn n(v: f32) -> String {
     let r = (v * U * 10.0).round() / 10.0;
@@ -266,6 +268,10 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
         format!(r#" class="{class}""#)
     };
 
+    if g.role == Role::Punct && !g.hidden {
+        judou(s, g, x, y);
+        return;
+    }
     let mut chars = g.text.chars();
     if let (Some(c), None) = (chars.next(), chars.next())
         && let Some((d, vertical)) = rod_digit(c)
@@ -286,16 +292,27 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
             n(size),
             escape(&g.text)
         );
+        // 部件的目标框写在 data-box 里，页面脚本按字形实际的墨迹把部件填满这个框
+        // （见 web/fontload.js 的 fitCompose）；没有脚本时按下面的缩放近似。
+        let part_class = if class.is_empty() {
+            "idsp".to_string()
+        } else {
+            format!("idsp {class}")
+        };
         for (t, r) in parts {
-            let px = x - bw / 2.0 + (r.x + r.w / 2.0) * bw;
-            let py = y - bh / 2.0 + (r.y + r.h / 2.0) * bh;
+            let (bx, by) = (x - bw / 2.0 + r.x * bw, y - bh / 2.0 + r.y * bh);
+            let (pw, ph) = (r.w * bw, r.h * bh);
             let _ = write!(
                 s,
-                r#"<text{class_attr} transform="translate({} {}) scale({:.3} {:.3})" font-size="{}">{}</text>"#,
-                n(px),
-                n(py),
-                r.w,
-                r.h * g.stretch,
+                r#"<text class="{part_class}" data-box="{} {} {} {}" transform="translate({} {}) scale({:.3} {:.3})" font-size="{}">{}</text>"#,
+                n(bx),
+                n(by),
+                n(pw),
+                n(ph),
+                n(bx + pw / 2.0),
+                n(by + ph / 2.0),
+                (r.w * COMPOSE_FILL).min(1.0),
+                (r.h * COMPOSE_FILL).min(1.0) * g.stretch,
                 n(size),
                 escape(&t)
             );
@@ -332,6 +349,94 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
             escape(&text)
         );
     }
+}
+
+/// 句讀：按古書的样子画成小圈、小點、小鉤，不借字体里的標點字形
+/// （那些字形在字身里偏向一角，缩小后位置不准）。原字作透明文字留给复制。
+fn judou(s: &mut String, g: &Glyph, x: f32, y: f32) {
+    let z = g.size;
+    let color = g.color.map_or("c-red", |c| c.css_class());
+    let _ = write!(
+        s,
+        r#"<text class="cp" x="{}" y="{}" font-size="{}">{}</text><g class="jd nosel {color}">"#,
+        n(x),
+        n(y),
+        n(z * 0.3),
+        escape(&g.text)
+    );
+    let w = n(z * 0.032);
+    let mut path = |d: String, filled: bool| {
+        let class = if filled { "f" } else { "s" };
+        let _ = write!(s, r#"<path class="{class}" d="{d}" stroke-width="{w}"/>"#);
+    };
+    let pt = |dx: f32, dy: f32| format!("{} {}", n(x + dx * z), n(y + dy * z));
+    let dot = |dx: f32, dy: f32, r: f32| {
+        format!(
+            "M{} a{r} {r} 0 1 0 {d} 0 a{r} {r} 0 1 0 -{d} 0",
+            pt(dx - r / z, dy),
+            r = n(r),
+            d = n(2.0 * r)
+        )
+    };
+    let comma = |dy: f32| {
+        format!(
+            "{} M{} Q{} {}",
+            dot(0.0, dy - 0.04, 0.026 * z),
+            pt(0.022, dy - 0.04),
+            pt(0.03, dy + 0.03),
+            pt(-0.03, dy + 0.06)
+        )
+    };
+    let corner = |a: (f32, f32), b: (f32, f32), c: (f32, f32)| {
+        format!("M{} L{} L{}", pt(a.0, a.1), pt(b.0, b.1), pt(c.0, c.1))
+    };
+    match g.text.chars().next().unwrap_or(' ') {
+        '。' | '︒' | '．' | '.' => path(dot(0.0, -0.06, 0.07 * z), false),
+        '，' | '︐' | ',' => {
+            path(comma(-0.06), false);
+            path(dot(0.0, -0.1, 0.026 * z), true);
+        }
+        '、' | '︑' => path(
+            format!("M{} L{}", pt(-0.035, -0.14), pt(0.03, -0.05)),
+            false,
+        ),
+        '：' | '︓' | ':' => {
+            path(dot(0.0, -0.2, 0.03 * z), true);
+            path(dot(0.0, -0.06, 0.03 * z), true);
+        }
+        '；' | '︔' | ';' => {
+            path(dot(0.0, -0.22, 0.03 * z), true);
+            path(comma(-0.06), false);
+            path(dot(0.0, -0.1, 0.026 * z), true);
+        }
+        // 前引號：右上角的「┐」；雙引號再套一层。
+        '「' | '﹁' | '“' | '‘' => {
+            path(corner((-0.2, 0.06), (-0.04, 0.06), (-0.04, 0.22)), false)
+        }
+        '『' | '﹃' => {
+            path(corner((-0.2, 0.06), (-0.04, 0.06), (-0.04, 0.22)), false);
+            path(corner((-0.2, 0.12), (-0.1, 0.12), (-0.1, 0.22)), false);
+        }
+        // 後引號：左下角的「└」。
+        '」' | '﹂' | '”' | '’' => {
+            path(corner((0.04, -0.22), (0.04, -0.06), (0.2, -0.06)), false)
+        }
+        '』' | '﹄' => {
+            path(corner((0.04, -0.22), (0.04, -0.06), (0.2, -0.06)), false);
+            path(corner((0.1, -0.22), (0.1, -0.12), (0.2, -0.12)), false);
+        }
+        other => {
+            let _ = write!(
+                s,
+                r#"<text class="f" x="{}" y="{}" font-size="{}">{}</text>"#,
+                n(x),
+                n(y - 0.12 * z),
+                n(z * 0.34),
+                escape(&other.to_string())
+            );
+        }
+    }
+    s.push_str("</g>");
 }
 
 /// 算籌：用直綫画，复制时得到 Unicode 算籌字符。

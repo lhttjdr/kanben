@@ -18,7 +18,6 @@ const SIDE_SIZE: f32 = 0.36;
 const SIDE_STEP: f32 = 0.42;
 const HEAD_SIZE: f32 = 0.46;
 const HEAD_STEP: f32 = 0.5;
-const PUNCT_SCALE: f32 = 0.5;
 const LINE_GAP: f32 = 0.06;
 /// 挂在行末的標點，字心比最后一格低多少（挤进版框留白）。
 const HANG: f32 = 0.2;
@@ -676,8 +675,9 @@ impl<'d> Engine<'d> {
         pre.extend(unit.pre);
         // 前引號先于字输出，这样 SVG 里文字的先后就是阅读顺序，复制出来不乱。
         for (i, p) in pre.iter().enumerate() {
-            let y = s.y - s.ext * 0.32 + i as f32 * s.size * 0.3;
-            self.punct(p, s.col, s.x + s.half_w * 0.9, y, s.size);
+            // 前引號：字的右上角，几个就往下错开。
+            let (x, y) = (s.x + s.half_w, s.y - s.ext * 0.5 + i as f32 * s.size * 0.12);
+            self.punct(p, s.col, x, y, s.size);
         }
         let placed = self.put(&unit.cell, s);
         let mut anchor = Anchor {
@@ -699,8 +699,17 @@ impl<'d> Engine<'d> {
     }
 
     fn post(&mut self, t: &Tok, a: Anchor) {
-        let y = a.y + a.ext * 0.3 + a.posts as f32 * a.size * 0.3;
-        self.punct(t, a.col, a.x + a.half_w * 0.9, y, a.size);
+        // 後引號在字的左下角；句讀在字的右侧、贴着字格下沿，几个就往下错开。
+        let close = t.text.chars().next().is_some_and(is_close_quote);
+        let (x, y) = if close {
+            (a.x - a.half_w, a.y + a.ext * 0.5)
+        } else {
+            (
+                a.x + a.half_w + a.size * 0.1,
+                a.y + a.ext * 0.5 - a.size * 0.12 + a.posts as f32 * a.size * 0.22,
+            )
+        };
+        self.punct(t, a.col, x, y, a.size);
         if let Some(last) = &mut self.last
             && last.col == a.col
             && last.y == a.y
@@ -715,7 +724,7 @@ impl<'d> Engine<'d> {
             col,
             x,
             y,
-            size: base * PUNCT_SCALE,
+            size: base,
             stretch: 1.0,
             text: t.text.clone(),
             compose: false,
@@ -874,6 +883,10 @@ impl<'d> Engine<'d> {
             options: self.o,
         }
     }
+}
+
+fn is_close_quote(c: char) -> bool {
+    matches!(c, '」' | '』' | '”' | '’' | '﹂' | '﹄')
 }
 
 /// 目次里只留文字，不带标记。

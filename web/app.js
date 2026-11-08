@@ -1,6 +1,6 @@
 // 刊本编辑器：排版全部由 wasm 完成，这里只负责界面。
 import init, { typeset, html, style, example, fitCells, plainText } from "./pkg/kanben_wasm.js";
-import { loadFonts } from "./fontload.js";
+import { loadFonts, fitCompose } from "./fontload.js";
 
 // 语法改过一次，旧草稿用不了，换个键。
 const DRAFT_KEY = "kanben:draft:v2";
@@ -78,6 +78,7 @@ function render() {
   for (let i = 0; i < result.pageCount; i++) parts.push(result.page(i));
   pages.innerHTML = parts.join("");
   loadFonts(pages.textContent);
+  fitCompose(pages);
   preview.scrollLeft = first ? preview.scrollWidth : preview.scrollWidth - preview.clientWidth - fromRight;
   first = false;
 
@@ -183,5 +184,9 @@ source.addEventListener("keydown", (e) => {
 render();
 
 // 网速慢时字體要等一会儿；状态栏提示一下，免得以为切换没生效。
-const fontNote = () => status.classList.toggle("fonts-loading", document.fonts.status === "loading");
+const fontNote = () => {
+  status.classList.toggle("fonts-loading", document.fonts.status === "loading");
+  // 字体换了，组字要按新字形重新量。
+  if (document.fonts.status === "loaded") fitCompose(pages);
+};
 for (const e of ["loading", "loadingdone", "loadingerror"]) document.fonts.addEventListener(e, fontNote);

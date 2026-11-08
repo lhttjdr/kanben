@@ -46,7 +46,7 @@ pub fn html(title: &str, pages: &[String], font_loader: Option<&str>) -> String 
     if let Some(src) = font_loader {
         // 只登记页面上用到的字，浏览器按需下载。
         out.push_str(&format!(
-            "<script type=\"module\">import {{ loadFonts }} from \"{}\"; loadFonts(document.body.textContent);</script>",
+            "<script type=\"module\">import {{ loadFonts, fitCompose }} from \"{}\"; loadFonts(document.body.textContent); fitCompose(); document.fonts.addEventListener(\"loadingdone\", () => fitCompose());</script>",
             svg::escape(src)
         ));
     }

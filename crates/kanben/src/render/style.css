@@ -55,3 +55,14 @@
 .kb text.b { font-weight: 700; }
 .kb .rod circle { stroke: var(--kb-ink-c); stroke-width: 6; fill: none; }
 .kb .colnum line, .kb .colnum circle { stroke: var(--kb-rule-c); stroke-width: 3; stroke-linecap: round; fill: none; opacity: 0.6; }
+.kb .jd { color: var(--kb-red-c); }
+.kb .jd.c-ink { color: var(--kb-ink-c); }
+.kb .jd.c-blue { color: var(--kb-blue-c); }
+.kb .jd.c-green { color: var(--kb-green-c); }
+.kb .jd.c-ochre { color: var(--kb-ochre-c); }
+.kb .jd.c-gray { color: var(--kb-gray-c); }
+.kb .jd .s { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+.kb .jd .f { fill: currentColor; stroke: none; }
+.kb .jd text.f { fill: currentColor; }
+/* 组字部件经脚本量过墨迹后，按字形原点（左、基线）定位。 */
+.kb text.idsp.fitted { text-anchor: start; dominant-baseline: alphabetic; }

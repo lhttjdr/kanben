@@ -58,3 +58,37 @@ export async function loadFonts(text) {
     }
   }
 }
+
+const canvas = document.createElement("canvas").getContext("2d");
+
+/**
+ * 组字：量出每个部件字形实际的墨迹范围，把墨迹缩放、移动到它的目标框里。
+ * 不同字体里偏旁（亻、艹 等）画的位置和大小各不相同，只有量过才拼得齐。
+ * 字体加载完后要再调一次（用的字形变了）。
+ */
+export function fitCompose(root = document) {
+  for (const t of root.querySelectorAll("text.idsp[data-box]")) {
+    const [bx, by, bw, bh] = t.dataset.box.split(" ").map(Number);
+    const style = getComputedStyle(t);
+    const size = parseFloat(t.getAttribute("font-size"));
+    canvas.font = `${style.fontWeight} ${size}px ${style.fontFamily}`;
+    canvas.textAlign = "left";
+    canvas.textBaseline = "alphabetic";
+    const m = canvas.measureText(t.textContent);
+    const left = -m.actualBoundingBoxLeft;
+    const right = m.actualBoundingBoxRight;
+    const top = -m.actualBoundingBoxAscent;
+    const bottom = m.actualBoundingBoxDescent;
+    const iw = right - left;
+    const ih = bottom - top;
+    if (!(iw > 0 && ih > 0)) continue;
+    // 留一点边，部件之间不至于粘连。
+    const pad = 0.06;
+    const sx = (bw * (1 - pad)) / iw;
+    const sy = (bh * (1 - pad)) / ih;
+    const tx = bx + bw / 2 - ((left + right) / 2) * sx;
+    const ty = by + bh / 2 - ((top + bottom) / 2) * sy;
+    t.setAttribute("transform", `translate(${tx.toFixed(1)} ${ty.toFixed(1)}) scale(${sx.toFixed(4)} ${sy.toFixed(4)})`);
+    t.classList.add("fitted");
+  }
+}

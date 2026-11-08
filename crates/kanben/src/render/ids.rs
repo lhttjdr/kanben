@@ -89,18 +89,15 @@ fn place(node: &Node, r: Rect, out: &mut Vec<(String, Rect)>) {
     };
     let (op, kids) = kids;
     let rects: Vec<Rect> = match op {
-        '⿰' => vec![r.sub(0.0, 0.0, 0.48, 1.0), r.sub(0.48, 0.0, 0.52, 1.0)],
-        '⿱' => vec![r.sub(0.0, 0.0, 1.0, 0.48), r.sub(0.0, 0.48, 1.0, 0.52)],
-        '⿲' => vec![
-            r.sub(0.0, 0.0, 0.33, 1.0),
-            r.sub(0.33, 0.0, 0.34, 1.0),
-            r.sub(0.67, 0.0, 0.33, 1.0),
-        ],
-        '⿳' => vec![
-            r.sub(0.0, 0.0, 1.0, 0.33),
-            r.sub(0.0, 0.33, 1.0, 0.34),
-            r.sub(0.0, 0.67, 1.0, 0.33),
-        ],
+        // 左右、上下结构按部件的「宽重」「高重」分：偏旁窄、字头矮。
+        '⿰' | '⿲' => {
+            let w: Vec<f32> = kids.iter().map(width_weight).collect();
+            split(r, &w, true)
+        }
+        '⿱' | '⿳' => {
+            let h: Vec<f32> = kids.iter().map(height_weight).collect();
+            split(r, &h, false)
+        }
         '⿴' => vec![r, r.sub(0.25, 0.25, 0.5, 0.5)],
         '⿵' => vec![r, r.sub(0.2, 0.35, 0.6, 0.6)],
         '⿶' => vec![r, r.sub(0.2, 0.05, 0.6, 0.6)],
@@ -115,6 +112,59 @@ fn place(node: &Node, r: Rect, out: &mut Vec<(String, Rect)>) {
     }
 }
 
+/// 按权重把矩形横向（或纵向）切成几块。
+fn split(r: Rect, weights: &[f32], across: bool) -> Vec<Rect> {
+    let total: f32 = weights.iter().sum();
+    let mut at = 0.0;
+    weights
+        .iter()
+        .map(|w| {
+            let share = w / total;
+            let part = if across {
+                r.sub(at, 0.0, share, 1.0)
+            } else {
+                r.sub(0.0, at, 1.0, share)
+            };
+            at += share;
+            part
+        })
+        .collect()
+}
+
+/// 左右并排时常作窄偏旁的部件。
+const NARROW: &str = "氵冫亻彳扌忄犭礻衤阝讠钅饣纟丬木禾米糸糹纟釒钅金口日目月火王玉土石足⻊言訁讠讠女子弓舟耳車车貝贝馬马魚鱼虫犭忄礻衤阝卩阜邑山巾方歹牙片爿矢立田示衣酉革骨食飠饣";
+/// 上下叠放时常作矮字头的部件。
+const SHORT_TOP: &str = "艹⺾䒑宀冖亠⺮竹雨穴罒⺈癶爫⺍乛厶人入八丷";
+/// 上下叠放时常作矮字底的部件。
+const SHORT_BOTTOM: &str = "灬心皿儿廾大小一";
+
+/// 横向占多宽（相对值）。
+fn width_weight(node: &Node) -> f32 {
+    match node {
+        Node::Leaf(s) if s.chars().next().is_some_and(|c| NARROW.contains(c)) => 0.62,
+        Node::Leaf(_) => 1.0,
+        Node::Op('⿰' | '⿲', kids) => kids.iter().map(width_weight).sum(),
+        Node::Op(_, kids) => kids.iter().map(width_weight).fold(0.0, f32::max),
+    }
+}
+
+/// 纵向占多高（相对值）。
+fn height_weight(node: &Node) -> f32 {
+    let one = |c: &str, set: &str, w: f32| {
+        c.chars()
+            .next()
+            .is_some_and(|c| set.contains(c))
+            .then_some(w)
+    };
+    match node {
+        Node::Leaf(s) => one(s, SHORT_TOP, 0.5)
+            .or_else(|| one(s, SHORT_BOTTOM, 0.6))
+            .unwrap_or(1.0),
+        Node::Op('⿱' | '⿳', kids) => kids.iter().map(height_weight).sum(),
+        Node::Op(_, kids) => kids.iter().map(height_weight).fold(0.0, f32::max),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -124,13 +174,22 @@ mod tests {
         let c = components("⿰木鬼").unwrap();
         assert_eq!(c.len(), 2);
         assert_eq!(c[0].0, "木");
-        assert!(c[0].1.w < 0.5 && c[1].1.x > 0.4);
+        assert!(c[0].1.w < 0.5 && c[1].1.x > 0.35);
     }
 
     #[test]
     fn nested() {
         let c = components("⿱艹⿰氵去").unwrap();
         assert_eq!(c.iter().map(|c| c.0.as_str()).collect::<String>(), "艹氵去");
+        // 艹 只佔上面三分之一；氵 窄于 去。
+        assert!((c[0].1.h - 1.0 / 3.0).abs() < 0.01);
+        assert!(c[1].1.w < c[2].1.w);
+    }
+
+    #[test]
+    fn radicals_are_narrow() {
+        let c = components("⿰木鬼").unwrap();
+        assert!(c[0].1.w > 0.35 && c[0].1.w < 0.42, "{:?}", c[0].1);
     }
 
     #[test]
