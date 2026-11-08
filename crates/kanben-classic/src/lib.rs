@@ -9,4 +9,5 @@
 pub mod jsre;
 pub mod layout;
 pub mod marks;
+pub mod misc;
 pub mod text;

@@ -208,3 +208,52 @@ pub fn note_replan(
     )
     .map(|plan| NotePlan { plan })
 }
+
+use kanben_classic::misc;
+
+/// `getBrowserInfo`：返回 `名\t版本`。
+#[wasm_bindgen(js_name = browserInfo)]
+pub fn browser_info(ua: &str) -> String {
+    let (名, 版本) = misc::瀏覽器(ua);
+    format!("{名}\t{版本}")
+}
+
+/// `detectOS`
+#[wasm_bindgen(js_name = detectOs)]
+pub fn detect_os(ua: &str, platform: &str) -> String {
+    misc::系統(ua, platform).to_string()
+}
+
+/// `數.讀百以內合文`
+#[wasm_bindgen(js_name = readUnder100)]
+pub fn read_under_100(n: u32) -> String {
+    kanben_classic::text::讀百以內合文(n as usize)
+}
+
+/// `數.讀十萬以內`
+#[wasm_bindgen(js_name = readUnder100k)]
+pub fn read_under_100k(n: f64) -> String {
+    misc::讀十萬以內(n.max(0.0) as u64)
+}
+
+/// `析整數`
+#[wasm_bindgen(js_name = parseHanNumber)]
+pub fn parse_han_number(s: &str) -> f64 {
+    misc::析整數(s)
+}
+
+/// `整數籌`：返回 `數\t類\t寬窄\t負號`。`n` 為字串時按碼子字處理，為數字時按數值。
+#[wasm_bindgen(js_name = rodStyle)]
+pub fn rod_style(n: &JsValue, units_vertical: bool) -> String {
+    let r = match n.as_f64() {
+        Some(v) => misc::整數籌_數(v, units_vertical),
+        None => misc::整數籌_字(&n.as_string().unwrap_or_default(), units_vertical),
+    };
+    format!(
+        "{}\t{}\t{}\t{}",
+        r.數,
+        r.類,
+        kanben_classic::text::num(r.寬窄),
+        r.負號
+    )
+}
