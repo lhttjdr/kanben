@@ -8,8 +8,17 @@
   --kb-ochre-c: var(--kb-ochre, #9a6a1c);
   --kb-gray-c: var(--kb-gray, #8a8178);
 }
+/* 字體：fangsong（仿宋，默认）、mincho（明朝）、system（系統字體）。
+   KB 系列是开源字體（OFL）切片后的网页字体，见 web/fonts/fonts.css；没有加载时退回系統字體。
+   页面可用 --kb-font 整体覆盖。 */
+.kb {
+  --kb-sys: "Noto Serif CJK TC", "Source Han Serif TC", "Noto Serif TC", "Songti TC", "SimSun", serif;
+  --kb-face: "KB Fangsong", "KB Mincho", var(--kb-sys);
+}
+.kb.f-mincho { --kb-face: "KB Mincho", var(--kb-sys); }
+.kb.f-system { --kb-face: var(--kb-sys); }
 .kb text {
-  font-family: var(--kb-font, "Noto Serif CJK TC", "Source Han Serif TC", "Noto Serif TC", "Songti TC", "SimSun", serif);
+  font-family: var(--kb-font, var(--kb-face));
   fill: var(--kb-ink-c);
   text-anchor: middle;
   dominant-baseline: central;
@@ -39,3 +48,7 @@
   user-select: none;
 }
 .kb text.cp { fill: transparent; }
+.kb text.kai { font-family: var(--kb-font-kai, "KB Kai", var(--kb-font, var(--kb-face))); }
+.kb .rod line { stroke: var(--kb-ink-c); stroke-width: 6; stroke-linecap: round; }
+.kb .rod.c-red line { stroke: var(--kb-red-c); }
+.kb .rod.c-blue line { stroke: var(--kb-blue-c); }

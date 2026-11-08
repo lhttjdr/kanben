@@ -1,7 +1,7 @@
 //! 排版用的最小单位：字（Tok）与字格（Unit）。
 
 use super::options::PunctStyle;
-use crate::syntax::ast::{Color, EmphMark, Shape};
+use crate::syntax::ast::{Color, EmphMark, Encl};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Tok {
@@ -81,8 +81,8 @@ pub enum MarkKind {
     Title,
     Emphasis(EmphMark),
     Stroke,
-    Inverse(Shape),
-    Frame(Shape),
+    Inverse(Encl),
+    Frame(Encl),
     Delete,
 }
 

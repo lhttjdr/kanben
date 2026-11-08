@@ -3,6 +3,27 @@
 use crate::syntax::ast::{Color, MetaEntry};
 use crate::syntax::span::Diagnostic;
 
+/// 正文字體。
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Font {
+    /// 仿宋（刻本字）。
+    Fangsong,
+    /// 明朝（老宋體）。
+    Mincho,
+    /// 不指定，用系統字體。
+    System,
+}
+
+impl Font {
+    pub fn name(self) -> &'static str {
+        match self {
+            Font::Fangsong => "fangsong",
+            Font::Mincho => "mincho",
+            Font::System => "system",
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Format {
     /// 冊頁：按半葉切分，每葉兩個半葉，中間是版心。
@@ -40,6 +61,7 @@ pub struct Options {
     pub punct: PunctStyle,
     pub punct_color: Color,
     pub title_mark: TitleMark,
+    pub font: Font,
     /// 書名，印在版心。
     pub title: String,
     /// 卷名，印在版心。
@@ -61,6 +83,7 @@ impl Default for Options {
             punct: PunctStyle::Judou,
             punct_color: Color::Red,
             title_mark: TitleMark::Wavy,
+            font: Font::Fangsong,
             title: String::new(),
             volume: String::new(),
             studio: String::new(),
@@ -71,7 +94,8 @@ impl Default for Options {
 }
 
 /// `\setup` 可用的键，用于报错提示。
-pub const KEYS: &str = "columns, cells, format, punct, punct-color, title-mark, column-width, head";
+pub const KEYS: &str =
+    "columns, cells, format, punct, punct-color, title-mark, font, column-width, head";
 
 impl Options {
     pub fn from_meta(meta: &[MetaEntry], diags: &mut Vec<Diagnostic>) -> Options {
@@ -137,6 +161,14 @@ impl Options {
                     "wavy" => TitleMark::Wavy,
                     "bracket" => TitleMark::Bracket,
                     _ => return Err(choice("wavy, bracket")),
+                }
+            }
+            "font" => {
+                self.font = match value {
+                    "fangsong" => Font::Fangsong,
+                    "mincho" => Font::Mincho,
+                    "system" => Font::System,
+                    _ => return Err(choice("fangsong, mincho, system")),
                 }
             }
             "column-width" => self.column_width = float(1.0, 3.0)?,

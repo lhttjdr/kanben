@@ -343,6 +343,7 @@ impl<'d> Parser<'d> {
                 }
                 let el = match resolved.kind {
                     ElementKind::Compose(_) => self.compose(children, span),
+                    ElementKind::Rod(_) => self.rod(children, span),
                     kind => Element {
                         kind,
                         children,
@@ -351,6 +352,30 @@ impl<'d> Parser<'d> {
                 };
                 out.push(Inline::Element(el));
             }
+        }
+    }
+
+    fn rod(&mut self, children: Vec<Inline>, span: Span) -> Element {
+        let mut text = String::new();
+        for child in &children {
+            collect_text(child, &mut text);
+        }
+        let digits: String = text.chars().filter(char::is_ascii_digit).collect();
+        if digits.is_empty() {
+            self.diags.push(Diagnostic::error(
+                span,
+                "\\rod 的內容應是阿拉伯數字，如 \\rod{1971}",
+            ));
+        } else if digits.chars().count() != text.chars().filter(|c| !c.is_whitespace()).count() {
+            self.diags.push(Diagnostic::warning(
+                span,
+                "\\rod 裏只能寫阿拉伯數字，其餘的字已忽略",
+            ));
+        }
+        Element {
+            kind: ElementKind::Rod(digits),
+            children: Vec::new(),
+            span,
         }
     }
 
@@ -388,7 +413,7 @@ pub fn collect_text(node: &Inline, out: &mut String) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::syntax::ast::Shape;
+    use crate::syntax::ast::{Encl, Shape};
 
     fn parse(s: &str) -> (Vec<Inline>, Vec<Diagnostic>) {
         let mut d = Vec::new();
@@ -429,7 +454,13 @@ mod tests {
         assert!(d.is_empty());
         assert_eq!(
             kinds(&r),
-            [format!("{:?}T(注)", ElementKind::Inverse(Shape::Round))]
+            [format!(
+                "{:?}T(注)",
+                ElementKind::Inverse(Encl {
+                    shape: Shape::Round,
+                    narrow: false
+                })
+            )]
         );
     }
 

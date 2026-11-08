@@ -1,3 +1,5 @@
 /target
 /web/pkg
 /examples/*.html
+/web/fonts
+/.cache

@@ -4,9 +4,10 @@ use std::collections::HashMap;
 
 use super::flatten::{Flattener, Item};
 use super::token::{MarkKind, Tok, TokKind, Unit, group, is_hanging};
-use super::{Deco, Glyph, Layout, Options, Role};
+use super::{Deco, Format, Glyph, Layout, Options, Role};
+use crate::render::numerals::hanzi;
 use crate::syntax::ast::{AttrKind, Block, Color, Document, Inline, Shape};
-use crate::syntax::span::Diagnostic;
+use crate::syntax::span::{Diagnostic, Span};
 
 // 尺寸（单位：字）。
 const NOTE_SIZE: f32 = 0.52;
@@ -87,6 +88,15 @@ struct Seg {
     y1: f32,
 }
 
+/// 目次的一條。
+#[derive(Clone, Debug, PartialEq)]
+pub struct TocEntry {
+    pub level: u8,
+    pub toks: Vec<Tok>,
+    /// 在第幾葉；長卷或第一遍排版時没有。
+    pub leaf: Option<i32>,
+}
+
 pub struct Engine<'d> {
     o: Options,
     diags: &'d mut Vec<Diagnostic>,
@@ -109,6 +119,10 @@ pub struct Engine<'d> {
     /// 右、左旁行各自排到了哪里，避免重叠。
     side_end: [(i32, f32); 2],
     max_col: i32,
+    /// 兼行佔去的格：行 → [起, 止)。
+    reserved: HashMap<i32, Vec<(i32, i32)>>,
+    /// 目次内容（由上一遍排版得出）。
+    toc: Vec<TocEntry>,
 }
 
 impl<'d> Engine<'d> {
@@ -130,14 +144,29 @@ impl<'d> Engine<'d> {
             head_next: f32::MIN,
             side_end: [(-1, 0.0); 2],
             max_col: 0,
+            reserved: HashMap::new(),
+            toc: Vec::new(),
         }
+    }
+
+    pub fn with_toc(mut self, toc: Vec<TocEntry>) -> Self {
+        self.toc = toc;
+        self
     }
 
     fn cells(&self) -> i32 {
         self.o.cells
     }
 
-    pub fn run(mut self, doc: &Document) -> Layout {
+    pub fn run(self, doc: &Document) -> Layout {
+        self.run_collect(doc).0
+    }
+
+    /// 排版，并返回排出的標題（含所在的行）。
+    pub fn run_collect(mut self, doc: &Document) -> (Layout, Vec<(TocEntry, i32)>) {
+        let mut heads = Vec::new();
+        // 目次只列它后面的标题。
+        let mut after_toc = false;
         for block in &doc.blocks {
             match block {
                 Block::Heading { level, content, .. } => {
@@ -147,7 +176,27 @@ impl<'d> Engine<'d> {
                         ..LineFmt::default()
                     };
                     let items = self.flatten(content);
+                    let toks: Vec<Tok> = items
+                        .iter()
+                        .filter_map(|i| match i {
+                            Item::Main(t) => Some(t.iter().filter(|t| !t.hidden).map(plain)),
+                            _ => None,
+                        })
+                        .flatten()
+                        .collect();
+                    let before = self.glyphs.len();
                     self.paragraph(vec![(fmt, items)]);
+                    let col = self.glyphs.get(before).map_or(self.col, |g| g.col);
+                    if after_toc {
+                        heads.push((
+                            TocEntry {
+                                level: *level,
+                                toks,
+                                leaf: None,
+                            },
+                            col,
+                        ));
+                    }
                 }
                 Block::Paragraph { attrs, lines, .. } => {
                     let mut base = LineFmt::default();
@@ -174,9 +223,51 @@ impl<'d> Engine<'d> {
                     self.start_block();
                     self.col += *count as i32;
                 }
+                Block::Toc { depth, .. } => {
+                    after_toc = true;
+                    self.toc(*depth);
+                }
             }
         }
-        self.finish()
+        (self.finish(), heads)
+    }
+
+    /// 目次：每個標題一行，按級低格；葉碼靠底。
+    fn toc(&mut self, depth: u8) {
+        let entries: Vec<TocEntry> = self
+            .toc
+            .iter()
+            .filter(|e| e.level <= depth)
+            .cloned()
+            .collect();
+        let cells = self.cells();
+        for e in entries {
+            self.start_block();
+            let indent = (i32::from(e.level) - 1).clamp(0, cells - 1);
+            self.row = indent;
+            self.cont = indent;
+            self.item(Item::Main(e.toks));
+            if let Some(leaf) = e.leaf {
+                let num: Vec<Tok> = hanzi(leaf as u32 + 1)
+                    .chars()
+                    .map(|c| Tok {
+                        text: c.to_string(),
+                        kind: TokKind::Cell,
+                        tone: None,
+                        style: Default::default(),
+                        compose: false,
+                        hidden: false,
+                    })
+                    .collect();
+                let target = cells - num.len() as i32;
+                if self.row < target {
+                    self.row = target;
+                } else {
+                    self.row += 1;
+                }
+                self.item(Item::Main(num));
+            }
+        }
     }
 
     fn flatten(&mut self, nodes: &[Inline]) -> Vec<Item> {
@@ -295,6 +386,27 @@ impl<'d> Engine<'d> {
                     self.row += 1;
                 }
             }
+            Item::Half { toks, left } => {
+                let g = group(toks);
+                self.lead(g.lead);
+                for u in g.units {
+                    self.ensure_room();
+                    let slot = Slot {
+                        col: self.col,
+                        x: if left { -NOTE_X } else { NOTE_X },
+                        y: self.row as f32 + 0.5,
+                        size: NOTE_SIZE,
+                        stretch: NOTE_STRETCH,
+                        half_w: NOTE_SIZE / 2.0,
+                        ext: 1.0,
+                        role: Role::Note,
+                    };
+                    self.place(u, slot, true);
+                    self.row += 1;
+                }
+                self.pending.extend(g.tail);
+            }
+            Item::Span { toks, prev, n, at } => self.span(toks, prev, i32::from(n), at),
             Item::Double(toks) => self.double(toks),
             Item::Side { toks, left } => self.side(toks, left),
             Item::Head(toks) => self.head(toks),
@@ -303,11 +415,103 @@ impl<'d> Engine<'d> {
     }
 
     fn ensure_room(&mut self) {
-        if self.row >= self.cells() {
-            self.col += 1;
-            self.row = self.cont;
+        loop {
+            if self.row >= self.cells() {
+                self.col += 1;
+                self.row = self.cont;
+            } else if let Some(end) = self.reserved_end(self.col, self.row) {
+                self.row = end;
+            } else {
+                break;
+            }
         }
         self.used = true;
+    }
+
+    /// 若 (col, row) 已被兼行佔去，返回佔到哪一格为止。
+    fn reserved_end(&self, col: i32, row: i32) -> Option<i32> {
+        self.reserved
+            .get(&col)?
+            .iter()
+            .find(|(a, b)| (*a..*b).contains(&row))
+            .map(|r| r.1)
+    }
+
+    /// 本行从 `row` 起，到哪一格之前都可以连续放字。
+    fn room_until(&self, col: i32, row: i32) -> i32 {
+        self.reserved
+            .get(&col)
+            .and_then(|v| v.iter().filter(|r| r.0 >= row).map(|r| r.0).min())
+            .unwrap_or(self.cells())
+    }
+
+    /// 兼行：字排在本行与后（前）`n` 行的正中，佔去这几行的同样几格。
+    fn span(&mut self, toks: Vec<Tok>, prev: bool, n: i32, at: Span) {
+        let g = group(toks);
+        self.lead(g.lead);
+        let len = g.units.len() as i32;
+        self.ensure_room();
+        if self.row + len > self.room_until(self.col, self.row) && self.row > self.cont {
+            self.col += 1;
+            self.row = self.cont;
+            self.ensure_room();
+        }
+        let start = self.row;
+        let end = start + len;
+        let shift = n as f32 * self.o.column_width / 2.0;
+        let x = if prev { shift } else { -shift };
+        let cols: Vec<i32> = if prev {
+            (self.col - n..self.col).collect()
+        } else {
+            (self.col + 1..=self.col + n).collect()
+        };
+        let half = |c: i32| c.div_euclid(self.o.columns);
+        if self.o.format == Format::Leaves && cols.iter().any(|&c| half(c) != half(self.col)) {
+            self.diags.push(Diagnostic::warning(
+                at,
+                "兼行跨過了半葉的邊界（版心或版框），請換一行再寫",
+            ));
+        }
+        if prev {
+            let clash = self.glyphs.iter().any(|gl| {
+                cols.contains(&gl.col)
+                    && !gl.hidden
+                    && gl.y > start as f32
+                    && gl.y < end as f32
+                    && matches!(gl.role, Role::Main | Role::Note | Role::Punct)
+            });
+            if clash {
+                self.diags.push(Diagnostic::warning(
+                    at,
+                    "兼行與前面的行重疊：前行在這幾格已經有字",
+                ));
+            }
+        }
+        for c in cols {
+            self.reserved.entry(c).or_default().push((start, end));
+        }
+        self.decos.push(Deco::Gap {
+            col: self.col,
+            x,
+            half_w: 0.5,
+            y0: start as f32,
+            y1: end as f32,
+        });
+        for u in g.units {
+            let slot = Slot {
+                col: self.col,
+                x,
+                y: self.row as f32 + 0.5,
+                size: 1.0,
+                stretch: 1.0,
+                half_w: 0.5,
+                ext: 1.0,
+                role: Role::Main,
+            };
+            self.place(u, slot, true);
+            self.row += 1;
+        }
+        self.pending.extend(g.tail);
     }
 
     /// 雙行夾注：每格两个小字，先右后左；最后一段左右平分。
@@ -317,7 +521,7 @@ impl<'d> Engine<'d> {
         let mut rest: Vec<Unit> = g.units;
         while !rest.is_empty() {
             self.ensure_room();
-            let avail = (self.cells() - self.row) as usize;
+            let avail = (self.room_until(self.col, self.row) - self.row) as usize;
             let need = rest.len().div_ceil(2);
             let k = need.min(avail);
             let mut take = (2 * k).min(rest.len());
@@ -533,16 +737,22 @@ impl<'d> Engine<'d> {
                     mark,
                     color: Some(self.o.punct_color),
                 }),
-                MarkKind::Inverse(Shape::Each) | MarkKind::Frame(Shape::Each) => {
+                MarkKind::Inverse(e) | MarkKind::Frame(e) if e.shape.is_each() => {
                     let filled = matches!(m.kind, MarkKind::Inverse(_));
                     inverse |= filled;
-                    let r = s.half_w.max(s.ext * 0.5 * s.size) * 0.98;
+                    let lantern = e.shape == Shape::Lantern;
+                    let r = if lantern {
+                        s.ext * 0.5 * s.stretch.max(1.0)
+                    } else {
+                        s.half_w.max(s.ext * 0.5 * s.size) * 0.98
+                    };
                     self.decos.push(Deco::Ring {
                         col: s.col,
                         x: s.x,
                         y: s.y,
                         r,
                         filled,
+                        hex: lantern,
                     });
                 }
                 kind => {
@@ -630,15 +840,23 @@ impl<'d> Engine<'d> {
                     wavy: false,
                     color: Some(Color::Red),
                 },
-                MarkKind::Inverse(shape) | MarkKind::Frame(shape) => Deco::Box {
-                    col: s.col,
-                    x: s.x,
-                    half_w: s.half_w + 0.04,
-                    y0: s.y0 + 0.02,
-                    y1: s.y1 - 0.02,
-                    shape,
-                    filled: matches!(s.kind, MarkKind::Inverse(_)),
-                },
+                MarkKind::Inverse(e) | MarkKind::Frame(e) => {
+                    // 正文的框默认贴着界行；窄式和小字的框只包住字。
+                    let wide = !e.narrow && s.x.abs() < 1e-3 && s.half_w >= 0.5;
+                    Deco::Box {
+                        col: s.col,
+                        x: s.x,
+                        half_w: if wide {
+                            self.o.column_width / 2.0 - 0.03
+                        } else {
+                            s.half_w + 0.04
+                        },
+                        y0: s.y0 + 0.02,
+                        y1: s.y1 - 0.02,
+                        shape: e.shape,
+                        filled: matches!(s.kind, MarkKind::Inverse(_)),
+                    }
+                }
                 MarkKind::Emphasis(_) => continue,
             };
             self.decos.push(deco);
@@ -653,6 +871,15 @@ impl<'d> Engine<'d> {
     }
 }
 
+/// 目次里只留文字，不带标记。
+fn plain(t: &Tok) -> Tok {
+    Tok {
+        style: Default::default(),
+        tone: None,
+        ..t.clone()
+    }
+}
+
 /// 一段要佔多少格（用于靠底排）。
 fn measure(items: &[Item]) -> i32 {
     let cells = |t: &[Tok]| {
@@ -663,7 +890,10 @@ fn measure(items: &[Item]) -> i32 {
     items
         .iter()
         .map(|i| match i {
-            Item::Main(t) | Item::Single(t) => cells(t),
+            Item::Main(t)
+            | Item::Single(t)
+            | Item::Half { toks: t, .. }
+            | Item::Span { toks: t, .. } => cells(t),
             Item::Double(t) => (cells(t) + 1) / 2,
             _ => 0,
         })
@@ -848,5 +1078,124 @@ mod container_tests {
             [2.5, 3.5, 0.5],
             "容器低二格，段首再低一格累加，容器外不低"
         );
+    }
+}
+
+#[cfg(test)]
+mod feature_tests {
+    use crate::layout::{Deco, Options, Role, layout};
+    use crate::syntax::ast::Shape;
+    use crate::syntax::parse;
+
+    fn run(src: &str, o: Options) -> crate::layout::Layout {
+        let parsed = parse(src);
+        let mut d = parsed.diagnostics;
+        let l = layout(&parsed.document, o, &mut d);
+        assert!(d.is_empty(), "{d:?}");
+        l
+    }
+
+    fn cells(n: i32) -> Options {
+        Options {
+            cells: n,
+            ..Options::default()
+        }
+    }
+
+    #[test]
+    fn span_reserves_next_column() {
+        // 「明算」跨到下一行：排在两行正中，下一行的这两格空出来。
+        let l = run("甲\\span{明算}乙\n丙丁戊", cells(10));
+        let g: Vec<(i32, f32, f32, &str)> = l
+            .glyphs
+            .iter()
+            .map(|g| (g.col, g.x, g.y, g.text.as_str()))
+            .collect();
+        assert_eq!(g[1], (0, -0.75, 1.5, "明"));
+        assert_eq!(g[2], (0, -0.75, 2.5, "算"));
+        let next: Vec<f32> = g.iter().filter(|g| g.0 == 1).map(|g| g.2).collect();
+        assert_eq!(next, [0.5, 3.5, 4.5], "丙在第一格，丁戊跳过被佔的两格");
+    }
+
+    #[test]
+    fn half_note_takes_cells_on_one_side() {
+        let l = run("甲\\note[left]{乙丙}丁", cells(10));
+        let notes: Vec<(f32, f32)> = l
+            .glyphs
+            .iter()
+            .filter(|g| g.role == Role::Note)
+            .map(|g| (g.x, g.y))
+            .collect();
+        assert_eq!(notes, [(-0.26, 1.5), (-0.26, 2.5)]);
+        assert_eq!(l.glyphs.last().unwrap().y, 3.5);
+    }
+
+    #[test]
+    fn rods_alternate_vertical_and_horizontal() {
+        let l = run("\\rod{1971}", cells(10));
+        let text: String = l.glyphs.iter().map(|g| g.text.as_str()).collect();
+        // 千位橫、百位縱、十位橫、個位縱。
+        assert_eq!(text, "\u{1D369}\u{1D368}\u{1D36F}\u{1D360}");
+        let l = run("\\rod{105}", cells(10));
+        let text: String = l.glyphs.iter().map(|g| g.text.as_str()).collect();
+        assert_eq!(text, "\u{1D360}〇\u{1D364}");
+    }
+
+    #[test]
+    fn frames_touch_rules_unless_narrow() {
+        let wide = run("\\frame{甲}", cells(10));
+        let narrow = run("\\frame[narrow]{甲}", cells(10));
+        let hw = |l: &crate::layout::Layout| match l.decos[0] {
+            Deco::Box { half_w, .. } => half_w,
+            _ => panic!(),
+        };
+        assert!(hw(&wide) > 0.7 && hw(&narrow) < 0.6);
+        let lantern = run("\\inv[lantern]{甲乙}", cells(10));
+        assert_eq!(
+            lantern
+                .decos
+                .iter()
+                .filter(|d| matches!(d, Deco::Ring { hex: true, .. }))
+                .count(),
+            2
+        );
+        let flower = run("\\frame[flower]{甲乙}", cells(10));
+        assert!(matches!(
+            flower.decos[0],
+            Deco::Box {
+                shape: Shape::Flower,
+                ..
+            }
+        ));
+    }
+
+    #[test]
+    fn toc_lists_headings_with_leaf_numbers() {
+        // 每半葉 2 行、每葉 4 行：卷二落在第二葉。
+        let o = Options {
+            cells: 10,
+            columns: 2,
+            ..Options::default()
+        };
+        let l = run(
+            "\\toc\n\n\\heading{卷一}\n\n甲\n\n乙\n\n\\heading{卷二}\n\n丙",
+            o,
+        );
+        let col0: String = l
+            .glyphs
+            .iter()
+            .filter(|g| g.col == 0)
+            .map(|g| g.text.as_str())
+            .collect();
+        let col1: String = l
+            .glyphs
+            .iter()
+            .filter(|g| g.col == 1)
+            .map(|g| g.text.as_str())
+            .collect();
+        assert_eq!(col0, "卷一一");
+        assert_eq!(col1, "卷二二");
+        let last = l.glyphs.iter().rfind(|g| g.col == 1).unwrap();
+        assert_eq!(last.y, 9.5, "葉碼靠底");
     }
 }

@@ -330,6 +330,26 @@ impl<'d> BlockParser<'d> {
                     span: cmd.span,
                 });
             }
+            "toc" => {
+                self.flush_blanks();
+                let depth = match commands::number_arg(&cmd.args, "depth") {
+                    Ok(n) => n.unwrap_or(6).clamp(1, 6),
+                    Err((span, msg)) => {
+                        self.diags.push(Diagnostic::error(span, msg));
+                        6
+                    }
+                };
+                if cmd.body.is_some() {
+                    self.diags.push(Diagnostic::warning(
+                        cmd.span,
+                        "\\toc 不帶內容，寫作 \\toc 或 \\toc[2]",
+                    ));
+                }
+                self.blocks.push(Block::Toc {
+                    depth,
+                    span: cmd.span,
+                });
+            }
             "end" => {
                 let env = self.body_text(cmd).unwrap_or_default();
                 match self.envs.last() {

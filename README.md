@@ -8,6 +8,7 @@
 - **解析**：先按通用形式解析，再查命令表；出错带行列号。
 - **排版**：按字格计算坐标，结果确定，不依赖浏览器测量，可单元测试。夾注、眉批、分葉都在 Rust 里算好位置。
 - **输出**：SVG，每葉一页，文字仍可搜索、复制。
+- **字體**：正文仿宋或明朝，批注楷書，都是开源字體（OFL），切片成网页字体按需加载；算籌、圈點等由引擎直接画出，不靠字体。
 
 语法说明见 [docs/語法.md](docs/語法.md)，示例见 [examples/通鑑.kb](examples/通鑑.kb)。
 
@@ -33,6 +34,7 @@ crates/kanben/            核心库（无外部依赖）
   src/bin/kanben.rs       命令行
 crates/kanben-wasm/       浏览器接口（wasm-bindgen）
 web/                      编辑器页面：左边写源码，右边实时预览
+tools/fonts.py            下载开源字體、切片成网页字体（生成 web/fonts）
 ```
 
 ## 使用
@@ -45,6 +47,7 @@ mise run test         # 运行全部测试
 mise run serve        # 编译 wasm 并在 http://localhost:8765 打开编辑器
 mise run example      # 命令行排印示例到 examples/通鑑.html
 mise run lint         # 格式与 clippy 检查
+mise run fonts        # 生成网页字体到 web/fonts（需要 uv，首次要下载约 50 MB）
 ```
 
 推送到 `main` 后，GitHub Actions（`.github/workflows/pages.yml`）会检查、测试、编译 wasm，并把 `web/` 发布到 GitHub Pages；示例的排印结果在 `example.html`。
@@ -52,7 +55,7 @@ mise run lint         # 格式与 clippy 检查
 命令行：
 
 ```sh
-cargo run -p kanben -- 輸入.kb -o 輸出.html --svg 目錄
+cargo run -p kanben -- 輸入.kb -o 輸出.html --svg 目錄 --font-css https://lhttjdr.github.io/kanben/fonts/fonts.css
 ```
 
 浏览器：
@@ -67,9 +70,20 @@ fitCells(source, "", 900, 30);                          // 按高度算每行字
 plainText(selection.toString());                        // 复制文字：直排標點还原
 ```
 
-SVG 不内嵌样式，页面里引入一次 `style()` 即可。颜色、字体都是 CSS 变量：`--kb-font` `--kb-ink` `--kb-paper` `--kb-red` 等。
+SVG 不内嵌样式，页面里引入一次 `style()` 即可；要用开源字體，再引入 `fonts/fonts.css`。颜色、字体都是 CSS 变量：`--kb-font` `--kb-font-kai` `--kb-ink` `--kb-paper` `--kb-red` 等。
+
+## 字體
+
+| 用途 | 字體 | 网页字体名 |
+|---|---|---|
+| 正文（`font=fangsong`，默认） | [朱雀仿宋](https://github.com/TrionesType/zhuque) | KB Fangsong |
+| 正文（`font=mincho`） | [源樣明體](https://github.com/ButTaiwan/genyo-font) | KB Mincho |
+| 旁批、眉批 | [霞鶩文楷](https://github.com/lxgw/LxgwWenKai) | KB Kai |
+
+三种都是 SIL Open Font License 1.1。切片属于 OFL 所说的修改版，所以改了字体名，每种字体的授权文件放在 `web/fonts/<名>/OFL.txt`。
 
 ## 已知限制
 
-- 字形用系统字体（默认 Noto Serif CJK TC），没有内嵌字体；佔格模式下直排標點的位置取决于字体。
-- 还没有实现：表格、插图、算籌數碼、跨行（兼行）、目次。
+- 佔格模式下直排標點的位置取决于字体。
+- 兼行跨过版心（半葉的最后一行）时不会自动避开。
+- 还没有实现：表格、插图。

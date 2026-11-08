@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>刊本排版</title>
+<link rel="stylesheet" href="fonts/fonts.css">
 <link rel="stylesheet" href="app.css">
 <style id="kb-style"></style>
 </head>
@@ -32,6 +33,14 @@
       <option value="bracket">括號</option>
     </select>
   </label>
+  <label>字體
+    <select id="opt-font">
+      <option value="">依源碼</option>
+      <option value="fangsong">仿宋</option>
+      <option value="mincho">明朝</option>
+      <option value="system">系統</option>
+    </select>
+  </label>
   <label>行數 <input id="opt-columns" type="number" min="1" max="40" placeholder="依源碼"></label>
   <label>字數 <input id="opt-cells" type="number" min="4" max="60" placeholder="依源碼"></label>
   <label title="按預覽區高度決定每行字數，窗口變了就重排"><input id="opt-fit" type="checkbox"> 字數隨窗口</label>
@@ -53,17 +62,21 @@
       <table>
         <tr><th>寫法</th><th>效果</th></tr>
         <tr><td><code>\note{…}</code> <code>\note[single]{…}</code></td><td>雙行夾注 / 單行小注</td></tr>
-        <tr><td><code>\side{…}</code> <code>\side[left]{…}</code></td><td>旁行小字</td></tr>
+        <tr><td><code>\note[right]{…}</code> <code>\note[left]{…}</code></td><td>側行小注（只排一邊，佔格）</td></tr>
+        <tr><td><code>\side{…}</code> <code>\side[left]{…}</code></td><td>旁行小字、句段旁注</td></tr>
         <tr><td><code>\comment{…}</code></td><td>朱色旁批</td></tr>
         <tr><td><code>\head{…}</code></td><td>眉批（天頭）</td></tr>
         <tr><td><code>\name{…}</code></td><td>專名號</td></tr>
         <tr><td><code>《…》</code> <code>〈…〉</code> <code>\title{…}</code></td><td>書名號（正文標點，畫法見「書名號」選項）</td></tr>
         <tr><td><code>\emph{…}</code> [circle dot sesame comma]</td><td>圈點</td></tr>
         <tr><td><code>\stroke{…}</code></td><td>朱抹</td></tr>
-        <tr><td><code>\inv{…}</code> <code>\frame{…}</code> [square round hex each]</td><td>陰文、墨圍（each 為逐字圓圈）</td></tr>
+        <tr><td><code>\inv{…}</code> <code>\frame{…}</code> [square round hex flower each lantern]</td><td>陰文、墨圍：平頭、圓頭、六角、花頭、逐字圓圈、疊燈籠；加 <code>narrow</code> 為窄式</td></tr>
+        <tr><td><code>\span{…}</code> <code>\span[prev]{…}</code></td><td>兼行：跨到後（前）一行</td></tr>
+        <tr><td><code>\rod{1971}</code></td><td>算籌數碼</td></tr>
         <tr><td><code>\del{…}</code> <code>\ins{…}</code></td><td>校勘刪、增</td></tr>
         <tr><td><code>\color[blue]{…}</code> red blue green ochre ink gray</td><td>字色</td></tr>
         <tr><td><code>\compose{⿰木鬼}</code></td><td>IDS 組字</td></tr>
+        <tr><td><code>\toc</code> <code>\toc[2]</code></td><td>目次（自動葉碼）</td></tr>
         <tr><td><code>朝〪</code> 〪〭〫〬</td><td>四聲圈發（附前一字）</td></tr>
         <tr><td>換行 <code>\\</code> <code>\\[2]</code></td><td>另起一行 / 另起並擡二格</td></tr>
         <tr><td><code>\heading{…}</code> <code>\heading[2]{…}</code></td><td>標題</td></tr>

@@ -5,7 +5,8 @@ use std::fmt::Write;
 use super::ids;
 use super::numerals::hanzi;
 use super::page::{FRAME_PAD, Geometry, MARGIN};
-use crate::layout::{Deco, Format, Glyph, Layout};
+use crate::layout::flatten::rod_digit;
+use crate::layout::{Deco, Format, Glyph, Layout, Role};
 use crate::syntax::ast::{EmphMark, Shape};
 
 /// SVG 坐标：一个字 = 100。线宽直接用这个单位写。
@@ -43,7 +44,8 @@ pub fn page(layout: &Layout, geo: &Geometry, page: i32) -> String {
     let mut s = String::new();
     let _ = write!(
         s,
-        r#"<svg xmlns="http://www.w3.org/2000/svg" class="kb" viewBox="0 0 {} {}" width="{:.0}" height="{:.0}" data-page="{}"><g class="kb-root">"#,
+        r#"<svg xmlns="http://www.w3.org/2000/svg" class="kb f-{}" viewBox="0 0 {} {}" width="{:.0}" height="{:.0}" data-page="{}"><g class="kb-root">"#,
+        layout.options.font.name(),
         n(w),
         n(h),
         w * PX,
@@ -210,6 +212,13 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
     if let Some(c) = g.color {
         class.push_str(c.css_class());
     }
+    // 旁批、眉批用楷書。
+    if matches!(g.role, Role::Side | Role::Head) {
+        if !class.is_empty() {
+            class.push(' ');
+        }
+        class.push_str("kai");
+    }
     if g.hidden {
         class = "cp".into();
     } else if g.inverse {
@@ -224,6 +233,13 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
         format!(r#" class="{class}""#)
     };
 
+    let mut chars = g.text.chars();
+    if let (Some(c), None) = (chars.next(), chars.next())
+        && let Some((d, vertical)) = rod_digit(c)
+    {
+        rod(s, &g.text, d, vertical, x, y, size, &class);
+        return;
+    }
     if g.compose
         && let Some(parts) = ids::components(&g.text)
     {
@@ -285,6 +301,61 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
     }
 }
 
+/// 算籌：用直綫画，复制时得到 Unicode 算籌字符。
+#[allow(clippy::too_many_arguments)]
+fn rod(s: &mut String, text: &str, d: u8, vertical: bool, x: f32, y: f32, size: f32, class: &str) {
+    let _ = write!(
+        s,
+        r#"<text class="cp" x="{}" y="{}" font-size="{}">{}</text><g class="rod nosel {class}">"#,
+        n(x),
+        n(y),
+        n(size),
+        escape(text)
+    );
+    let h = size * 0.36;
+    let mut line = |x0: f32, y0: f32, x1: f32, y1: f32| {
+        let _ = write!(
+            s,
+            r#"<line x1="{}" y1="{}" x2="{}" y2="{}"/>"#,
+            n(x + x0),
+            n(y + y0),
+            n(x + x1),
+            n(y + y1)
+        );
+    };
+    let spread = |k: u8| -> Vec<f32> {
+        let k = f32::from(k);
+        (0..k as u8)
+            .map(|i| {
+                if k == 1.0 {
+                    0.0
+                } else {
+                    -h * 0.8 + 1.6 * h * f32::from(i) / (k - 1.0)
+                }
+            })
+            .collect()
+    };
+    match (vertical, d) {
+        // 縱式：一至五是并排的竖筹；六至九上面一横当五。
+        (true, 1..=5) => spread(d).into_iter().for_each(|p| line(p, -h, p, h)),
+        (true, _) => {
+            line(-h, -h, h, -h);
+            spread(d - 5)
+                .into_iter()
+                .for_each(|p| line(p, -h * 0.55, p, h));
+        }
+        // 橫式：一至五是叠起的横筹；六至九上面一竖当五。
+        (false, 1..=5) => spread(d).into_iter().for_each(|p| line(-h, p, h, p)),
+        (false, _) => {
+            line(0.0, -h, 0.0, -h * 0.1);
+            spread(d - 5)
+                .into_iter()
+                .for_each(|p| line(-h, h * 0.2 + p * 0.45, h, h * 0.2 + p * 0.45));
+        }
+    }
+    s.push_str("</g>");
+}
+
 fn color_class(c: Option<crate::syntax::ast::Color>) -> &'static str {
     c.map_or("c-ink", |c| c.css_class())
 }
@@ -332,6 +403,31 @@ fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
                         n(y1 - c)
                     );
                 }
+                Shape::Flower => {
+                    // 花頭：两端作如意云头，中间尖、两肩圆。
+                    let w = x1 - x0;
+                    let c = (half_w * 0.75).min((y1 - y0) / 3.0);
+                    let xm = cx + x;
+                    let _ = write!(
+                        s,
+                        r#"<path {class} d="M{a} {b} Q{a} {top} {l} {sh} Q{lm} {y0} {xm} {y0} Q{rm} {y0} {r} {sh} Q{x1} {top} {x1} {b} L{x1} {bb} Q{x1} {bot} {r} {shb} Q{rm} {y1} {xm} {y1} Q{lm} {y1} {l} {shb} Q{a} {bot} {a} {bb} Z"/>"#,
+                        a = n(x0),
+                        b = n(y0 + c),
+                        top = n(y0 + c * 0.25),
+                        l = n(x0 + w * 0.25),
+                        sh = n(y0 + c * 0.45),
+                        lm = n(xm - w * 0.12),
+                        y0 = n(y0),
+                        xm = n(xm),
+                        rm = n(xm + w * 0.12),
+                        r = n(x1 - w * 0.25),
+                        x1 = n(x1),
+                        bb = n(y1 - c),
+                        bot = n(y1 - c * 0.25),
+                        shb = n(y1 - c * 0.45),
+                        y1 = n(y1),
+                    );
+                }
                 _ => {
                     let r = if shape == Shape::Round { half_w } else { 0.05 };
                     let _ = write!(
@@ -347,7 +443,12 @@ fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
             }
         }
         Deco::Ring {
-            x, y, r, filled, ..
+            x,
+            y,
+            r,
+            filled,
+            hex,
+            ..
         } => {
             if filled != filled_pass {
                 return;
@@ -357,13 +458,50 @@ fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
             } else {
                 r#"class="frame" stroke-width="3""#
             };
-            let _ = write!(
-                s,
-                r#"<circle {class} cx="{}" cy="{}" r="{}"/>"#,
-                n(cx + x),
-                n(top + y),
-                n(r)
-            );
+            let (x, y) = (cx + x, top + y);
+            if hex {
+                // 疊燈籠：上下尖的六角，一字一个，上下相接。
+                let w = r * 0.9;
+                let c = r * 0.4;
+                let _ = write!(
+                    s,
+                    r#"<polygon {class} points="{},{} {},{} {},{} {},{} {},{} {},{}"/>"#,
+                    n(x),
+                    n(y - r),
+                    n(x + w),
+                    n(y - r + c),
+                    n(x + w),
+                    n(y + r - c),
+                    n(x),
+                    n(y + r),
+                    n(x - w),
+                    n(y + r - c),
+                    n(x - w),
+                    n(y - r + c)
+                );
+            } else {
+                let _ = write!(
+                    s,
+                    r#"<circle {class} cx="{}" cy="{}" r="{}"/>"#,
+                    n(x),
+                    n(y),
+                    n(r)
+                );
+            }
+        }
+        Deco::Gap {
+            x, half_w, y0, y1, ..
+        } => {
+            if filled_pass {
+                let _ = write!(
+                    s,
+                    r#"<rect class="paper" x="{}" y="{}" width="{}" height="{}"/>"#,
+                    n(cx + x - half_w),
+                    n(top + y0),
+                    n(half_w * 2.0),
+                    n(y1 - y0)
+                );
+            }
         }
         _ if filled_pass => {}
         Deco::Line {

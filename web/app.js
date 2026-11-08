@@ -18,6 +18,7 @@ const controls = {
   format: $("opt-format"),
   punct: $("opt-punct"),
   "title-mark": $("opt-title"),
+  font: $("opt-font"),
   columns: $("opt-columns"),
   cells: $("opt-cells"),
 };
@@ -166,7 +167,7 @@ $("btn-example").addEventListener("click", () => {
 });
 $("btn-save").addEventListener("click", () => download(`${baseName()}.kb`, source.value, "text/plain;charset=utf-8"));
 $("btn-html").addEventListener("click", () =>
-  download(`${baseName()}.html`, html(source.value, overrides()), "text/html;charset=utf-8"),
+  download(`${baseName()}.html`, html(source.value, overrides(), new URL("fonts/fonts.css", location.href).href), "text/html;charset=utf-8"),
 );
 $("btn-print").addEventListener("click", () => window.print());
 source.addEventListener("keydown", (e) => {

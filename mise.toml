@@ -22,3 +22,7 @@ run = "cargo run -q -p kanben -- examples/通鑑.kb -o examples/通鑑.html"
 [tasks.lint]
 description = "格式与 clippy 检查"
 run = ["cargo fmt --all --check", "cargo clippy --workspace --all-targets -- -D warnings"]
+
+[tasks.fonts]
+description = "下载开源字體并切片到 web/fonts（需要 uv）"
+run = "uv run --with fonttools==4.60.1 --with brotli==1.1.0 tools/fonts.py"

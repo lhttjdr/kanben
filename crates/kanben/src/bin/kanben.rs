@@ -1,6 +1,6 @@
 //! 命令行：`kanben 輸入.kb [-o 輸出.html]`
 //!
-//! 输出 HTML（全部页面）；`--svg 目录` 则每页另存一张 SVG。
+//! 输出 HTML（全部页面）；`--svg 目录` 则每页另存一张 SVG；`--font-css 網址` 让 HTML 加载网页字體。
 
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -12,19 +12,21 @@ fn main() -> ExitCode {
     let mut input = None;
     let mut out_html = None;
     let mut svg_dir = None;
+    let mut font_css = None;
     while let Some(a) = args.next() {
         match a.as_str() {
             "-o" => out_html = args.next().map(PathBuf::from),
             "--svg" => svg_dir = args.next().map(PathBuf::from),
+            "--font-css" => font_css = args.next(),
             "-h" | "--help" => {
-                eprintln!("用法：kanben 輸入.kb [-o 輸出.html] [--svg 目錄]");
+                eprintln!("用法：kanben 輸入.kb [-o 輸出.html] [--svg 目錄] [--font-css 網址]");
                 return ExitCode::SUCCESS;
             }
             _ => input = Some(PathBuf::from(a)),
         }
     }
     let Some(input) = input else {
-        eprintln!("用法：kanben 輸入.kb [-o 輸出.html] [--svg 目錄]");
+        eprintln!("用法：kanben 輸入.kb [-o 輸出.html] [--svg 目錄] [--font-css 網址]");
         return ExitCode::FAILURE;
     };
     let src = match std::fs::read_to_string(&input) {
@@ -51,7 +53,7 @@ fn main() -> ExitCode {
     }
 
     let html_path = out_html.unwrap_or_else(|| input.with_extension("html"));
-    let html = kanben::render::html(&out.options.title, &out.pages);
+    let html = kanben::render::html(&out.options.title, &out.pages, font_css.as_deref());
     if let Err(e) = std::fs::write(&html_path, html) {
         eprintln!("寫不了 {}：{e}", html_path.display());
         return ExitCode::FAILURE;

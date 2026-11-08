@@ -58,16 +58,17 @@ pub fn typeset(src: &str, overrides: &str) -> Typeset {
     }
 }
 
-/// 导出完整 HTML（可打印）。
+/// 导出完整 HTML（可打印）。`font_css` 为字體样式表的地址，空串表示不加载字體。
 #[wasm_bindgen]
-pub fn html(src: &str, overrides: &str) -> String {
+pub fn html(src: &str, overrides: &str, font_css: &str) -> String {
     let pairs = parse_overrides(overrides);
     let refs: Vec<(&str, &str)> = pairs
         .iter()
         .map(|(k, v)| (k.as_str(), v.as_str()))
         .collect();
     let out = kanben::typeset(src, &refs);
-    kanben::render::html(&out.options.title, &out.pages)
+    let font_css = (!font_css.is_empty()).then_some(font_css);
+    kanben::render::html(&out.options.title, &out.pages, font_css)
 }
 
 /// 按可用高度（像素）算每行字數，让一个字约 `cell_px` 像素高。

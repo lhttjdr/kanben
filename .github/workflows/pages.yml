@@ -33,6 +33,19 @@ jobs:
       - name: 编译 wasm
         run: mise run build
 
+      - uses: astral-sh/setup-uv@v6
+
+      # 字體切片较慢，按脚本内容缓存
+      - uses: actions/cache@v4
+        with:
+          path: |
+            web/fonts
+            .cache/fonts
+          key: fonts-${{ hashFiles('tools/fonts.py') }}
+
+      - name: 字體
+        run: test -f web/fonts/fonts.css || mise run fonts
+
       - name: 示例 HTML
         run: |
           mise run example

@@ -13,9 +13,27 @@ pub enum Item {
     Main(Vec<Tok>),
     Double(Vec<Tok>),
     Single(Vec<Tok>),
-    Side { toks: Vec<Tok>, left: bool },
+    /// 側行小注：只排右（左）半邊。
+    Half {
+        toks: Vec<Tok>,
+        left: bool,
+    },
+    /// 兼行：排在當前行與後（前）`n` 行的正中。
+    Span {
+        toks: Vec<Tok>,
+        prev: bool,
+        n: u8,
+        /// 源碼位置，用于提示。
+        at: Span,
+    },
+    Side {
+        toks: Vec<Tok>,
+        left: bool,
+    },
     Head(Vec<Tok>),
-    Break { raise: u8 },
+    Break {
+        raise: u8,
+    },
 }
 
 pub struct Flattener<'d> {
@@ -178,6 +196,40 @@ impl<'d> Flattener<'d> {
                 c.style.color = Some(*color);
                 self.walk(&el.children, &c, out, cur);
             }
+            ElementKind::Rod(digits) => {
+                let len = digits.len();
+                for (i, d) in digits.bytes().enumerate() {
+                    cur.push(Tok {
+                        text: rod_char(d - b'0', (len - 1 - i) % 2 == 0).to_string(),
+                        kind: TokKind::Cell,
+                        tone: None,
+                        style: ctx.style.clone(),
+                        compose: false,
+                        hidden: false,
+                    });
+                }
+            }
+            ElementKind::Span { prev, n } => {
+                if let Some(inside) = ctx.nested {
+                    self.diags.push(Diagnostic::warning(
+                        el.span,
+                        format!("{inside}裏不能兼行，按普通文字排"),
+                    ));
+                    self.walk(&el.children, ctx, out, cur);
+                    return;
+                }
+                let mut c = ctx.clone();
+                c.nested = Some("兼行");
+                let mut buf = Vec::new();
+                self.walk(&el.children, &c, out, &mut buf);
+                flush(out, cur);
+                out.push(Item::Span {
+                    toks: buf,
+                    prev: *prev,
+                    n: *n,
+                    at: el.span,
+                });
+            }
             ElementKind::Compose(ids) => {
                 if !ids.is_empty() {
                     cur.push(Tok {
@@ -203,12 +255,14 @@ impl<'d> Flattener<'d> {
             }
             ElementKind::DoubleNote
             | ElementKind::SingleNote
+            | ElementKind::HalfNote { .. }
             | ElementKind::Side { .. }
             | ElementKind::Comment
             | ElementKind::HeadNote => {
                 let name = match el.kind {
                     ElementKind::DoubleNote => "雙行夾注",
                     ElementKind::SingleNote => "單行小注",
+                    ElementKind::HalfNote { .. } => "側行小注",
                     ElementKind::HeadNote => "眉批",
                     _ => "旁行",
                 };
@@ -231,6 +285,7 @@ impl<'d> Flattener<'d> {
                 out.push(match el.kind {
                     ElementKind::DoubleNote => Item::Double(buf),
                     ElementKind::SingleNote => Item::Single(buf),
+                    ElementKind::HalfNote { left } => Item::Half { toks: buf, left },
                     ElementKind::Side { left } => Item::Side { toks: buf, left },
                     ElementKind::Comment => Item::Side {
                         toks: buf,
@@ -240,6 +295,26 @@ impl<'d> Flattener<'d> {
                 });
             }
         }
+    }
+}
+
+/// 算籌數碼：個位、百位……用縱式，十位、千位……用橫式（「一縱十橫」）。零作〇。
+pub fn rod_char(d: u8, vertical: bool) -> char {
+    match d {
+        0 => '〇',
+        d => {
+            let base = if vertical { 0x1D360 } else { 0x1D369 };
+            char::from_u32(base + u32::from(d) - 1).expect("counting rod range")
+        }
+    }
+}
+
+/// 算籌字符 → (數字, 是否縱式)。
+pub fn rod_digit(c: char) -> Option<(u8, bool)> {
+    match c as u32 {
+        v @ 0x1D360..=0x1D368 => Some(((v - 0x1D360 + 1) as u8, true)),
+        v @ 0x1D369..=0x1D371 => Some(((v - 0x1D369 + 1) as u8, false)),
+        _ => None,
     }
 }
 

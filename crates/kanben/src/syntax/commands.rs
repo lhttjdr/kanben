@@ -2,7 +2,7 @@
 //!
 //! 解析器只认形式，不认命令；所有命令名、参数都在这里。
 
-use super::ast::{Color, ElementKind, EmphMark, Shape};
+use super::ast::{Color, ElementKind, EmphMark, Encl, Shape};
 use super::span::Span;
 
 /// 方括号里的一个参数：`round` 或 `raise=2`。
@@ -24,15 +24,14 @@ pub enum Kind {
 pub fn kind_of(name: &str) -> Option<Kind> {
     Some(match name {
         "note" | "side" | "comment" | "head" | "name" | "title" | "emph" | "stroke" | "inv"
-        | "frame" | "del" | "ins" | "color" | "compose" => Kind::Inline,
+        | "frame" | "del" | "ins" | "color" | "compose" | "span" | "rod" => Kind::Inline,
         "setup" | "book" | "volume" | "studio" | "heading" | "begin" | "end" | "indent"
-        | "raise" | "bottom" => Kind::Block,
+        | "raise" | "bottom" | "toc" => Kind::Block,
         _ => return None,
     })
 }
 
-pub const INLINE_COMMANDS: &str =
-    "note, side, comment, head, name, title, emph, stroke, inv, frame, del, ins, color, compose";
+pub const INLINE_COMMANDS: &str = "note, side, comment, head, name, title, emph, stroke, inv, frame, del, ins, color, compose, span, rod";
 
 pub struct Resolved {
     pub kind: ElementKind,
@@ -43,34 +42,21 @@ pub struct Resolved {
 pub fn resolve_inline(name: &str, args: &[Arg]) -> Resolved {
     let mut warnings = Vec::new();
     // 每个命令只接受一个位置参数，取值来自固定的几个词。
-    let mut choose = |allowed: &[&str]| -> Option<String> {
-        let mut picked = None;
-        for a in args {
-            if a.key.is_some() || !allowed.contains(&a.value.as_str()) {
-                warnings.push((
-                    a.span,
-                    format!(
-                        "\\{name} 不接受參數「{}」（可用：{}）",
-                        show(a),
-                        allowed.join(", ")
-                    ),
-                ));
-            } else {
-                picked = Some(a.value.clone());
-            }
-        }
-        picked
+    let choose = |allowed: &[&str], warnings: &mut Vec<(Span, String)>| {
+        choose_from(name, args, allowed, warnings)
     };
     let kind = match name {
-        "note" => match choose(&["double", "single"]).as_deref() {
+        "note" => match choose(&["double", "single", "right", "left"], &mut warnings).as_deref() {
             Some("single") => ElementKind::SingleNote,
+            Some("right") => ElementKind::HalfNote { left: false },
+            Some("left") => ElementKind::HalfNote { left: true },
             _ => ElementKind::DoubleNote,
         },
         "side" => ElementKind::Side {
-            left: choose(&["right", "left"]).as_deref() == Some("left"),
+            left: choose(&["right", "left"], &mut warnings).as_deref() == Some("left"),
         },
         "emph" => ElementKind::Emphasis(
-            match choose(&["circle", "dot", "sesame", "comma"]).as_deref() {
+            match choose(&["circle", "dot", "sesame", "comma"], &mut warnings).as_deref() {
                 Some("dot") => EmphMark::Dot,
                 Some("sesame") => EmphMark::Sesame,
                 Some("comma") => EmphMark::Comma,
@@ -78,21 +64,51 @@ pub fn resolve_inline(name: &str, args: &[Arg]) -> Resolved {
             },
         ),
         "inv" | "frame" => {
-            let shape = match choose(&["square", "round", "hex", "each"]).as_deref() {
+            // `narrow` 可以和形狀並用：`\frame[hex, narrow]`。
+            let narrow = args.iter().any(|a| a.key.is_none() && a.value == "narrow");
+            let rest: Vec<Arg> = args
+                .iter()
+                .filter(|a| !(a.key.is_none() && a.value == "narrow"))
+                .cloned()
+                .collect();
+            let shape = match choose_from(name, &rest, SHAPES, &mut warnings).as_deref() {
                 Some("round") => Shape::Round,
                 Some("hex") => Shape::Hex,
+                Some("flower") => Shape::Flower,
                 Some("each") => Shape::Each,
+                Some("lantern") => Shape::Lantern,
                 _ => Shape::Square,
             };
+            let encl = Encl { shape, narrow };
             if name == "inv" {
-                ElementKind::Inverse(shape)
+                ElementKind::Inverse(encl)
             } else {
-                ElementKind::Frame(shape)
+                ElementKind::Frame(encl)
             }
+        }
+        "span" => {
+            let mut prev = false;
+            let mut n = 1;
+            for a in args {
+                match (a.key.as_deref(), a.value.as_str()) {
+                    (None, "next") => prev = false,
+                    (None, "prev") => prev = true,
+                    (None | Some("n"), v)
+                        if v.parse::<u8>().is_ok_and(|v| (1..=3).contains(&v)) =>
+                    {
+                        n = v.parse().expect("checked");
+                    }
+                    _ => warnings.push((
+                        a.span,
+                        format!("\\span 不接受參數「{}」（可用：next, prev, 1–3）", show(a)),
+                    )),
+                }
+            }
+            ElementKind::Span { prev, n }
         }
         "color" => {
             let names: Vec<&str> = Color::NAMES.split(", ").collect();
-            let picked = choose(&names);
+            let picked = choose(&names, &mut warnings);
             if picked.is_none() && args.is_empty() {
                 warnings.push((
                     Span::default(),
@@ -109,7 +125,7 @@ pub fn resolve_inline(name: &str, args: &[Arg]) -> Resolved {
             )
         }
         other => {
-            choose(&[]);
+            choose(&[], &mut warnings);
             match other {
                 "comment" => ElementKind::Comment,
                 "head" => ElementKind::HeadNote,
@@ -119,11 +135,41 @@ pub fn resolve_inline(name: &str, args: &[Arg]) -> Resolved {
                 "del" => ElementKind::Delete,
                 "ins" => ElementKind::Insert,
                 "compose" => ElementKind::Compose(String::new()),
+                "rod" => ElementKind::Rod(String::new()),
                 _ => unreachable!("not an inline command: {other}"),
             }
         }
     };
     Resolved { kind, warnings }
+}
+
+const SHAPES: &[&str] = &[
+    "square", "round", "hex", "flower", "each", "lantern", "narrow",
+];
+
+/// 从固定的几个词里取一个位置参数，其余的记为提示。
+fn choose_from(
+    name: &str,
+    args: &[Arg],
+    allowed: &[&str],
+    warnings: &mut Vec<(Span, String)>,
+) -> Option<String> {
+    let mut picked = None;
+    for a in args {
+        if a.key.is_some() || !allowed.contains(&a.value.as_str()) {
+            warnings.push((
+                a.span,
+                format!(
+                    "\\{name} 不接受參數「{}」（可用：{}）",
+                    show(a),
+                    allowed.join(", ")
+                ),
+            ));
+        } else {
+            picked = Some(a.value.clone());
+        }
+    }
+    picked
 }
 
 /// 取唯一的数字参数（`[2]` 或 `[raise=2]` 都行）。
@@ -176,11 +222,17 @@ mod tests {
         );
         assert_eq!(
             resolve_inline("inv", &[arg("round")]).kind,
-            ElementKind::Inverse(Shape::Round)
+            ElementKind::Inverse(Encl {
+                shape: Shape::Round,
+                narrow: false
+            })
         );
         assert_eq!(
-            resolve_inline("frame", &[arg("hex")]).kind,
-            ElementKind::Frame(Shape::Hex)
+            resolve_inline("frame", &[arg("hex"), arg("narrow")]).kind,
+            ElementKind::Frame(Encl {
+                shape: Shape::Hex,
+                narrow: true
+            })
         );
         assert_eq!(
             resolve_inline("color", &[arg("blue")]).kind,

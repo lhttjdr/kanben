@@ -12,9 +12,10 @@ pub mod flatten;
 pub mod options;
 pub mod token;
 
-use crate::syntax::ast::{Color, Document, EmphMark, Shape};
+use crate::syntax::ast::{Block, Color, Document, EmphMark, Shape};
 use crate::syntax::span::Diagnostic;
-pub use options::{Format, Options, PunctStyle, TitleMark};
+use engine::TocEntry;
+pub use options::{Font, Format, Options, PunctStyle, TitleMark};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Glyph {
@@ -64,6 +65,8 @@ pub enum Deco {
         y: f32,
         r: f32,
         filled: bool,
+        /// 六角（疊燈籠），否则是圆。
+        hex: bool,
     },
     /// 專名號、書名號、抹、刪除綫。
     Line {
@@ -85,6 +88,14 @@ pub enum Deco {
     },
     /// 四聲圈發。
     Tone { col: i32, x: f32, y: f32, r: f32 },
+    /// 兼行处断开界行：用纸色盖住。
+    Gap {
+        col: i32,
+        x: f32,
+        half_w: f32,
+        y0: f32,
+        y1: f32,
+    },
 }
 
 impl Deco {
@@ -94,7 +105,8 @@ impl Deco {
             | Deco::Ring { col, .. }
             | Deco::Line { col, .. }
             | Deco::Mark { col, .. }
-            | Deco::Tone { col, .. } => col,
+            | Deco::Tone { col, .. }
+            | Deco::Gap { col, .. } => col,
         }
     }
 }
@@ -109,5 +121,29 @@ pub struct Layout {
 }
 
 pub fn layout(doc: &Document, options: Options, diags: &mut Vec<Diagnostic>) -> Layout {
-    engine::Engine::new(options, diags).run(doc)
+    if !doc.blocks.iter().any(|b| matches!(b, Block::Toc { .. })) {
+        return engine::Engine::new(options, diags).run(doc);
+    }
+    // 有目次：先排一遍得出各標題在第幾葉，再带着葉碼重排；葉碼变了就再来，最多几遍。
+    let per_leaf = options.columns * 2;
+    let leaves = options.format == Format::Leaves;
+    let mut toc: Vec<TocEntry> = Vec::new();
+    for _ in 0..4 {
+        let mut scratch = Vec::new();
+        let (_, heads) = engine::Engine::new(options.clone(), &mut scratch)
+            .with_toc(toc.clone())
+            .run_collect(doc);
+        let next: Vec<TocEntry> = heads
+            .into_iter()
+            .map(|(mut e, col)| {
+                e.leaf = leaves.then(|| col.div_euclid(per_leaf));
+                e
+            })
+            .collect();
+        if next == toc {
+            break;
+        }
+        toc = next;
+    }
+    engine::Engine::new(options, diags).with_toc(toc).run(doc)
 }
