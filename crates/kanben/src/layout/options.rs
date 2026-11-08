@@ -140,8 +140,7 @@ impl Options {
     }
 }
 
-pub const KEYS: &str =
-    "columns, cells, format, punct, punct-color, title-mark, font, engine, numbers, column-width, head";
+pub const KEYS: &str = "columns, cells, format, punct, punct-color, title-mark, font, engine, numbers, column-width, head";
 
 impl Options {
     pub fn from_meta(meta: &[MetaEntry], diags: &mut Vec<Diagnostic>) -> Options {
