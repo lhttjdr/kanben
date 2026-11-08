@@ -3,6 +3,17 @@
 import init, * as wasm from "./pkg/kanben_classic_wasm.js";
 import { install } from "./engine.js";
 
+// 嵌入模式（?embed）：隱去原版的編輯區，只排印父頁面發來的文本。
+const embed = new URLSearchParams(location.search).has("embed");
+if (embed) {
+  document.documentElement.classList.add("kb-embed");
+  const css = document.createElement("style");
+  css.textContent =
+    ".kb-embed #編輯函, .kb-embed #介欄, .kb-embed #劉海 { display: none !important; }" +
+    ".kb-embed #結果函 { width: 100% !important; height: 100% !important; }";
+  document.head.appendChild(css);
+}
+
 await init();
 window.__kanbenWasm = wasm;
 install();
@@ -23,3 +34,16 @@ await load(new URL("editor.js", import.meta.url).href);
 for (const f of document.querySelectorAll("iframe[data-src]")) f.src = new URL(f.dataset.src, new URL("./", import.meta.url)).href;
 // main.js 在 window.onload 裏綁定事件；若頁面早已載入完，補調一次。
 if (document.readyState === "complete") window.onload?.();
+
+if (embed) {
+  window.addEventListener("message", (e) => {
+    if (e.source !== window.parent || e.data?.type !== "kanben-classic") return;
+    const ed = document.getElementById("編輯器");
+    ed.value = e.data.text;
+    ed.dispatchEvent(new Event("input"));
+    document.getElementById("bookName").textContent = e.data.book || "自排";
+    window.單卷.排版();
+    window.parent.postMessage({ type: "kanben-classic-done" }, "*");
+  });
+  window.parent.postMessage({ type: "kanben-classic-ready" }, "*");
+}

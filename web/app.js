@@ -1,5 +1,5 @@
 // 刊本编辑器：排版全部由 wasm 完成，这里只负责界面。
-import init, { typeset, html, style, example, fitCells, plainText } from "./pkg/kanben_wasm.js";
+import init, { typeset, html, style, example, fitCells, plainText, toClassic } from "./pkg/kanben_wasm.js";
 import { loadFonts, fitCompose } from "./fontload.js";
 
 // 语法改过一次，旧草稿用不了，换个键。
@@ -20,6 +20,7 @@ const controls = {
   punct: $("opt-punct"),
   "title-mark": $("opt-title"),
   font: $("opt-font"),
+  engine: $("opt-engine"),
   columns: $("opt-columns"),
   cells: $("opt-cells"),
 };
@@ -124,9 +125,47 @@ function render() {
     (errors ? ` · ${errors} 處錯誤` : "") +
     (warnings ? ` · ${warnings} 處提示` : "");
   document.title = result.title ? `${result.title} · 刊本` : "刊本排版";
-  showSettings(JSON.parse(result.settings));
+  const settings = JSON.parse(result.settings);
+  showSettings(settings);
   result.free();
+  if (settings.engine === "classic") renderClassic(diags);
+  else showClassic(false);
 }
+
+// ───── 原版排法預覽：源碼譯成原版標記，交給嵌入的原版排版器（web/classic）排印 ─────
+const classicFrame = $("classic-frame");
+let classicReady = false;
+let classicPending = null;
+
+function showClassic(on) {
+  classicFrame.hidden = !on;
+  pages.hidden = on;
+}
+
+function renderClassic(svgDiags) {
+  showClassic(true);
+  const c = toClassic(source.value);
+  classicPending = { type: "kanben-classic", text: c.text, book: c.book };
+  const notes = JSON.parse(c.diagnostics).filter((d) => d.message.startsWith("原版排法"));
+  c.free();
+  showDiagnostics([...svgDiags, ...notes]);
+  if (!classicFrame.src) classicFrame.src = "classic/type/set/?embed";
+  if (classicReady) postClassic();
+}
+
+function postClassic() {
+  if (!classicPending) return;
+  classicFrame.contentWindow.postMessage(classicPending, "*");
+  classicPending = null;
+}
+
+window.addEventListener("message", (e) => {
+  if (e.source !== classicFrame.contentWindow) return;
+  if (e.data?.type === "kanben-classic-ready") {
+    classicReady = true;
+    postClassic();
+  }
+});
 
 function showDiagnostics(diags) {
   diagList.replaceChildren(

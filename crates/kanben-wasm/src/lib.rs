@@ -193,3 +193,41 @@ mod tests {
         assert!(bad.diagnostics.contains("columns"));
     }
 }
+
+/// 譯成原版排版器的標記（見 `kanben::classic`）。
+#[wasm_bindgen]
+pub struct ClassicText {
+    text: String,
+    book: String,
+    diagnostics: String,
+}
+
+#[wasm_bindgen]
+impl ClassicText {
+    #[wasm_bindgen(getter)]
+    pub fn text(&self) -> String {
+        self.text.clone()
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn book(&self) -> String {
+        self.book.clone()
+    }
+
+    /// 同 [`Typeset::diagnostics`]。
+    #[wasm_bindgen(getter)]
+    pub fn diagnostics(&self) -> String {
+        self.diagnostics.clone()
+    }
+}
+
+/// 刊本源碼 → 原版標記。
+#[wasm_bindgen(js_name = toClassic)]
+pub fn to_classic(src: &str) -> ClassicText {
+    let c = kanben::classic::to_classic(src);
+    ClassicText {
+        diagnostics: diagnostics_json(src, &c.diagnostics),
+        text: c.text,
+        book: c.book,
+    }
+}

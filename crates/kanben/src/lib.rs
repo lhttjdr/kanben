@@ -5,6 +5,7 @@
 //! - [`layout`]：语法树 → 字格坐标（每个字落在哪一行、哪一格）
 //! - [`render`]：字格坐标 → SVG 页面
 
+pub mod classic;
 pub mod layout;
 pub mod render;
 pub mod syntax;

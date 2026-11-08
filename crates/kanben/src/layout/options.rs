@@ -62,6 +62,8 @@ pub struct Options {
     pub punct_color: Color,
     pub title_mark: TitleMark,
     pub font: Font,
+    /// 預覽用哪種排法：`svg`（刊本字格排版）或 `classic`（原版排法）。只影響編輯器，排版本身不用。
+    pub engine: String,
     /// 版框下标行號（算籌數碼）。
     pub numbers: bool,
     /// 書名，印在版心。
@@ -88,6 +90,7 @@ impl Default for Options {
             punct_color: Color::Red,
             title_mark: TitleMark::Wavy,
             font: Font::Mincho,
+            engine: "svg".into(),
             numbers: true,
             title: String::new(),
             volume: String::new(),
@@ -130,6 +133,7 @@ impl Options {
                 .into(),
             ),
             ("font", self.font.name().into()),
+            ("engine", self.engine.clone()),
             ("columns", self.columns.to_string()),
             ("cells", self.cells.to_string()),
         ]
@@ -137,7 +141,7 @@ impl Options {
 }
 
 pub const KEYS: &str =
-    "columns, cells, format, punct, punct-color, title-mark, font, numbers, column-width, head";
+    "columns, cells, format, punct, punct-color, title-mark, font, engine, numbers, column-width, head";
 
 impl Options {
     pub fn from_meta(meta: &[MetaEntry], diags: &mut Vec<Diagnostic>) -> Options {
@@ -211,6 +215,12 @@ impl Options {
                     "mincho" => Font::Mincho,
                     "system" => Font::System,
                     _ => return Err(choice("fangsong, mincho, system")),
+                }
+            }
+            "engine" => {
+                self.engine = match value {
+                    "svg" | "classic" => value.to_string(),
+                    _ => return Err(choice("svg, classic")),
                 }
             }
             "numbers" => {

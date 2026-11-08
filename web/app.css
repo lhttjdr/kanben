@@ -139,3 +139,5 @@ main {
   .pages svg { display: block; width: 100%; height: auto; box-shadow: none; page-break-after: always; }
 }
 .status.fonts-loading::after { content: " · 字體載入中…"; }
+.classic-frame { border: 0; width: 100%; height: 100%; display: block; background: #eeeada; }
+.classic-frame[hidden], .pages[hidden] { display: none; }
