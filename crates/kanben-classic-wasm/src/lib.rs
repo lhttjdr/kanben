@@ -257,3 +257,15 @@ pub fn rod_style(n: &JsValue, units_vertical: bool) -> String {
         r.負號
     )
 }
+
+/// 編輯器語法著色（原版 `編輯純文本.渲染` 的文本部分）。
+#[wasm_bindgen(js_name = highlight)]
+pub fn highlight(text: &str) -> String {
+    kanben_classic::editor::渲染(text)
+}
+
+/// `在何段`：UTF-16 下標之前有幾個換行。
+#[wasm_bindgen(js_name = lineOf)]
+pub fn line_of(text: &str, index: usize) -> usize {
+    kanben_classic::editor::在何段(text, index)
+}

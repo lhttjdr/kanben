@@ -1,0 +1,13 @@
+/* 哂蟹齋排版器（https://vert.neocities.org/type/set/）原文件，經作者許可收錄；路徑已改為相對路徑。 */
+body {background-color:#eee; font-size:16px; line-height:1.6; min-width:10em; font-family: Noto Sans CJK KR,等线,微软雅黑}
+#wttlbar {background-color:#ddd; font-size:2em; padding-top:1rem}
+main {font-size:1.5em; padding:1rem}
+#每面行數 {font-size:1.25em; width:1.4em}
+#每面行數:invalid {background-color:darkred}
+#版心底欄字,#版心頂欄字 {font-size:1em; inline-size:5em}
+.選魚尾 img,.選魚尾 div {height:3em; width:3em}
+#okbtn,#canclbtn {padding:0.5em 0.2em; margin:1em 0.7em; border-radius:0.2em; transition:all 0.5s; font-size:1em; font-family:inherit}
+#okbtn:link,#okbtn:visited,#okbtn {border:1px solid var(--孔雀綠); background-color:var(--黛綠); color:#fff}
+#okbtn:hover,#okbtn:active {background-color:var(--孔雀綠)}
+#canclbtn:link,#canclbtn:visited,#canclbtn {border:1px solid var(--葛巾紫); background-color:var(--淡牽牛紫); color:#000}
+#canclbtn:hover,#canclbtn:active {background-color:var(--風信紫)}

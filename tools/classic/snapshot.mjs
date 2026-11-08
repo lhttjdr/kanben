@@ -36,11 +36,12 @@ for (const f of readdirSync(corpusDir).filter((f) => f.endsWith(".txt")).sort())
   const dom = await ev(`(async () => {
     const ed = document.getElementById("編輯器");
     ed.value = ${JSON.stringify(input)};
+    ed.dispatchEvent(new Event("input"));
     單卷.排版();
     await new Promise((r) => setTimeout(r, 400));
     document.getElementById("結果").scrollLeft = 0;
     return { main: document.getElementById("inMain").innerHTML, tentou: document.getElementById("tentou").innerHTML,
-             silan: document.getElementById("jiusilan")?.innerHTML ?? "" };
+             silan: document.getElementById("jiusilan")?.innerHTML ?? "", editor: document.getElementById("富編輯器")?.innerHTML ?? "" };
   })()`);
   await sleep(200);
   const shot = await send("Page.captureScreenshot", { format: "png" });

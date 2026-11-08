@@ -11,3 +11,4 @@ pub mod layout;
 pub mod marks;
 pub mod misc;
 pub mod text;
+pub mod editor;
