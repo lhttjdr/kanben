@@ -4,7 +4,7 @@
 //! 标记（專名、圈點、陰文等）不拆条目，而是写进每个字的 [`Style`]。
 
 use super::options::{PunctStyle, TitleMark};
-use super::token::{Mark, MarkKind, Style, Tok, TokKind, Tone, classify, is_combining};
+use super::token::{Ann, Mark, MarkKind, Style, Tok, TokKind, Tone, classify, is_combining};
 use crate::syntax::ast::{Color, Element, ElementKind, EmphMark, Inline, StrokeMark};
 use crate::syntax::span::{Diagnostic, Span};
 
@@ -191,11 +191,29 @@ impl<'d> Flattener<'d> {
                 };
                 self.walk(&el.children, &c, out, cur);
             }
-            // TODO(SVG)：以下還只排出正文，不畫旁字、韻標、插圖。
-            ElementKind::Rhyme { .. }
-            | ElementKind::Ruby(_)
-            | ElementKind::Pitch { .. }
-            | ElementKind::Figure => self.walk(&el.children, ctx, out, cur),
+            ElementKind::Rhyme { tone, group } => {
+                let mut c = ctx.clone();
+                c.style.ann = Some(Ann::Rhyme {
+                    mark: tone.mark(),
+                    group: *group,
+                });
+                self.walk(&el.children, &c, out, cur);
+            }
+            ElementKind::Ruby(text) => {
+                let mut c = ctx.clone();
+                c.style.ann = Some(Ann::Ruby(text.clone()));
+                self.walk(&el.children, &c, out, cur);
+            }
+            ElementKind::Pitch { text, left } => {
+                let mut c = ctx.clone();
+                c.style.ann = Some(Ann::Pitch {
+                    text: text.clone(),
+                    left: *left,
+                });
+                self.walk(&el.children, &c, out, cur);
+            }
+            // TODO(SVG)：插圖還沒有畫。
+            ElementKind::Figure => self.walk(&el.children, ctx, out, cur),
             ElementKind::Image(_) | ElementKind::Map(_) => {}
             ElementKind::Digits(t)
             | ElementKind::Suzhou(t)

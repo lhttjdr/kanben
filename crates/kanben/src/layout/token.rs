@@ -68,6 +68,19 @@ impl Tone {
 pub struct Style {
     pub marks: Vec<Mark>,
     pub color: Option<Color>,
+    /// 字上附的小標：韻標、平仄、樂譜旁字。
+    pub ann: Option<Ann>,
+}
+
+/// 附在字上的小標。
+#[derive(Clone, Debug, PartialEq)]
+pub enum Ann {
+    /// 韻標（●■◆▲），畫在字下面，`group` 定顏色。
+    Rhyme { mark: char, group: Option<u8> },
+    /// 字右的小字（平仄圈）。
+    Ruby(String),
+    /// 樂譜旁字：佔旁邊一整行。
+    Pitch { text: String, left: bool },
 }
 
 /// 加在一串字上的标记。同一个 `id` 的字连成一段来画（綫、框）。

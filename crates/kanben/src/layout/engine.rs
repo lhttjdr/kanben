@@ -3,11 +3,11 @@
 use std::collections::HashMap;
 
 use super::flatten::{Flattener, Item};
-use super::token::{MarkKind, Tok, TokKind, Tone, Unit, group, is_hanging};
+use super::token::{Ann, MarkKind, Tok, TokKind, Tone, Unit, group, is_hanging};
 use super::{Deco, Figure, Format, Glyph, Layout, Options, Role};
 use crate::render::numerals::hanzi;
 use crate::syntax::ast::{
-    AttrKind, Block, Document, EmphMark, EnvKind, Inline, ParaStyle, Shape,
+    AttrKind, Block, Document, EmphMark, EnvKind, Inline, ParaStyle, Shape, TableHeader,
 };
 use crate::syntax::span::{Diagnostic, Span};
 
@@ -27,6 +27,15 @@ const NOTE_SIZE: f32 = 0.8;
 const PIPA_PX: i32 = 34;
 /// 琵琶譜裏單側行一格的高。
 const PIPA_LINE_PX: f32 = 33.0;
+/// 韻部的顏色（原版 --韵抹0 至 --韵抹9；不標韻部用桃紅）。
+const RHYME_COLORS: [&str; 10] = [
+    "#9ed900", "#b9dec9", "#f0ada0", "#93d5dc", "#fcb70a", "#d1c2d3", "#f97d1c", "#d2d97a",
+    "#c6e6e8", "#e3bd8d",
+];
+/// 手寫目次的字色（原版鏈接色，正青）。
+const TOC_COLOR: &str = "rgb(16.27,51.37,147.9)";
+/// 集（分段單兒）段首小籤的半寬：字的內容區 15px 加左右內距 6px。
+const LIST_TAB_HALF_W: f32 = 21.0 / 30.0;
 const NOTE_STRETCH: f32 = 1.0;
 const NOTE_R: f32 = 0.45;
 const NOTE_L: f32 = -0.35;
@@ -253,7 +262,7 @@ impl<'d> Engine<'d> {
                     for a in attrs {
                         base.add(&a.kind);
                     }
-                    let lines = lines
+                    let lines: Vec<(LineFmt, Vec<Item>)> = lines
                         .iter()
                         .enumerate()
                         .map(|(k, l)| {
@@ -267,6 +276,13 @@ impl<'d> Engine<'d> {
                             (fmt, self.flatten(&l.content))
                         })
                         .collect();
+                    // 單兒：每行一條，照原版（flex，每條至少三分之一行高）。
+                    if attrs.iter().any(|a| matches!(a.kind, AttrKind::List { .. })) {
+                        let items: Vec<Vec<Item>> =
+                            lines.into_iter().map(|(_, items)| items).collect();
+                        self.flex(items, 0.333);
+                        continue;
+                    }
                     let before = self.glyphs.len();
                     let deco_before = self.decos.len();
                     // 琵琶譜字的字身比一字高（34px / 30px），一行排得少些，再把各格拉開。
@@ -278,6 +294,7 @@ impl<'d> Engine<'d> {
                         self.o.cells = (saved * 30 / PIPA_PX).max(1);
                     }
                     self.paragraph(lines);
+                    self.widen_pitch(before, deco_before);
                     if pipa {
                         self.o.cells = saved;
                         self.stretch_rows(before, deco_before);
@@ -316,20 +333,297 @@ impl<'d> Engine<'d> {
                     if entries.is_empty() {
                         self.toc(*depth);
                     } else {
-                        // 手寫的目次：每條一行。
-                        for e in entries {
-                            let items = self.flatten(&e.content);
-                            self.paragraph(vec![(outer, items)]);
+                        // 手寫的目次：照原版（flex，每條至少半行高），短的兩條共一行；字用正青。
+                        let items: Vec<Vec<Item>> =
+                            entries.iter().map(|e| self.flatten(&e.content)).collect();
+                        let before = self.glyphs.len();
+                        self.flex(items, 0.5);
+                        for g in &mut self.glyphs[before..] {
+                            if g.role != Role::Punct {
+                                g.paint = Some(TOC_COLOR);
+                                if g.role == Role::Main {
+                                    g.extra = Some("g-toc");
+                                }
+                            }
                         }
                     }
                 }
+                Block::Env {
+                    kind: EnvKind::List { ordered: false },
+                    blocks,
+                    ..
+                } => {
+                    // 分段單兒（集）：每條段首上方一塊絲欄色的小籤（原版 li::before）。
+                    for b in blocks {
+                        let before = self.glyphs.len();
+                        self.blocks(std::slice::from_ref(b), outer, heads, after_toc);
+                        if matches!(b, Block::Paragraph { .. })
+                            && let Some(col) = self.glyphs[before..].iter().map(|g| g.col).min()
+                        {
+                            self.shape(
+                                col,
+                                Figure::Rect {
+                                    x0: -LIST_TAB_HALF_W,
+                                    y0: -0.5,
+                                    x1: LIST_TAB_HALF_W,
+                                    y1: 0.0,
+                                    rx: 0.0,
+                                    ry: 0.0,
+                                },
+                                "f-tab crisp",
+                            );
+                        }
+                    }
+                }
+                Block::Env {
+                    kind: EnvKind::Table { title, header },
+                    blocks,
+                    ..
+                } => self.table(title, *header, blocks),
                 Block::Env { kind, blocks, .. } => {
-                    // TODO(SVG)：引文、單兒、表格還沒有照原版排；引文暫低一格。
+                    // 引文：原版 blockquote 上空二格（margin-top: 2em）。
                     let mut fmt = outer;
                     if *kind == EnvKind::Quote {
-                        fmt.indent += 1;
+                        fmt.indent += 2;
                     }
                     self.blocks(blocks, fmt, heads, after_toc);
+                }
+            }
+        }
+    }
+
+    /// 表格（原版 table，竪排）：標題一行（上空一格），表的每一列各佔一行；
+    /// 各格長按該欄最長的字數，首格下留半格，其餘上下各留半格；每格之後一條 1px 淡朱綫。
+    fn table(&mut self, title: &str, header: TableHeader, blocks: &[Block]) {
+        let mut rows: Vec<Vec<Vec<Item>>> = Vec::new();
+        for b in blocks {
+            if let Block::Paragraph { lines, .. } = b {
+                for l in lines {
+                    let items = self.flatten(&l.content);
+                    rows.push(split_cells(items));
+                }
+            }
+        }
+        let ncol = rows.iter().map(Vec::len).max().unwrap_or(0);
+        let mut h = vec![0.0f32; ncol];
+        for row in &rows {
+            for (k, cell) in row.iter().enumerate() {
+                let pad = if k == 0 { 0.5 } else { 1.0 };
+                h[k] = h[k].max(measure(cell) as f32 + pad);
+            }
+        }
+        let total: f32 = h.iter().sum();
+        let cw = self.o.column_width;
+        let rule = |e: &mut Self, col: i32, y: f32| {
+            e.shape(
+                col,
+                Figure::Rect {
+                    x0: -cw / 2.0,
+                    y0: y,
+                    x1: cw / 2.0,
+                    y1: y + 1.0 / 30.0,
+                    rx: 0.0,
+                    ry: 0.0,
+                },
+                "f-tabrule",
+            );
+        };
+        self.start_block();
+        let place = |e: &mut Self, items: Vec<Item>, pos: f32, class: &'static str| {
+            let g0 = e.glyphs.len();
+            let d0 = e.decos.len();
+            e.row = pos.floor() as i32;
+            e.cont = 0;
+            e.pending.clear();
+            e.last = None;
+            for it in items {
+                e.item(it);
+            }
+            let dy = pos.fract();
+            if dy > 0.0 {
+                e.remap_y(g0, d0, |_, y| y + dy);
+            }
+            for g in &mut e.glyphs[g0..] {
+                if g.role == Role::Main && !g.encl {
+                    g.extra = Some(class);
+                }
+            }
+            e.used = true;
+        };
+        if !title.is_empty() {
+            let items = self.flatten(&[Inline::Text {
+                text: title.to_string(),
+                span: Span::default(),
+            }]);
+            place(self, items, 1.0, "g-th");
+            let col = self.col;
+            rule(self, col, total);
+            self.new_column();
+        }
+        for (r, row) in rows.into_iter().enumerate() {
+            let mut y = 0.0;
+            for (k, cell) in row.into_iter().enumerate() {
+                let th = match header {
+                    TableHeader::None => false,
+                    TableHeader::Row => r == 0,
+                    TableHeader::Column => k == 0,
+                    TableHeader::Both => r == 0 || k == 0,
+                };
+                let pad = if k == 0 { 0.0 } else { 0.5 };
+                place(self, cell, y + pad, if th { "g-th" } else { "g-td" });
+                y += h[k];
+                let col = self.col;
+                rule(self, col, y);
+            }
+            self.used = true;
+            self.new_column();
+        }
+    }
+
+    /// 字上的小標，照原版：
+    /// - 韻標（ryme）：與字同位同大，畫在字下面，按韻部取色；
+    /// - 平仄（rightRuby::after）：半字大，右移 0.75、與字心同高，標點色；
+    /// - 樂譜旁字（ruby.mscScr）：0.8 字大，排在右邊另加的一行裏，與字心同高；兩字並排（先右後左）。
+    fn annotate(&mut self, a: &Ann, s: &Slot) {
+        let push = |e: &mut Self, text: String, x: f32, y: f32, size: f32, class, paint| {
+            e.glyphs.push(Glyph {
+                col: s.col,
+                x,
+                y,
+                size,
+                stretch: 1.0,
+                text,
+                compose: false,
+                rod: false,
+                color: None,
+                inverse: false,
+                hidden: false,
+                faded: false,
+                encl: false,
+                role: Role::Ann,
+                level: 0,
+                paint,
+                extra: Some(class),
+            });
+        };
+        let z = s.size;
+        match a {
+            Ann::Rhyme { mark, group } => {
+                let color = match group {
+                    Some(g) => RHYME_COLORS[usize::from(*g) % 10],
+                    None => RHYME_COLORS[2],
+                };
+                push(self, mark.to_string(), s.x, s.y, z, "g-ryme", Some(color));
+            }
+            Ann::Ruby(text) => {
+                // 逐像素比對：再上 1px。
+                let y = s.y - 1.0 / 30.0;
+                push(self, text.clone(), s.x + 0.75 * z, y, 0.5 * z, "g-rruby", None);
+            }
+            // 原版的左旁字（ruby-position: under）在竪排裏同樣排在右邊一行。
+            Ann::Pitch { text, .. } => {
+                let cx = s.x + self.o.column_width;
+                let chars: Vec<char> = text.chars().collect();
+                let n = chars.len() as f32;
+                for (i, c) in chars.iter().enumerate() {
+                    // 先右後左：第 i 字的中心。
+                    let x = cx + 0.8 * z * ((n - 1.0) / 2.0 - i as f32);
+                    push(self, c.to_string(), x, s.y, 0.8 * z, "g-pitch", None);
+                }
+            }
+        }
+    }
+
+    /// 樂譜旁字所在的行另佔旁邊一行：右旁字的行，正文挪到左邊一行，旁字畫在原位；
+    /// 其後各行依次左移。
+    fn widen_pitch(&mut self, from: usize, deco_from: usize) {
+        use std::collections::BTreeMap;
+        // 每行需要在前（右）還是後（左）加一行。
+        let mut need: BTreeMap<i32, (bool, bool)> = BTreeMap::new();
+        for g in &self.glyphs[from..] {
+            if g.extra == Some("g-pitch") {
+                let e = need.entry(g.col).or_default();
+                if g.x > 0.0 {
+                    e.0 = true;
+                } else {
+                    e.1 = true;
+                }
+            }
+        }
+        if need.is_empty() {
+            return;
+        }
+        // 原第 c 行的新位置：之前（含本行右邊）加了幾行。
+        let shift = |c: i32| -> i32 {
+            need.iter()
+                .map(|(&k, &(r, l))| {
+                    (k < c) as i32 * (r as i32 + l as i32) + (k == c && r) as i32
+                })
+                .sum()
+        };
+        let total: i32 = need.values().map(|&(r, l)| r as i32 + l as i32).sum();
+        for g in &mut self.glyphs[from..] {
+            g.col += shift(g.col);
+        }
+        for d in &mut self.decos[deco_from..] {
+            let c = d.col();
+            d.set_col(c + shift(c));
+        }
+        self.col += total;
+    }
+
+    /// 原版的 flex 單兒、目次：各條順着排，每條至少佔 `frac` 行高（行高含行尾 0.2 字），
+    /// 放不下就換行。起點可以落在半格上。
+    fn flex(&mut self, entries: Vec<Vec<Item>>, frac: f32) {
+        self.start_block();
+        let h = self.cells() as f32 + 0.2;
+        let mut pos = 0.0f32;
+        let mut first = true;
+        for items in entries {
+            let size = (measure(&items) as f32).max(frac * h);
+            if !first && pos + size > h + 1e-3 {
+                self.used = true;
+                self.new_column();
+                pos = 0.0;
+            }
+            first = false;
+            let (g0, d0) = (self.glyphs.len(), self.decos.len());
+            self.row = pos.floor() as i32;
+            self.cont = 0;
+            self.pending.clear();
+            self.last = None;
+            for it in items {
+                self.item(it);
+            }
+            let dy = pos.fract();
+            if dy > 0.0 {
+                self.remap_y(g0, d0, |_, y| y + dy);
+            }
+            self.used = true;
+            pos += size;
+        }
+    }
+
+    /// 把 `glyphs[g0..]`、`decos[d0..]` 的縱坐標按 `f(行, y)` 換掉。
+    fn remap_y(&mut self, g0: usize, d0: usize, f: impl Fn(i32, f32) -> f32) {
+        for g in &mut self.glyphs[g0..] {
+            g.y = f(g.col, g.y);
+        }
+        for d in &mut self.decos[d0..] {
+            match d {
+                Deco::Mark { col, y, .. } | Deco::Tone { col, y, .. } | Deco::Ring { col, y, .. } => {
+                    *y = f(*col, *y)
+                }
+                Deco::Line { col, y0, y1, .. }
+                | Deco::Wave { col, y0, y1, .. }
+                | Deco::Box { col, y0, y1, .. }
+                | Deco::Gap { col, y0, y1, .. } => {
+                    *y0 = f(*col, *y0);
+                    *y1 = f(*col, *y1);
+                }
+                Deco::Shape { col, figure, .. } => {
+                    let c = *col;
+                    figure.map_y(|y| f(c, y));
                 }
             }
         }
@@ -364,24 +658,7 @@ impl<'d> Engine<'d> {
             let start: f32 = (0..r).map(adv).sum();
             start + (y - r as f32) * adv(r)
         };
-        for g in &mut self.glyphs[from..] {
-            g.y = map(g.col, g.y);
-        }
-        for d in &mut self.decos[deco_from..] {
-            match d {
-                Deco::Mark { col, y, .. } | Deco::Tone { col, y, .. } | Deco::Ring { col, y, .. } => {
-                    *y = map(*col, *y)
-                }
-                Deco::Line { col, y0, y1, .. }
-                | Deco::Wave { col, y0, y1, .. }
-                | Deco::Box { col, y0, y1, .. }
-                | Deco::Gap { col, y0, y1, .. } => {
-                    *y0 = map(*col, *y0);
-                    *y1 = map(*col, *y1);
-                }
-                Deco::Shape { .. } => {}
-            }
-        }
+        self.remap_y(from, deco_from, map);
     }
 
     /// 段落字色：照原版（背景漸變裁成字形），從段首那一行起逐行輪換顏色；標點不變色。
@@ -397,7 +674,7 @@ impl<'d> Engine<'d> {
             return;
         }
         for g in &mut self.glyphs[from..] {
-            if g.role != Role::Punct && g.color.is_none() {
+            if !matches!(g.role, Role::Punct | Role::Ann) && g.color.is_none() {
                 g.paint = Some(colors[(g.col - first) as usize % colors.len()]);
             }
         }
@@ -935,6 +1212,9 @@ impl<'d> Engine<'d> {
 
     /// 放一个字。返回是否真的画了字（空格不画）。
     fn put(&mut self, t: &Tok, s: Slot) -> bool {
+        if let Some(a) = &t.style.ann {
+            self.annotate(a, &s);
+        }
         let mut inverse = false;
         let mut faded = false;
         let z = s.size;
@@ -1451,6 +1731,34 @@ fn plain(t: &Tok) -> Tok {
 }
 
 /// 一段要佔多少格（用于靠底排）。
+/// 表格一列：按 `&` 切成各格。
+fn split_cells(items: Vec<Item>) -> Vec<Vec<Item>> {
+    let mut cells: Vec<Vec<Item>> = vec![Vec::new()];
+    for it in items {
+        match it {
+            Item::Main(toks) => {
+                let mut cur = Vec::new();
+                for t in toks {
+                    if t.text == "&" {
+                        if !cur.is_empty() {
+                            cells.last_mut().expect("non-empty").push(Item::Main(cur));
+                        }
+                        cur = Vec::new();
+                        cells.push(Vec::new());
+                    } else {
+                        cur.push(t);
+                    }
+                }
+                if !cur.is_empty() {
+                    cells.last_mut().expect("non-empty").push(Item::Main(cur));
+                }
+            }
+            other => cells.last_mut().expect("non-empty").push(other),
+        }
+    }
+    cells
+}
+
 fn measure(items: &[Item]) -> i32 {
     let cells = |t: &[Tok]| {
         t.iter()

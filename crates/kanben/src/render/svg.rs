@@ -375,6 +375,7 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
         (Role::Main, _) => "g-h6",
         (Role::Note, _) => "g-note",
         (Role::Line, _) => g.extra.unwrap_or("g-line"),
+        (Role::Ann, _) => g.extra.unwrap_or(""),
         (Role::NoteSingle, _) => "g-note1",
         (Role::Side, _) => "g-side",
         (Role::Head, _) => "g-head",

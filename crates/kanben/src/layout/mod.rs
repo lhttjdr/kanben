@@ -59,6 +59,8 @@ pub enum Role {
     Tone,
     /// 單側行（原版 rightLine、leftLine）：正文字體的 0.8 倍小字。
     Line,
+    /// 字上附的小標（韻標、平仄、樂譜旁字），字體類在 `extra`。
+    Ann,
     Side,
     Head,
     Punct,
@@ -172,6 +174,29 @@ pub enum Figure {
     Clip(Box<Figure>, [f32; 4]),
 }
 
+impl Figure {
+    /// 把縱坐標都換成 `f(y)`（整體挪動、拉伸時用）。
+    pub fn map_y(&mut self, f: impl Fn(f32) -> f32 + Copy) {
+        match self {
+            Figure::Rect { y0, y1, .. } => {
+                *y0 = f(*y0);
+                *y1 = f(*y1);
+            }
+            Figure::Circle { y, .. } | Figure::Ring { y, .. } => *y = f(*y),
+            Figure::Polygon(pts) => pts.iter_mut().for_each(|p| p.1 = f(p.1)),
+            Figure::Minus(a, b) => {
+                a.map_y(f);
+                b.map_y(f);
+            }
+            Figure::Clip(a, r) => {
+                a.map_y(f);
+                r[1] = f(r[1]);
+                r[3] = f(r[3]);
+            }
+        }
+    }
+}
+
 impl Deco {
     pub fn col(&self) -> i32 {
         match *self {
@@ -183,6 +208,19 @@ impl Deco {
             | Deco::Mark { col, .. }
             | Deco::Tone { col, .. }
             | Deco::Gap { col, .. } => col,
+        }
+    }
+
+    pub fn set_col(&mut self, c: i32) {
+        match self {
+            Deco::Shape { col, .. }
+            | Deco::Wave { col, .. }
+            | Deco::Box { col, .. }
+            | Deco::Ring { col, .. }
+            | Deco::Line { col, .. }
+            | Deco::Mark { col, .. }
+            | Deco::Tone { col, .. }
+            | Deco::Gap { col, .. } => *col = c,
         }
     }
 }
