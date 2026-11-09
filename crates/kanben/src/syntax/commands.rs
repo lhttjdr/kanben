@@ -2,7 +2,7 @@
 //!
 //! 解析器只认形式，不认命令；所有命令名、参数都在这里。
 
-use super::ast::{Color, ElementKind, EmphMark, Encl, Shape};
+use super::ast::{Color, ElementKind, EmphMark, Encl, Shape, StrokeMark, Tone};
 use super::span::Span;
 
 /// 方括号里的一个参数：`round` 或 `raise=2`。
@@ -24,14 +24,18 @@ pub enum Kind {
 pub fn kind_of(name: &str) -> Option<Kind> {
     Some(match name {
         "note" | "side" | "comment" | "head" | "name" | "title" | "emph" | "stroke" | "inv"
-        | "frame" | "del" | "ins" | "color" | "compose" | "span" | "rod" => Kind::Inline,
+        | "frame" | "del" | "ins" | "color" | "compose" | "span" | "rod" | "digits"
+        | "endnote" | "rhyme" | "ruby" | "pitch" | "glyph" | "figure" | "image" | "map" => {
+            Kind::Inline
+        }
         "setup" | "book" | "volume" | "studio" | "heading" | "begin" | "end" | "indent"
-        | "raise" | "bottom" | "toc" => Kind::Block,
+        | "raise" | "bottom" | "toc" | "byline" | "outline" | "detail" | "remark" | "pipa"
+        | "list" | "colors" => Kind::Block,
         _ => return None,
     })
 }
 
-pub const INLINE_COMMANDS: &str = "note, side, comment, head, name, title, emph, stroke, inv, frame, del, ins, color, compose, span, rod";
+pub const INLINE_COMMANDS: &str = "note, side, comment, head, name, title, emph, stroke, inv, frame, del, ins, color, compose, span, rod, digits, endnote, rhyme, ruby, pitch, glyph, figure, image, map";
 
 pub struct Resolved {
     pub kind: ElementKind,
@@ -46,20 +50,110 @@ pub fn resolve_inline(name: &str, args: &[Arg]) -> Resolved {
         choose_from(name, args, allowed, warnings)
     };
     let kind = match name {
-        "note" => match choose(&["double", "single", "right", "left"], &mut warnings).as_deref() {
+        "note" => match choose(&["double", "single", "right", "left", "pair"], &mut warnings)
+            .as_deref()
+        {
             Some("single") => ElementKind::SingleNote,
             Some("right") => ElementKind::HalfNote { left: false },
             Some("left") => ElementKind::HalfNote { left: true },
+            Some("pair") => ElementKind::PairNote,
             _ => ElementKind::DoubleNote,
         },
+        "comment" => ElementKind::Comment {
+            stagger: choose(&["stagger"], &mut warnings).is_some(),
+        },
+        "name" => ElementKind::Name {
+            double: choose(&["double"], &mut warnings).is_some(),
+        },
+        "stroke" => ElementKind::Stroke(
+            match choose(&["line", "dot", "circle", "tint"], &mut warnings).as_deref() {
+                Some("dot") => StrokeMark::Dot,
+                Some("circle") => StrokeMark::Circle,
+                Some("tint") => StrokeMark::Tint,
+                _ => StrokeMark::Line,
+            },
+        ),
+        "rod" => {
+            // 內容在 inline.rs 裏取；這裏只分樣式。
+            match choose(&["rod", "suzhou", "gua"], &mut warnings).as_deref() {
+                Some("suzhou") => ElementKind::Suzhou(String::new()),
+                Some("gua") => ElementKind::Divination(String::new()),
+                _ => ElementKind::Rod(String::new()),
+            }
+        }
+        "endnote" => {
+            // 唯一的位置參數是所注之字，如 \endnote[正史]{…}。
+            let mut anchor = None;
+            for a in args {
+                match &a.key {
+                    None if anchor.is_none() => anchor = Some(a.value.clone()),
+                    _ => warnings.push((
+                        a.span,
+                        format!("\\endnote 只接受一個參數（所注之字），「{}」已忽略", show(a)),
+                    )),
+                }
+            }
+            ElementKind::Endnote { anchor }
+        }
+        "ruby" | "pitch" => {
+            let mut text = None;
+            let mut left = false;
+            for a in args {
+                match (&a.key, a.value.as_str()) {
+                    (None, "left") if name == "pitch" => left = true,
+                    (None, "right") if name == "pitch" => left = false,
+                    (None, v) if text.is_none() => text = Some(v.to_string()),
+                    _ => warnings.push((
+                        a.span,
+                        format!("\\{name} 多了參數「{}」", show(a)),
+                    )),
+                }
+            }
+            let text = text.unwrap_or_else(|| {
+                warnings.push((
+                    Span::default(),
+                    format!("\\{name} 需要指定旁字，如 \\{name}[◓]{{鳳}}"),
+                ));
+                String::new()
+            });
+            if name == "ruby" {
+                ElementKind::Ruby(text)
+            } else {
+                ElementKind::Pitch { text, left }
+            }
+        }
+        "rhyme" => {
+            let mut tone = Tone::Ping;
+            let mut group = None;
+            for a in args {
+                match (a.key.as_deref(), a.value.as_str()) {
+                    (None, "ping") => tone = Tone::Ping,
+                    (None, "shang") => tone = Tone::Shang,
+                    (None, "qu") => tone = Tone::Qu,
+                    (None, "ru") => tone = Tone::Ru,
+                    (None | Some("group"), v) if v.parse::<u8>().is_ok_and(|v| v <= 9) => {
+                        group = v.parse().ok();
+                    }
+                    _ => warnings.push((
+                        a.span,
+                        format!(
+                            "\\rhyme 不接受參數「{}」（可用：ping, shang, qu, ru，韻部 0–9）",
+                            show(a)
+                        ),
+                    )),
+                }
+            }
+            ElementKind::Rhyme { tone, group }
+        }
         "side" => ElementKind::Side {
             left: choose(&["right", "left"], &mut warnings).as_deref() == Some("left"),
         },
         "emph" => ElementKind::Emphasis(
-            match choose(&["circle", "dot", "sesame", "comma"], &mut warnings).as_deref() {
+            match choose(&["circle", "dot", "sesame", "comma", "box"], &mut warnings).as_deref() {
                 Some("dot") => EmphMark::Dot,
                 Some("sesame") => EmphMark::Sesame,
                 Some("comma") => EmphMark::Comma,
+                Some("box") => EmphMark::Box,
                 _ => EmphMark::Circle,
             },
         ),
@@ -127,15 +221,16 @@ pub fn resolve_inline(name: &str, args: &[Arg]) -> Resolved {
         other => {
             choose(&[], &mut warnings);
             match other {
-                "comment" => ElementKind::Comment,
                 "head" => ElementKind::HeadNote,
-                "name" => ElementKind::Name,
                 "title" => ElementKind::Title { brackets: None },
-                "stroke" => ElementKind::Stroke,
                 "del" => ElementKind::Delete,
                 "ins" => ElementKind::Insert,
                 "compose" => ElementKind::Compose(String::new()),
-                "rod" => ElementKind::Rod(String::new()),
+                "digits" => ElementKind::Digits(String::new()),
+                "glyph" => ElementKind::Glyph(String::new()),
+                "figure" => ElementKind::Figure,
+                "image" => ElementKind::Image(String::new()),
+                "map" => ElementKind::Map(String::new()),
                 _ => unreachable!("not an inline command: {other}"),
             }
         }

@@ -338,6 +338,7 @@ fn letter_spacing_shift(g: &Glyph) -> f32 {
     match g.role {
         // 雙行夾注與其標點：6px（正文 30px）。
         Role::Note => 0.1,
+        Role::Line => 0.1 + 1.0 / 30.0,
         Role::Punct if g.size < 0.9 && !matches!(punct_class(g), "p-nq") => 0.1,
         // 單行小注裏的標點繼承小注的 2px 字距。
         Role::Punct if (g.size - 28.0 / 30.0).abs() < 1e-3 => 1.0 / 30.0,
@@ -373,6 +374,7 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
         (Role::Main, 5) => "g-h5",
         (Role::Main, _) => "g-h6",
         (Role::Note, _) => "g-note",
+        (Role::Line, _) => "g-line",
         (Role::NoteSingle, _) => "g-note1",
         (Role::Side, _) => "g-side",
         (Role::Head, _) => "g-head",
@@ -929,11 +931,11 @@ fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
                         n(size * 0.065)
                     );
                 }
-                EmphMark::Sesame | EmphMark::Comma => {
-                    let c = if mark == EmphMark::Sesame {
-                        '﹅'
-                    } else {
-                        '﹆'
+                EmphMark::Sesame | EmphMark::Comma | EmphMark::Box => {
+                    let c = match mark {
+                        EmphMark::Sesame => '﹅',
+                        EmphMark::Comma => '﹆',
+                        _ => 'ロ',
                     };
                     let _ = write!(
                         s,

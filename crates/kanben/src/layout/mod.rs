@@ -53,6 +53,8 @@ pub enum Role {
     NoteSingle,
     /// 圈發（原版是「標點符號」字體裏的圈）。
     Tone,
+    /// 單側行（原版 rightLine、leftLine）：正文字體的 0.8 倍小字。
+    Line,
     Side,
     Head,
     Punct,
@@ -215,11 +217,15 @@ fn has_head_notes(doc: &Document) -> bool {
             Inline::Text { .. } => false,
         })
     }
-    doc.blocks.iter().any(|b| match b {
-        Block::Heading { content, .. } => any(content),
-        Block::Paragraph { lines, .. } => lines.iter().any(|l| any(&l.content)),
-        _ => false,
-    })
+    fn blocks(bs: &[Block]) -> bool {
+        bs.iter().any(|b| match b {
+            Block::Heading { content, .. } => any(content),
+            Block::Paragraph { lines, .. } => lines.iter().any(|l| any(&l.content)),
+            Block::Env { blocks: inner, .. } => blocks(inner),
+            _ => false,
+        })
+    }
+    blocks(&doc.blocks)
 }
 
 fn layout_with(doc: &Document, options: Options, diags: &mut Vec<Diagnostic>) -> Layout {

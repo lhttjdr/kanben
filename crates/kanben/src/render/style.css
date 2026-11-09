@@ -56,6 +56,7 @@
 /* 陰文、墨圍裏的字（原版 cite）。 */
 .kb text.g-encl { font-family: var(--kb-f-encl); font-weight: 400; }
 .kb text.g-note { font-family: var(--kb-f-note); font-weight: 240; font-stretch: 75%; }
+.kb text.g-line { font-weight: 400; }
 .kb text.g-note1 { font-family: var(--kb-f-note1); font-weight: 320; }
 .kb text.g-side { font-family: var(--kb-f-side); font-weight: 500; fill: var(--kb-side-c); }
 .kb text.g-head { font-family: var(--kb-f-head); font-weight: 400; fill: var(--kb-head-c); }

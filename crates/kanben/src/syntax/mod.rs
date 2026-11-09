@@ -18,7 +18,10 @@ pub mod commands;
 pub mod inline;
 pub mod span;
 
-use ast::{Attr, AttrKind, Block, Document, Inline, Line as ParaLine, MetaEntry};
+use ast::{
+    Attr, AttrKind, Block, Document, EnvKind, Inline, Line as ParaLine, MetaEntry, ParaStyle,
+    TableHeader,
+};
 use commands::Kind;
 use inline::{CommandParts, collect_text, parse_command_at};
 use span::{Diagnostic, Span};
@@ -92,14 +95,63 @@ fn strip_comment(text: &str) -> &str {
 
 const SPACE: [char; 2] = [' ', '\t'];
 
-/// 段落属性命令及其默认值。
-fn attr_kind(name: &str, n: Option<u8>) -> Option<AttrKind> {
-    Some(match name {
-        "indent" => AttrKind::Indent(n.unwrap_or(1)),
-        "raise" => AttrKind::Raise(n.unwrap_or(1)),
-        "bottom" => AttrKind::Bottom(n.unwrap_or(0)),
-        _ => return None,
-    })
+/// 是不是段落属性命令。
+fn is_attr(name: &str) -> bool {
+    matches!(
+        name,
+        "indent" | "raise" | "bottom" | "byline" | "outline" | "detail" | "remark" | "pipa"
+            | "list" | "colors"
+    )
+}
+
+/// 段落属性命令及其参数 → 属性。
+fn attr_kind(name: &str, args: &[commands::Arg]) -> Result<AttrKind, (Span, String)> {
+    let number = |default| commands::number_arg(args, name).map(|n| n.unwrap_or(default));
+    let none = |kind| match args.first() {
+        Some(a) => Err((a.span, format!("\\{name} 不帶參數"))),
+        None => Ok(kind),
+    };
+    match name {
+        "indent" => number(1).map(AttrKind::Indent),
+        "raise" => number(1).map(AttrKind::Raise),
+        "bottom" => number(0).map(AttrKind::Bottom),
+        "byline" => none(AttrKind::Style(ParaStyle::Byline)),
+        "outline" => none(AttrKind::Style(ParaStyle::Outline)),
+        "detail" => none(AttrKind::Style(ParaStyle::Detail)),
+        "remark" => none(AttrKind::Style(ParaStyle::Remark)),
+        "pipa" => none(AttrKind::Style(ParaStyle::Pipa)),
+        "list" => list_kind(name, args).map(|ordered| AttrKind::List { ordered }),
+        "colors" => {
+            let names: Vec<String> = args.iter().map(|a| a.value.clone()).collect();
+            if names.is_empty() || args.iter().any(|a| a.key.is_some()) {
+                Err((
+                    args.first().map_or(Span::default(), |a| a.span),
+                    "寫作 \\colors[孔雀綠, 葛巾紫]：給一種或幾種顏色（幾種就逐行輪換）".into(),
+                ))
+            } else {
+                Ok(AttrKind::Colors(names))
+            }
+        }
+        _ => unreachable!("not an attribute: {name}"),
+    }
+}
+
+/// `[ordered]`（默认）或 `[unordered]`。
+fn list_kind(name: &str, args: &[commands::Arg]) -> Result<bool, (Span, String)> {
+    let mut ordered = true;
+    for a in args {
+        match (a.key.as_deref(), a.value.as_str()) {
+            (None, "ordered") => ordered = true,
+            (None, "unordered") => ordered = false,
+            _ => {
+                return Err((
+                    a.span,
+                    format!("\\{name} 不接受參數「{}」（可用：ordered, unordered）", commands::show(a)),
+                ));
+            }
+        }
+    }
+    Ok(ordered)
 }
 
 struct ParaBuilder {
@@ -111,7 +163,12 @@ struct ParaBuilder {
 /// `\begin{…}` 打开的环境。
 struct Env {
     name: String,
+    /// 段落属性环境（indent 等）给其中每段加的属性。
     attr: Option<Attr>,
+    /// 结构环境（quote、list、table）：外层已收的块先存在这里。
+    outer: Option<(EnvKind, Vec<Block>)>,
+    /// 紧接上一段（中间不空行）。
+    attached: bool,
     span: Span,
 }
 
@@ -123,6 +180,8 @@ struct BlockParser<'d> {
     envs: Vec<Env>,
     blank_run: usize,
     blank_span: Span,
+    /// 刚写了 `\\toc`：紧接着的各行是手写的目次条目。
+    toc_open: bool,
 }
 
 impl<'d> BlockParser<'d> {
@@ -135,14 +194,16 @@ impl<'d> BlockParser<'d> {
             envs: Vec::new(),
             blank_run: 0,
             blank_span: Span::default(),
+            toc_open: false,
         }
     }
 
     fn finish(mut self) -> Document {
         self.close_para();
-        for env in std::mem::take(&mut self.envs) {
+        while let Some(env) = self.envs.pop() {
             let msg = format!("\\begin{{{0}}} 沒有對應的 \\end{{{0}}}", env.name);
             self.diags.push(Diagnostic::error(env.span, msg));
+            self.close_env(env);
         }
         Document {
             meta: self.meta,
@@ -153,6 +214,7 @@ impl<'d> BlockParser<'d> {
     fn line(&mut self, line: &Line) {
         let t = line.text.trim_matches(SPACE);
         if t.is_empty() {
+            self.toc_open = false;
             self.close_para();
             if self.blank_run == 0 {
                 self.blank_span = line.span();
@@ -166,11 +228,24 @@ impl<'d> BlockParser<'d> {
         let mut scratch = Vec::new();
         if let Some(cmd) = parse_command_at(t, line.offset_of(t), &mut scratch)
             && commands::kind_of(&cmd.name) == Some(Kind::Block)
-            && attr_kind(&cmd.name, None).is_none()
+            && !is_attr(&cmd.name)
         {
             self.diags.append(&mut scratch);
             let rest = t[cmd.end..].trim_matches(SPACE);
+            self.toc_open = false;
             self.block_command(&cmd, line, rest);
+            return;
+        }
+
+        // 手写的目次条目。
+        if self.toc_open
+            && let Some(Block::Toc { entries, .. }) = self.blocks.last_mut()
+        {
+            let content = inline::parse_inline(t, line.offset_of(t), self.diags);
+            entries.push(ParaLine {
+                attrs: Vec::new(),
+                content,
+            });
             return;
         }
 
@@ -179,7 +254,8 @@ impl<'d> BlockParser<'d> {
         let line_attrs = match self.para {
             Some(_) => attrs,
             None => {
-                let mut all: Vec<Attr> = self.envs.iter().filter_map(|e| e.attr).collect();
+                let mut all: Vec<Attr> =
+                    self.envs.iter().filter_map(|e| e.attr.clone()).collect();
                 all.extend(attrs);
                 self.para = Some(ParaBuilder {
                     attrs: all,
@@ -214,7 +290,7 @@ impl<'d> BlockParser<'d> {
             let Some(cmd) = parse_command_at(s, line.offset_of(s), &mut scratch) else {
                 break;
             };
-            if attr_kind(&cmd.name, None).is_none() {
+            if !is_attr(&cmd.name) {
                 break;
             }
             self.diags.append(&mut scratch);
@@ -222,12 +298,15 @@ impl<'d> BlockParser<'d> {
                 let msg = format!("段落屬性不帶內容：寫作 \\{}[2]，後面直接接正文", cmd.name);
                 self.diags.push(Diagnostic::error(cmd.span, msg));
             }
-            match commands::number_arg(&cmd.args, &cmd.name) {
-                Ok(n) => out.push(Attr {
-                    kind: attr_kind(&cmd.name, n).expect("checked"),
+            match attr_kind(&cmd.name, &cmd.args) {
+                Ok(kind) => out.push(Attr {
+                    kind,
                     span: cmd.span,
                 }),
-                Err((span, msg)) => self.diags.push(Diagnostic::error(span, msg)),
+                Err((span, msg)) => {
+                    let span = if span == Span::default() { cmd.span } else { span };
+                    self.diags.push(Diagnostic::error(span, msg))
+                }
             }
             s = s[cmd.end..].trim_start_matches(SPACE);
         }
@@ -235,6 +314,7 @@ impl<'d> BlockParser<'d> {
     }
 
     fn block_command(&mut self, cmd: &CommandParts, line: &Line, rest: &str) {
+        let attached = self.para.is_some();
         self.close_para();
         let name = cmd.name.as_str();
         if name != "heading" && !rest.is_empty() {
@@ -309,24 +389,37 @@ impl<'d> BlockParser<'d> {
                 } else {
                     &cmd.post_args
                 };
-                let attr = match (attr_kind(&env, None), commands::number_arg(args, &env)) {
-                    (None, _) => {
-                        let msg = format!("未知的環境「{env}」（可用：indent, raise, bottom）");
+                let mut attr = None;
+                let mut outer = None;
+                match env.as_str() {
+                    "quote" | "list" | "table" => match structural_env(&env, args) {
+                        Ok(kind) => outer = Some((kind, std::mem::take(&mut self.blocks))),
+                        Err((span, msg)) => {
+                            let span = if span == Span::default() { cmd.span } else { span };
+                            self.diags.push(Diagnostic::error(span, msg));
+                        }
+                    },
+                    "indent" | "raise" | "bottom" => match attr_kind(&env, args) {
+                        Ok(kind) => {
+                            attr = Some(Attr {
+                                kind,
+                                span: cmd.span,
+                            })
+                        }
+                        Err((span, msg)) => self.diags.push(Diagnostic::error(span, msg)),
+                    },
+                    _ => {
+                        let msg = format!(
+                            "未知的環境「{env}」（可用：indent, raise, bottom, quote, list, table）"
+                        );
                         self.diags.push(Diagnostic::error(cmd.span, msg));
-                        None
                     }
-                    (Some(_), Ok(n)) => Some(Attr {
-                        kind: attr_kind(&env, n).expect("checked"),
-                        span: cmd.span,
-                    }),
-                    (Some(_), Err((span, msg))) => {
-                        self.diags.push(Diagnostic::error(span, msg));
-                        None
-                    }
-                };
+                }
                 self.envs.push(Env {
                     name: env,
                     attr,
+                    outer,
+                    attached,
                     span: cmd.span,
                 });
             }
@@ -347,14 +440,17 @@ impl<'d> BlockParser<'d> {
                 }
                 self.blocks.push(Block::Toc {
                     depth,
+                    entries: Vec::new(),
                     span: cmd.span,
                 });
+                self.toc_open = true;
             }
             "end" => {
                 let env = self.body_text(cmd).unwrap_or_default();
                 match self.envs.last() {
                     Some(top) if top.name == env => {
-                        self.envs.pop();
+                        let top = self.envs.pop().expect("checked");
+                        self.close_env(top);
                     }
                     Some(top) => {
                         let msg =
@@ -402,6 +498,21 @@ impl<'d> BlockParser<'d> {
         }
     }
 
+    /// 结构环境结束：其中的块收成一个 `Block::Env`，接回外层。
+    fn close_env(&mut self, env: Env) {
+        self.close_para();
+        if let Some((kind, outer)) = env.outer {
+            let inner = std::mem::replace(&mut self.blocks, outer);
+            self.blank_run = 0;
+            self.blocks.push(Block::Env {
+                kind,
+                blocks: inner,
+                attached: env.attached,
+                span: env.span,
+            });
+        }
+    }
+
     fn flush_blanks(&mut self) {
         if self.blank_run >= 2 && !self.blocks.is_empty() {
             self.blocks.push(Block::Blank {
@@ -410,6 +521,41 @@ impl<'d> BlockParser<'d> {
             });
         }
         self.blank_run = 0;
+    }
+}
+
+/// `\\begin{quote}`、`\\begin{list}[unordered]`、`\\begin{table}[標題, header=both]`。
+fn structural_env(env: &str, args: &[commands::Arg]) -> Result<EnvKind, (Span, String)> {
+    match env {
+        "quote" => match args.first() {
+            Some(a) => Err((a.span, "\\begin{quote} 不帶參數".into())),
+            None => Ok(EnvKind::Quote),
+        },
+        "list" => list_kind(env, args).map(|ordered| EnvKind::List { ordered }),
+        "table" => {
+            let mut title = String::new();
+            let mut header = TableHeader::None;
+            for a in args {
+                match (a.key.as_deref(), a.value.as_str()) {
+                    (Some("header"), "none") => header = TableHeader::None,
+                    (Some("header"), "row") => header = TableHeader::Row,
+                    (Some("header"), "column") => header = TableHeader::Column,
+                    (Some("header"), "both") => header = TableHeader::Both,
+                    (Some("title") | None, v) => title = v.to_string(),
+                    _ => {
+                        return Err((
+                            a.span,
+                            format!(
+                                "\\begin{{table}} 不接受參數「{}」（可用：標題、header=none|row|column|both）",
+                                commands::show(a)
+                            ),
+                        ));
+                    }
+                }
+            }
+            Ok(EnvKind::Table { title, header })
+        }
+        _ => unreachable!("not a structural environment: {env}"),
     }
 }
 
@@ -423,7 +569,7 @@ mod tests {
 
     fn attrs_of(b: &Block) -> Vec<AttrKind> {
         match b {
-            Block::Paragraph { attrs, .. } => attrs.iter().map(|a| a.kind).collect(),
+            Block::Paragraph { attrs, .. } => attrs.iter().map(|a| a.kind.clone()).collect(),
             _ => vec![],
         }
     }
@@ -489,12 +635,12 @@ mod tests {
             panic!()
         };
         assert_eq!(
-            attrs.iter().map(|a| a.kind).collect::<Vec<_>>(),
+            attrs.iter().map(|a| a.kind.clone()).collect::<Vec<_>>(),
             [AttrKind::Bottom(1)]
         );
         assert_eq!(lines.len(), 3);
         assert_eq!(
-            lines[1].attrs.iter().map(|a| a.kind).collect::<Vec<_>>(),
+            lines[1].attrs.iter().map(|a| a.kind.clone()).collect::<Vec<_>>(),
             [AttrKind::Bottom(2)]
         );
         assert!(lines[2].attrs.is_empty());

@@ -6,7 +6,7 @@ use super::flatten::{Flattener, Item};
 use super::token::{MarkKind, Tok, TokKind, Tone, Unit, group, is_hanging};
 use super::{Deco, Figure, Format, Glyph, Layout, Options, Role};
 use crate::render::numerals::hanzi;
-use crate::syntax::ast::{AttrKind, Block, Document, EmphMark, Inline, Shape};
+use crate::syntax::ast::{AttrKind, Block, Document, EmphMark, EnvKind, Inline, Shape};
 use crate::syntax::span::{Diagnostic, Span};
 
 // 尺寸（单位：字）。
@@ -48,20 +48,23 @@ struct LineFmt {
 
 impl LineFmt {
     /// 段落属性：低格累加（容器与段首的会叠在一起）。
-    fn add(&mut self, a: AttrKind) {
-        match a {
+    fn add(&mut self, a: &AttrKind) {
+        match *a {
             AttrKind::Indent(n) => self.indent += i32::from(n),
             AttrKind::Raise(n) => self.raise = self.raise.max(i32::from(n)),
             AttrKind::Bottom(n) => self.bottom = Some(i32::from(n)),
+            // TODO(SVG)：撰者、綱目、琵琶譜、單兒、字色還沒有照原版排。
+            AttrKind::Style(_) | AttrKind::List { .. } | AttrKind::Colors(_) => {}
         }
     }
 
     /// 行首属性：覆盖同类的段落属性。
-    fn replace(&mut self, a: AttrKind) {
-        match a {
+    fn replace(&mut self, a: &AttrKind) {
+        match *a {
             AttrKind::Indent(n) => self.indent = i32::from(n),
             AttrKind::Raise(n) => self.raise = i32::from(n),
             AttrKind::Bottom(n) => self.bottom = Some(i32::from(n)),
+            AttrKind::Style(_) | AttrKind::List { .. } | AttrKind::Colors(_) => {}
         }
     }
 }
@@ -186,7 +189,18 @@ impl<'d> Engine<'d> {
         let mut heads = Vec::new();
         // 目次只列它后面的标题。
         let mut after_toc = false;
-        for block in &doc.blocks {
+        self.blocks(&doc.blocks, LineFmt::default(), &mut heads, &mut after_toc);
+        (self.finish(), heads)
+    }
+
+    fn blocks(
+        &mut self,
+        blocks: &[Block],
+        outer: LineFmt,
+        heads: &mut Vec<(TocEntry, i32)>,
+        after_toc: &mut bool,
+    ) {
+        for block in blocks {
             match block {
                 Block::Heading { level, content, .. } => {
                     // 原版：n 級標題低 n-1 格。
@@ -212,7 +226,7 @@ impl<'d> Engine<'d> {
                         }
                     }
                     let col = self.glyphs.get(before).map_or(self.col, |g| g.col);
-                    if after_toc {
+                    if *after_toc {
                         heads.push((
                             TocEntry {
                                 level: *level,
@@ -224,9 +238,9 @@ impl<'d> Engine<'d> {
                     }
                 }
                 Block::Paragraph { attrs, lines, .. } => {
-                    let mut base = LineFmt::default();
+                    let mut base = outer;
                     for a in attrs {
-                        base.add(a.kind);
+                        base.add(&a.kind);
                     }
                     let lines = lines
                         .iter()
@@ -237,7 +251,7 @@ impl<'d> Engine<'d> {
                                 fmt.raise = 0;
                             }
                             for a in &l.attrs {
-                                fmt.replace(a.kind);
+                                fmt.replace(&a.kind);
                             }
                             (fmt, self.flatten(&l.content))
                         })
@@ -248,13 +262,28 @@ impl<'d> Engine<'d> {
                     self.start_block();
                     self.col += *count as i32;
                 }
-                Block::Toc { depth, .. } => {
-                    after_toc = true;
-                    self.toc(*depth);
+                Block::Toc { depth, entries, .. } => {
+                    *after_toc = true;
+                    if entries.is_empty() {
+                        self.toc(*depth);
+                    } else {
+                        // 手寫的目次：每條一行。
+                        for e in entries {
+                            let items = self.flatten(&e.content);
+                            self.paragraph(vec![(outer, items)]);
+                        }
+                    }
+                }
+                Block::Env { kind, blocks, .. } => {
+                    // TODO(SVG)：引文、單兒、表格還沒有照原版排；引文暫低一格。
+                    let mut fmt = outer;
+                    if *kind == EnvKind::Quote {
+                        fmt.indent += 1;
+                    }
+                    self.blocks(blocks, fmt, heads, after_toc);
                 }
             }
         }
-        (self.finish(), heads)
     }
 
     /// 目次：每個標題一行，按級低格；葉碼靠底。
@@ -415,7 +444,7 @@ impl<'d> Engine<'d> {
                     self.row += 1;
                 }
             }
-            Item::Half { toks, left } => {
+            Item::Half { toks, left, line } => {
                 let g = group(toks);
                 self.lead(g.lead);
                 for u in g.units {
@@ -425,10 +454,10 @@ impl<'d> Engine<'d> {
                         x: if left { NOTE_L } else { NOTE_R },
                         y: self.row as f32 + 0.5 + NOTE_DROP,
                         size: NOTE_SIZE,
-                        stretch: NOTE_STRETCH,
+                        stretch: if line { 1.0 } else { NOTE_STRETCH },
                         half_w: NOTE_SIZE / 2.0,
                         ext: 1.0,
-                        role: Role::Note,
+                        role: if line { Role::Line } else { Role::Note },
                     };
                     self.place(u, slot, true);
                     self.row += 1;
@@ -574,7 +603,7 @@ impl<'d> Engine<'d> {
         self.pending.extend(g.tail);
     }
 
-    /// 旁行：沿行的右侧（或左侧）排小字，不佔正文字格。
+    /// 句段旁注：沿行的右侧（或左侧）排小字，不佔正文字格。
     fn side(&mut self, toks: Vec<Tok>, left: bool) {
         let g = group(toks);
         let cells = self.cells() as f32;

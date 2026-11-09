@@ -65,25 +65,34 @@
         <tr><th>寫法</th><th>效果</th></tr>
         <tr><td><code>\note{…}</code> <code>\note[single]{…}</code></td><td>雙行夾注 / 單行小注</td></tr>
         <tr><td><code>\note[right]{…}</code> <code>\note[left]{…}</code></td><td>側行小注（只排一邊，佔格）</td></tr>
-        <tr><td><code>\side{…}</code> <code>\side[left]{…}</code></td><td>旁行小字、句段旁注</td></tr>
-        <tr><td><code>\comment{…}</code></td><td>朱色旁批</td></tr>
+        <tr><td><code>\note[pair]{右\\左}</code></td><td>並行（兩行小字並排）</td></tr>
+        <tr><td><code>\side{…}</code> <code>\side[left]{…}</code></td><td>單側行（正文字體小字，佔半邊字格）</td></tr>
+        <tr><td><code>\comment{…}</code> <code>\comment[stagger]{…}</code></td><td>句段旁注（旁批）</td></tr>
+        <tr><td><code>\endnote[字]{…}</code></td><td>尾注、校勘記（列在段後）</td></tr>
         <tr><td><code>\head{…}</code></td><td>眉批（天頭）</td></tr>
         <tr><td><code>\name{…}</code></td><td>專名號</td></tr>
         <tr><td><code>《…》</code> <code>〈…〉</code> <code>\title{…}</code></td><td>書名號（正文標點，畫法見「書名號」選項）</td></tr>
-        <tr><td><code>\emph{…}</code> [circle dot sesame comma]</td><td>圈點</td></tr>
-        <tr><td><code>\stroke{…}</code></td><td>朱抹</td></tr>
+        <tr><td><code>\emph{…}</code> [circle dot sesame comma box]</td><td>圈點</td></tr>
+        <tr><td><code>\stroke{…}</code> [line dot circle tint]</td><td>校勘標記：抹、點、圈、改色</td></tr>
+        <tr><td><code>\rhyme[ru, 1]{翟}</code> <code>\ruby[◓]{鳳}</code> <code>\pitch[清黃]{呦}</code></td><td>韻標（四聲、韻部）/ 字右小標 / 樂譜旁字</td></tr>
         <tr><td><code>\inv{…}</code> <code>\frame{…}</code> [square round hex flower each lantern]</td><td>陰文、墨圍：平頭、圓頭、六角、花頭、逐字圓圈、疊燈籠；加 <code>narrow</code> 為窄式</td></tr>
         <tr><td><code>\span{…}</code> <code>\span[prev]{…}</code></td><td>兼行：跨到後（前）一行</td></tr>
-        <tr><td><code>\rod{1971}</code></td><td>算籌數碼</td></tr>
+        <tr><td><code>\rod{1971}</code> <code>\rod{-6}</code> [suzhou gua]</td><td>算籌數碼 / 蘇州碼子 / 數字卦</td></tr>
+        <tr><td><code>\digits{18:20}</code></td><td>縱中橫排的數字</td></tr>
+        <tr><td><code>\glyph{瓊}</code> <code>\figure{\image{圖.png}}</code></td><td>字樣 / 插圖</td></tr>
         <tr><td><code>\del{…}</code> <code>\ins{…}</code></td><td>校勘刪、增</td></tr>
         <tr><td><code>\color[blue]{…}</code> red blue green ochre ink gray</td><td>字色</td></tr>
         <tr><td><code>\compose{⿰木鬼}</code></td><td>IDS 組字</td></tr>
-        <tr><td><code>\toc</code> <code>\toc[2]</code></td><td>目次（自動葉碼）</td></tr>
+        <tr><td><code>\toc</code> <code>\toc[2]</code></td><td>目次（自動葉碼）；後面緊接幾行則是手寫的目次</td></tr>
+        <tr><td><code>\byline</code> <code>\outline</code> <code>\detail</code> <code>\remark</code> <code>\pipa</code></td><td>寫在段首：撰者署名 / 綱 / 目 / 按語 / 琵琶譜</td></tr>
+        <tr><td><code>\list</code> <code>\list[unordered]</code></td><td>寫在段首：單兒，每行一條</td></tr>
+        <tr><td><code>\colors[孔雀綠, 葛巾紫]</code></td><td>寫在段首：字色，幾種就逐行輪換</td></tr>
         <tr><td><code>朝〪</code> 〪〭〫〬</td><td>四聲圈發（附前一字）</td></tr>
         <tr><td>換行 <code>\\</code> <code>\\[2]</code></td><td>另起一行 / 另起並擡二格</td></tr>
         <tr><td><code>\heading{…}</code> <code>\heading[2]{…}</code></td><td>標題</td></tr>
         <tr><td><code>\indent[2]</code> <code>\raise[1]</code> <code>\bottom[1]</code></td><td>寫在行首：段首管整段，段內某行只管該行</td></tr>
         <tr><td><code>\begin{indent}[2]</code> … <code>\end{indent}</code></td><td>環境：其中各段都低二格</td></tr>
+        <tr><td><code>\begin{quote}</code> <code>\begin{list}</code> <code>\begin{table}[標題, header=both]</code></td><td>引文 / 分段單兒 / 表格（每行一列，格子用 <code>&amp;</code> 分開）</td></tr>
         <tr><td>空行 / 多空行</td><td>分段 / 版面空行</td></tr>
         <tr><td><code>\{ \} \[ \] \%</code> <code>% 注釋</code> Tab 鍵</td><td>轉義 / 注釋 / 全角空格</td></tr>
       </table>

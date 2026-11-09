@@ -5,7 +5,7 @@
 
 use super::options::{PunctStyle, TitleMark};
 use super::token::{Mark, MarkKind, Style, Tok, TokKind, Tone, classify, is_combining};
-use crate::syntax::ast::{Color, Element, ElementKind, Inline};
+use crate::syntax::ast::{Color, Element, ElementKind, EmphMark, Inline, StrokeMark};
 use crate::syntax::span::{Diagnostic, Span};
 
 #[derive(Clone, Debug, PartialEq)]
@@ -13,10 +13,11 @@ pub enum Item {
     Main(Vec<Tok>),
     Double(Vec<Tok>),
     Single(Vec<Tok>),
-    /// 側行小注：只排右（左）半邊。
+    /// 側行小注：只排右（左）半邊。`line` 是單側行（正文字體的小字，不是注）。
     Half {
         toks: Vec<Tok>,
         left: bool,
+        line: bool,
     },
     /// 兼行：排在當前行與後（前）`n` 行的正中。
     Span {
@@ -135,7 +136,7 @@ impl<'d> Flattener<'d> {
     fn element(&mut self, el: &Element, ctx: &Ctx, out: &mut Vec<Item>, cur: &mut Vec<Tok>) {
         let styled = |this: &mut Self, kind| this.mark(ctx, kind);
         match &el.kind {
-            ElementKind::Name => {
+            ElementKind::Name { .. } => {
                 let c = styled(self, MarkKind::Name);
                 self.walk(&el.children, &c, out, cur);
             }
@@ -176,10 +177,30 @@ impl<'d> Flattener<'d> {
                 let c = styled(self, MarkKind::Emphasis(*m));
                 self.walk(&el.children, &c, out, cur);
             }
-            ElementKind::Stroke => {
-                let c = styled(self, MarkKind::Stroke);
+            // TODO(SVG)：校勘的點、圈、改色還沒有照原版畫，暫用最接近的圈點。
+            ElementKind::Stroke(m) => {
+                let c = match m {
+                    StrokeMark::Line => styled(self, MarkKind::Stroke),
+                    StrokeMark::Dot => styled(self, MarkKind::Emphasis(EmphMark::Dot)),
+                    StrokeMark::Circle => styled(self, MarkKind::Emphasis(EmphMark::Circle)),
+                    StrokeMark::Tint => {
+                        let mut c = ctx.clone();
+                        c.style.color = Some(Color::Ochre);
+                        c
+                    }
+                };
                 self.walk(&el.children, &c, out, cur);
             }
+            // TODO(SVG)：以下還只排出正文，不畫旁字、韻標、插圖。
+            ElementKind::Rhyme { .. }
+            | ElementKind::Ruby(_)
+            | ElementKind::Pitch { .. }
+            | ElementKind::Figure => self.walk(&el.children, ctx, out, cur),
+            ElementKind::Image(_) | ElementKind::Map(_) => {}
+            ElementKind::Digits(t)
+            | ElementKind::Suzhou(t)
+            | ElementKind::Divination(t)
+            | ElementKind::Glyph(t) => self.text(t, el.span, ctx, cur),
             ElementKind::Inverse(s) => {
                 let c = styled(self, MarkKind::Inverse(*s));
                 self.walk(&el.children, &c, out, cur);
@@ -204,12 +225,14 @@ impl<'d> Flattener<'d> {
             }
             ElementKind::Rod(digits) => {
                 // 照原版：整串碼子字排在一格裏，由「華數碼」字體畫成算籌。
+                // TODO(SVG)：負數、一串裏的幾個數還沒有分開排。
                 const 碼子: [char; 10] =
                     ['〇', '〡', '〢', '〣', '〤', '〥', '〦', '〧', '〨', '〩'];
                 if !digits.is_empty() {
                     cur.push(Tok {
                         text: digits
                             .bytes()
+                            .filter(u8::is_ascii_digit)
                             .map(|d| 碼子[usize::from(d - b'0')])
                             .collect(),
                         kind: TokKind::Cell,
@@ -268,16 +291,20 @@ impl<'d> Flattener<'d> {
             }
             ElementKind::DoubleNote
             | ElementKind::SingleNote
+            | ElementKind::PairNote
+            | ElementKind::Endnote { .. }
             | ElementKind::HalfNote { .. }
             | ElementKind::Side { .. }
-            | ElementKind::Comment
+            | ElementKind::Comment { .. }
             | ElementKind::HeadNote => {
                 let name = match el.kind {
-                    ElementKind::DoubleNote => "雙行夾注",
+                    ElementKind::DoubleNote | ElementKind::PairNote => "雙行夾注",
+                    ElementKind::Endnote { .. } => "尾注",
                     ElementKind::SingleNote => "單行小注",
                     ElementKind::HalfNote { .. } => "側行小注",
                     ElementKind::HeadNote => "眉批",
-                    _ => "旁行",
+                    ElementKind::Side { .. } => "單側行",
+                    _ => "旁注",
                 };
                 if let Some(inside) = ctx.nested {
                     self.diags.push(Diagnostic::warning(
@@ -289,18 +316,38 @@ impl<'d> Flattener<'d> {
                 }
                 let mut c = ctx.clone();
                 c.nested = Some(name);
-                if matches!(el.kind, ElementKind::Comment) && c.style.color.is_none() {
+                if matches!(el.kind, ElementKind::Comment { .. }) && c.style.color.is_none() {
                     c.style.color = Some(Color::Red);
                 }
                 let mut buf = Vec::new();
-                self.walk(&el.children, &c, out, &mut buf);
+                // TODO(SVG)：並行的右、左兩行還沒有分開排，尾注還沒有移到段後。
+                let children: Vec<Inline> = el
+                    .children
+                    .iter()
+                    .filter(|n| {
+                        !matches!(n, Inline::Element(e) if matches!(e.kind, ElementKind::Break { .. }))
+                    })
+                    .cloned()
+                    .collect();
+                self.walk(&children, &c, out, &mut buf);
                 flush(out, cur);
                 out.push(match el.kind {
-                    ElementKind::DoubleNote => Item::Double(buf),
+                    ElementKind::DoubleNote | ElementKind::PairNote | ElementKind::Endnote { .. } => {
+                        Item::Double(buf)
+                    }
                     ElementKind::SingleNote => Item::Single(buf),
-                    ElementKind::HalfNote { left } => Item::Half { toks: buf, left },
-                    ElementKind::Side { left } => Item::Side { toks: buf, left },
-                    ElementKind::Comment => Item::Side {
+                    ElementKind::HalfNote { left } => Item::Half {
+                        toks: buf,
+                        left,
+                        line: false,
+                    },
+                    // 單側行：與側行小注同樣佔半邊字格，只是字體不同。
+                    ElementKind::Side { left } => Item::Half {
+                        toks: buf,
+                        left,
+                        line: true,
+                    },
+                    ElementKind::Comment { .. } => Item::Side {
                         toks: buf,
                         left: false,
                     },

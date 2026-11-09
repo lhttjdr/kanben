@@ -34,7 +34,39 @@ pub enum Block {
     /// 多出来的空行，每个占一整行（版面上的一列）。
     Blank { count: usize, span: Span },
     /// `\\toc`：目次，列出 `depth` 級以內的標題及葉碼。
-    Toc { depth: u8, span: Span },
+    /// 緊跟在 `\\toc` 後面（不空行）的各行是手寫的條目，有了就不自動列標題。
+    Toc {
+        depth: u8,
+        entries: Vec<Line>,
+        span: Span,
+    },
+    /// `\\begin{quote}` 之類的結構環境，裏面是若干塊。
+    Env {
+        kind: EnvKind,
+        blocks: Vec<Block>,
+        /// 緊接上一段（中間不空行）：表格這樣寫就屬於上一段。
+        attached: bool,
+        span: Span,
+    },
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum EnvKind {
+    /// 引文（原版 `‘‘‘…’’’`），整體低一格。
+    Quote,
+    /// 分段單兒：每段一條。`ordered` 是有序的列，否則是集。
+    List { ordered: bool },
+    /// 表格：每行一列，格子之間用 `&` 分開。
+    Table { title: String, header: TableHeader },
+}
+
+/// 表頭在哪：首列、首行，或兩者。
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TableHeader {
+    None,
+    Row,
+    Column,
+    Both,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -43,20 +75,40 @@ pub struct Line {
     pub content: Vec<Inline>,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Attr {
     pub kind: AttrKind,
     pub span: Span,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum AttrKind {
-    /// `@低N`：整段低 N 格。
+    /// `\\indent[N]`：整段低 N 格。
     Indent(u8),
-    /// `@擡N`：段首高出版框 N 格。
+    /// `\\raise[N]`：段首高出版框 N 格。
     Raise(u8),
-    /// `@底N`：每行靠底排，离底 N 格。
+    /// `\\bottom[N]`：每行靠底排，离底 N 格。
     Bottom(u8),
+    /// 特殊段落：撰者、綱、目、按語、琵琶譜。
+    Style(ParaStyle),
+    /// `\\list`：段中每行是一條（列或集）。
+    List { ordered: bool },
+    /// `\\colors[甲, 乙]`：字色；給幾種就逐行輪換。
+    Colors(Vec<String>),
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ParaStyle {
+    /// 撰者、校者署名（靠底，下留空）。
+    Byline,
+    /// 綱（大字）。
+    Outline,
+    /// 目。
+    Detail,
+    /// 按語。
+    Remark,
+    /// 琵琶譜。
+    Pipa,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -82,19 +134,29 @@ pub enum ElementKind {
     HalfNote { left: bool },
     /// 旁行小字（右或左），不占正文字格。
     Side { left: bool },
-    /// 旁批（朱色旁行小字）。
-    Comment,
+    /// 句段旁注（旁批）。`stagger`：字距拉開，與正文錯開。
+    Comment { stagger: bool },
+    /// 並行：左右兩行小字並排，`\\note[pair]{右\\\\左}`。
+    PairNote,
+    /// 尾注：文中只留編號，注文列在段後。`anchor` 是所注之字。
+    Endnote { anchor: Option<String> },
     /// 眉批，排在天頭。
     HeadNote,
-    /// 專名號（左側直綫）。
-    Name,
+    /// 專名號（左側直綫）。`double`：兩側都有綫。
+    Name { double: bool },
     /// 書名。`brackets` 是正文里的書名號（如 `《》`），`\title{}` 则没有。
     /// 画成波綫还是括號由版式决定。
     Title { brackets: Option<(char, char)> },
     /// 圈點（右側逐字）。
     Emphasis(EmphMark),
-    /// 抹（右側朱綫）。
-    Stroke,
+    /// 校勘標記：抹、點、圈、改色。
+    Stroke(StrokeMark),
+    /// 韻腳的四聲標記（抹在字右），`group` 是韻部（決定顏色）。
+    Rhyme { tone: Tone, group: Option<u8> },
+    /// 字右的小字標記，如平仄 ○●◒◓。
+    Ruby(String),
+    /// 樂譜旁字：字旁正書律呂等。
+    Pitch { text: String, left: bool },
     /// 陰文（黑底白字）。
     Inverse(Encl),
     /// 墨圍（框）。
@@ -111,8 +173,54 @@ pub enum ElementKind {
     Break { raise: u8 },
     /// 兼行：這段字跨到後（前）面 `n` 行，排在幾行的正中。
     Span { prev: bool, n: u8 },
-    /// 算籌數碼，內容是阿拉伯數字。
+    /// 算籌數碼，內容是阿拉伯數字（可帶負號，多個數用逗號分開）。
     Rod(String),
+    /// 縱中橫排的阿拉伯數字（可帶小數點、冒號）。
+    Digits(String),
+    /// 蘇州碼子，內容是阿拉伯數字。
+    Suzhou(String),
+    /// 數字卦（筮數）。
+    Divination(String),
+    /// 字書的字樣（字圖）。
+    Glyph(String),
+    /// 插圖：裏面是 `\\image`、`\\map`。
+    Figure,
+    /// 圖片文件。
+    Image(String),
+    /// 電子地圖。
+    Map(String),
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum StrokeMark {
+    /// 右側直綫（抹）。
+    Line,
+    /// 右側實點。
+    Dot,
+    /// 右側空圈。
+    Circle,
+    /// 改字色（校注所及之字）。
+    Tint,
+}
+
+/// 四聲：平■上◆去▲入，平作●。
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum Tone {
+    Ping,
+    Shang,
+    Qu,
+    Ru,
+}
+
+impl Tone {
+    pub fn mark(self) -> char {
+        match self {
+            Tone::Ping => '●',
+            Tone::Shang => '■',
+            Tone::Qu => '◆',
+            Tone::Ru => '▲',
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -125,6 +233,8 @@ pub enum EmphMark {
     Sesame,
     /// ﹆
     Comma,
+    /// ロ（琵琶譜的方框）
+    Box,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]

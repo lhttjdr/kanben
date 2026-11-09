@@ -1,6 +1,7 @@
 //! 命令行：`kanben 輸入.kb [-o 輸出.html]`
 //!
-//! 输出 HTML（全部页面）；`--svg 目录` 则每页另存一张 SVG；`--font-loader 網址` 让 HTML 加载网页字體。
+//! 输出 HTML（全部页面）；`--svg 目录` 则每页另存一张 SVG；`--font-loader 網址` 让 HTML 加载网页字體；
+//! `--classic` 则只把源碼譯成原版排版器的標記，印到標準輸出。
 
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -13,20 +14,22 @@ fn main() -> ExitCode {
     let mut out_html = None;
     let mut svg_dir = None;
     let mut font_loader = None;
+    let mut classic = false;
     while let Some(a) = args.next() {
         match a.as_str() {
             "-o" => out_html = args.next().map(PathBuf::from),
             "--svg" => svg_dir = args.next().map(PathBuf::from),
             "--font-loader" => font_loader = args.next(),
+            "--classic" => classic = true,
             "-h" | "--help" => {
-                eprintln!("用法：kanben 輸入.kb [-o 輸出.html] [--svg 目錄] [--font-loader 網址]");
+                eprintln!("用法：kanben 輸入.kb [-o 輸出.html] [--svg 目錄] [--font-loader 網址] [--classic]");
                 return ExitCode::SUCCESS;
             }
             _ => input = Some(PathBuf::from(a)),
         }
     }
     let Some(input) = input else {
-        eprintln!("用法：kanben 輸入.kb [-o 輸出.html] [--svg 目錄] [--font-loader 網址]");
+        eprintln!("用法：kanben 輸入.kb [-o 輸出.html] [--svg 目錄] [--font-loader 網址] [--classic]");
         return ExitCode::FAILURE;
     };
     let src = match std::fs::read_to_string(&input) {
@@ -37,8 +40,17 @@ fn main() -> ExitCode {
         }
     };
 
-    let out = kanben::typeset(&src, &[]);
     let index = LineIndex::new(&src);
+    if classic {
+        let c = kanben::classic::to_classic(&src);
+        for d in &c.diagnostics {
+            let (line, col) = index.line_col(d.span.start);
+            eprintln!("{}:{line}:{col}: {}", input.display(), d.message);
+        }
+        print!("{}", c.text);
+        return ExitCode::SUCCESS;
+    }
+    let out = kanben::typeset(&src, &[]);
     let mut errors = 0;
     for d in &out.diagnostics {
         let (line, col) = index.line_col(d.span.start);

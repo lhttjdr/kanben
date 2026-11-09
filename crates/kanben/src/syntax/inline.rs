@@ -344,6 +344,12 @@ impl<'d> Parser<'d> {
                 let el = match resolved.kind {
                     ElementKind::Compose(_) => self.compose(children, span),
                     ElementKind::Rod(_) => self.rod(children, span),
+                    k @ (ElementKind::Suzhou(_)
+                    | ElementKind::Divination(_)
+                    | ElementKind::Digits(_)
+                    | ElementKind::Glyph(_)
+                    | ElementKind::Image(_)
+                    | ElementKind::Map(_)) => self.text_body(&name, k, children, span),
                     kind => Element {
                         kind,
                         children,
@@ -355,25 +361,97 @@ impl<'d> Parser<'d> {
         }
     }
 
+    /// `\\rod{1971}`、`\\rod{4720, -398}`：幾個整數，可帶負號，存成「4720,-398」。
     fn rod(&mut self, children: Vec<Inline>, span: Span) -> Element {
         let mut text = String::new();
         for child in &children {
             collect_text(child, &mut text);
         }
-        let digits: String = text.chars().filter(char::is_ascii_digit).collect();
+        let mut nums = Vec::new();
+        let mut bad = false;
+        for part in text.split([',', '，', '、']) {
+            let part: String = part.chars().filter(|c| !c.is_whitespace()).collect();
+            if part.is_empty() {
+                continue;
+            }
+            let (neg, rest) = match part.strip_prefix(['-', '−']) {
+                Some(r) => ("-", r),
+                None => ("", part.as_str()),
+            };
+            let d: String = rest.chars().filter(char::is_ascii_digit).collect();
+            bad |= d.chars().count() != rest.chars().count();
+            if !d.is_empty() {
+                nums.push(format!("{neg}{d}"));
+            }
+        }
+        let digits = nums.join(",");
         if digits.is_empty() {
             self.diags.push(Diagnostic::error(
                 span,
                 "\\rod 的內容應是阿拉伯數字，如 \\rod{1971}",
             ));
-        } else if digits.chars().count() != text.chars().filter(|c| !c.is_whitespace()).count() {
+        } else if bad {
             self.diags.push(Diagnostic::warning(
                 span,
-                "\\rod 裏只能寫阿拉伯數字，其餘的字已忽略",
+                "\\rod 裏只能寫阿拉伯數字（可帶負號，用逗號分開幾個數），其餘的字已忽略",
             ));
         }
         Element {
             kind: ElementKind::Rod(digits),
+            children: Vec::new(),
+            span,
+        }
+    }
+
+    /// 內容只取文字的命令：數碼、字樣、圖片、地圖。
+    fn text_body(
+        &mut self,
+        name: &str,
+        kind: ElementKind,
+        children: Vec<Inline>,
+        span: Span,
+    ) -> Element {
+        let mut text = String::new();
+        for child in &children {
+            if let Inline::Element(_) = child {
+                self.diags.push(Diagnostic::warning(
+                    span,
+                    format!("\\{name} 裏只能寫文字，其中的標記已忽略"),
+                ));
+            }
+            collect_text(child, &mut text);
+        }
+        let text = text.trim().to_string();
+        let ok = match kind {
+            ElementKind::Suzhou(_) | ElementKind::Divination(_) => {
+                text.chars().all(|c| c.is_ascii_digit())
+            }
+            ElementKind::Digits(_) => text
+                .chars()
+                .all(|c| c.is_ascii_digit() || ".:-−+".contains(c)),
+            _ => true,
+        };
+        if text.is_empty() || !ok {
+            self.diags.push(Diagnostic::error(
+                span,
+                format!("\\{name} 的內容不對：應是{}", match kind {
+                    ElementKind::Suzhou(_) | ElementKind::Divination(_) => "阿拉伯數字",
+                    ElementKind::Digits(_) => "阿拉伯數字（可帶小數點、冒號、負號）",
+                    _ => "文字",
+                }),
+            ));
+        }
+        let kind = match kind {
+            ElementKind::Suzhou(_) => ElementKind::Suzhou(text),
+            ElementKind::Divination(_) => ElementKind::Divination(text),
+            ElementKind::Digits(_) => ElementKind::Digits(text),
+            ElementKind::Glyph(_) => ElementKind::Glyph(text),
+            ElementKind::Image(_) => ElementKind::Image(text),
+            ElementKind::Map(_) => ElementKind::Map(text),
+            k => k,
+        };
+        Element {
+            kind,
             children: Vec::new(),
             span,
         }
@@ -444,7 +522,7 @@ mod tests {
         assert!(d.is_empty(), "{d:?}");
         assert_eq!(
             kinds(&r),
-            ["DoubleNoteTitle { brackets: Some(('《', '》')) }T(史記)T(曰)NameT(微子)"]
+            ["DoubleNoteTitle { brackets: Some(('《', '》')) }T(史記)T(曰)Name { double: false }T(微子)"]
         );
     }
 
