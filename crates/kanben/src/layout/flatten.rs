@@ -115,6 +115,7 @@ impl<'d> Flattener<'d> {
                     tone: None,
                     style: ctx.style.clone(),
                     compose: false,
+                    rod: false,
                     hidden: false,
                 });
             }
@@ -153,6 +154,7 @@ impl<'d> Flattener<'d> {
                         tone: None,
                         style: Style::default(),
                         compose: false,
+                        rod: false,
                         hidden: true,
                     };
                     if let Some((open, _)) = brackets {
@@ -197,14 +199,20 @@ impl<'d> Flattener<'d> {
                 self.walk(&el.children, &c, out, cur);
             }
             ElementKind::Rod(digits) => {
-                let len = digits.len();
-                for (i, d) in digits.bytes().enumerate() {
+                // 照原版：整串碼子字排在一格裏，由「華數碼」字體畫成算籌。
+                const 碼子: [char; 10] =
+                    ['〇', '〡', '〢', '〣', '〤', '〥', '〦', '〧', '〨', '〩'];
+                if !digits.is_empty() {
                     cur.push(Tok {
-                        text: rod_char(d - b'0', (len - 1 - i) % 2 == 0).to_string(),
+                        text: digits
+                            .bytes()
+                            .map(|d| 碼子[usize::from(d - b'0')])
+                            .collect(),
                         kind: TokKind::Cell,
                         tone: None,
                         style: ctx.style.clone(),
                         compose: false,
+                        rod: true,
                         hidden: false,
                     });
                 }
@@ -238,6 +246,7 @@ impl<'d> Flattener<'d> {
                         tone: None,
                         style: ctx.style.clone(),
                         compose: true,
+                        rod: false,
                         hidden: false,
                     });
                 }
@@ -390,7 +399,7 @@ mod tests {
 
         let (r, _) = items_with("《史記》", TitleMark::Bracket);
         let Item::Main(t) = &r[0] else { panic!() };
-        assert_eq!(text(t), "︽史記︾");
+        assert_eq!(text(t), "《史記》");
         assert!(t.iter().all(|t| !t.hidden && t.style.marks.is_empty()));
     }
 }

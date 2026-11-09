@@ -7,22 +7,68 @@
   --kb-green-c: var(--kb-green, #2f6b45);
   --kb-ochre-c: var(--kb-ochre, #9a6a1c);
   --kb-gray-c: var(--kb-gray, #8a8178);
+  --kb-side-c: var(--kb-side, rgb(20, 74, 116));
+  --kb-head-c: var(--kb-head, rgb(244, 62, 6));
 }
-/* 字體：mincho（明朝，默认）、fangsong（仿宋）、system（系統字體）。
-   KB 系列是开源字體（OFL）一字一档的网页字体，由 web/fontload.js 按需登记；没有加载时退回系統字體。
-   页面可用 --kb-font 整体覆盖。 */
+/* 字體：照原版排版器各類文字的字體棧（default，與原版逐像素相同）；
+   也可選 mincho（明朝）、fangsong（仿宋）、system（系統字體），只換正文、標題、夾注的字體。
+   KB 系列是开源字體（OFL）一字一档的网页字体，由 web/fontload.js 按需登记。页面可用 --kb-font 覆盖正文字体。 */
 .kb {
+  --kb-f-main: 南監體, 森泽UD黎明体（旧字形）, 田楷替補, 真書替補, "A-OTF 欧体楷書 Std Light", "A-OTF Outai Kaisho Std", 華康歐陽詢體W5, 華康文徵明體W4, 文鼎皇華楷體, 方正新楷体_GB18030, 楷体, KaiTi, "方正楷体_GB18030(S10版)", 丝柳, 標楷體, "漢儀楷體(GB18030超大字符集版)", HiraMinProN-W6, "Hiragino Mincho ProN", "秀英明朝 B JIS2004", DNPShueiMinPr6N-B, "秀英明朝 M JIS2004", DNPShueiMinPr6N-M, 游明朝, YuMincho, "ヒラギノ明朝 ProN W3", HG明朝E, "ＭＳ Ｐ明朝", "ＭＳ 明朝", "HarmonyOS Sans SC", "Noto Sans CJK KR";
+  --kb-f-heading4: 南監體, 仿宋, FangSong, STFangsong, "汉仪仿宋(GB18030超大字符集版)", fangsong, 文鼎皇華楷體, 細明體, MingLiU, "Noto Serif CJK KR", "Microsoft Yahei Light";
+  --kb-f-heading: 森泽UD黎明体（旧字形）, "FOT-筑紫Aオールド明朝 Pr6N", "FOT-筑紫明朝 Pr6N", HiraMinProN-W6, "Hiragino Mincho ProN", "秀英明朝 B JIS2004", DNPShueiMinPr6N-B, "秀英明朝 M JIS2004", DNPShueiMinPr6N-M, 游明朝, YuMincho, "ヒラギノ明朝 ProN W3", HG明朝E, "ＭＳ Ｐ明朝", "ＭＳ 明朝", 統刊朙, "Typography Old P", "Songti SC", 宋体, 細明體, "HarmonyOS Sans SC", "Noto Serif CJK KR";
+  --kb-f-note: 纖體步水仿宋, "华康玉刻仿宋 W4", "方正筑紫明朝宋 简繁", HYZiDianSongS_Unicode, HYZiDianSongS_Unicode_CJK_B, HYFangSong_GB18030Super-ExtB, 仿宋, 宋体, "HarmonyOS Sans SC", "Noto Serif CJK KR";
+  --kb-f-note1: "華康玉刻仿宋 W6", 方正新书宋_GB18030, "HarmonyOS Sans SC", "Noto Serif CJK KR", 宋体, 仿宋, FangSong, "Hiragino Mincho ProN";
+  --kb-f-side: 南監體, 森泽UD黎明体（旧字形）, 田楷替補, 真書替補, "A-OTF 欧体楷書 Std Light", "A-OTF Outai Kaisho Std", 華康歐陽詢體W5, 華康文徵明體W4, 文鼎皇華楷體, 方正新楷体_GB18030, 楷体, KaiTi, "方正楷体_GB18030(S10版)", 丝柳, 標楷體, "漢儀楷體(GB18030超大字符集版)", HiraMinProN-W6, "Hiragino Mincho ProN", "秀英明朝 B JIS2004", DNPShueiMinPr6N-B, "秀英明朝 M JIS2004", DNPShueiMinPr6N-M, 游明朝, YuMincho, "ヒラギノ明朝 ProN W3", HG明朝E, "ＭＳ Ｐ明朝", "ＭＳ 明朝", "HarmonyOS Sans SC", "Noto Sans CJK KR";
+  --kb-f-head: 行楷-簡, 行楷-繁, 真書替補, 活版字型華文正楷, "A-OTF 欧体楷書 Std Light", "A-OTF Outai Kaisho Std", 華康歐陽詢體W5, 華康文徵明體W4, 文鼎皇華楷體, 方正新楷体_GB18030, 楷体, KaiTi, "方正楷体_GB18030(S10版)", 丝柳, 標楷體, 楷体_GB2312, "FZKaiS-Extended(SIP)", "FZKaiT-Extended(SIP)", "漢儀楷體(GB18030超大字符集版)";
+  --kb-f-p-sm: 標點符號, 楷体, KaiTi, 宋体, "PingFang SC", "Source Han Sans SC", "Noto Sans CJK SC";
+  --kb-f-p-md: 標點符號, 宋体, SimSun, "PingFang SC", "Source Han Sans SC", "Noto Sans CJK SC";
+  --kb-f-p-tl: 標點符號, 仿宋, FangSong, 宋体, SimSun, "PingFang SC", "Source Han Sans SC", "Noto Sans CJK SC";
+  --kb-f-p-q: 標點符號, 宋体;
+  --kb-f-p-n: 標點符號, 楷体, KaiTi, "Noto Sans CJK JP";
+  --kb-f-tone: 標點符號;
+  --kb-f-num: 華數碼, Times;
+  --kb-f-encl: 南監體, 方正金陵, 仿宋, fangsong;
   --kb-sys: "Noto Serif CJK TC", "Source Han Serif TC", "Noto Serif TC", "Songti TC", "SimSun", serif;
-  --kb-face: "KB Mincho", var(--kb-sys);
 }
-.kb.f-fangsong { --kb-face: "KB Fangsong", "KB Mincho", var(--kb-sys); }
-.kb.f-system { --kb-face: var(--kb-sys); }
+.kb.f-mincho { --kb-f-main: "KB Mincho", var(--kb-sys); --kb-f-heading: "KB Mincho", var(--kb-sys); --kb-f-note: "KB Mincho", var(--kb-sys); --kb-f-note1: "KB Mincho", var(--kb-sys); }
+.kb.f-fangsong { --kb-f-main: "KB Fangsong", "KB Mincho", var(--kb-sys); --kb-f-heading: "KB Mincho", var(--kb-sys); --kb-f-note: "KB Fangsong", "KB Mincho", var(--kb-sys); --kb-f-note1: "KB Fangsong", "KB Mincho", var(--kb-sys); }
+.kb.f-system { --kb-f-main: var(--kb-sys); --kb-f-heading: var(--kb-sys); --kb-f-note: var(--kb-sys); --kb-f-note1: var(--kb-sys); }
+/* 原版是 HTML 竪排；SVG 文字同樣竪排、直立，字形落點才與原版相同。 */
 .kb text {
-  font-family: var(--kb-font, var(--kb-face));
+  font-family: var(--kb-font, var(--kb-f-main));
+  font-weight: 500;
   fill: var(--kb-ink-c);
   text-anchor: middle;
   dominant-baseline: central;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
 }
+.kb text.g-h1 { font-family: var(--kb-f-heading); font-weight: 800; }
+.kb text.g-h2 { font-family: var(--kb-f-heading); font-weight: 750; }
+.kb text.g-h3 { font-family: var(--kb-f-heading); font-weight: 700; }
+.kb text.g-h4 { font-family: var(--kb-f-heading4); font-weight: 650; }
+.kb text.g-h5 { font-family: var(--kb-f-heading4); font-weight: 600; }
+.kb text.g-h6 { font-family: var(--kb-f-heading4); font-weight: 550; }
+.kb text.g-note { font-family: var(--kb-f-note); font-weight: 240; font-stretch: 75%; }
+.kb text.g-note1 { font-family: var(--kb-f-note1); font-weight: 320; }
+.kb text.g-side { font-family: var(--kb-f-side); font-weight: 500; fill: var(--kb-side-c); }
+.kb text.g-head { font-family: var(--kb-f-head); font-weight: 400; fill: var(--kb-head-c); }
+/* 標點：原版用自造的「標點符號」字體，按簡體中文的字形（lang=zh-Hans-CN）。 */
+.kb text.p-sm { font-family: var(--kb-f-p-sm); font-weight: 400; }
+.kb text.p-md { font-family: var(--kb-f-p-md); font-weight: 400; }
+.kb text.p-tl { font-family: var(--kb-f-p-tl); font-weight: 400; }
+.kb text.p-q { font-family: var(--kb-f-p-q); font-weight: 500; }
+.kb text.p-n { font-family: var(--kb-f-p-n); font-weight: 240; font-stretch: 75%; }
+.kb text.p-nq { font-family: var(--kb-f-p-q); font-weight: 240; font-stretch: 75%; }
+.kb text.p-sm, .kb text.p-md, .kb text.p-tl, .kb text.p-q, .kb text.p-n, .kb text.p-nq { fill: var(--kb-red-c); }
+/* 算籌：照原版 cnumDr，用「華數碼」字體，碼子字橫排在一格裏。 */
+.kb text.g-rod { font-family: 華數碼; writing-mode: horizontal-tb; font-variant-ligatures: contextual; font-kerning: normal; letter-spacing: 0; }
+.kb text.rod-v { font-feature-settings: "ss01"; }
+.kb text.rod-h { font-feature-settings: "ss02"; }
+.kb text.rod-1 { font-variant-east-asian: full-width; }
+/* 組字部件按橫排量墨迹，保持橫排。 */
+.kb text.idsp { writing-mode: horizontal-tb; }
 .kb .paper { fill: var(--kb-paper-c); }
 .kb .rule { stroke: var(--kb-rule-c); fill: none; }
 .kb .rule-fill { fill: var(--kb-rule-c); }
@@ -48,11 +94,10 @@
   user-select: none;
 }
 .kb text.cp { fill: transparent; }
-.kb text.kai { font-family: var(--kb-font-kai, "KB Kai", var(--kb-font, var(--kb-face))); }
 .kb .rod line { stroke: var(--kb-ink-c); stroke-width: 6; stroke-linecap: round; }
 .kb .rod.c-red line { stroke: var(--kb-red-c); }
 .kb .rod.c-blue line { stroke: var(--kb-blue-c); }
-.kb text.b { font-weight: 700; }
+
 .kb .rod circle { stroke: var(--kb-ink-c); stroke-width: 6; fill: none; }
 .kb .colnum line, .kb .colnum circle { stroke: var(--kb-rule-c); stroke-width: 3; stroke-linecap: round; fill: none; opacity: 0.6; }
 .kb .jd { color: var(--kb-red-c); }

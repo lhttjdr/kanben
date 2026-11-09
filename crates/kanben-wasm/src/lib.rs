@@ -231,3 +231,31 @@ pub fn to_classic(src: &str) -> ClassicText {
         book: c.book,
     }
 }
+
+/// 每個字的格位，JSON 數組：`[{col,x,y,size,text,role,hidden}]`（單位：字）。與原版比對用。
+#[wasm_bindgen(js_name = glyphsJson)]
+pub fn glyphs_json(src: &str, overrides: &str) -> String {
+    let pairs = parse_overrides(overrides);
+    let refs: Vec<(&str, &str)> = pairs
+        .iter()
+        .map(|(k, v)| (k.as_str(), v.as_str()))
+        .collect();
+    let l = kanben::layout_only(src, &refs);
+    let items: Vec<String> = l
+        .glyphs
+        .iter()
+        .map(|g| {
+            format!(
+                r#"{{"col":{},"x":{},"y":{},"size":{},"text":"{}","role":"{:?}","hidden":{}}}"#,
+                g.col,
+                g.x,
+                g.y,
+                g.size,
+                g.text.replace('\\', "\\\\").replace('"', "\\\""),
+                g.role,
+                g.hidden
+            )
+        })
+        .collect();
+    format!("[{}]", items.join(","))
+}

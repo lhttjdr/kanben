@@ -1,3 +1,9 @@
+/* 原版排版器的字體（經作者許可收錄於 ref/z6h2）：SVG 版的標點、算籌等用它們，與原版一致。 */
+@font-face { font-family: "行間標點"; src: url("ref/z6h2/行間標點.woff") format("woff"); }
+@font-face { font-family: "標點符號"; src: url("ref/z6h2/標點符號.woff2") format("woff2"), url("ref/z6h2/標點符號.woff") format("woff"); }
+@font-face { font-family: "真書替補"; src: url("ref/z6h2/真書替補.woff2") format("woff2"), url("ref/z6h2/真書替補.woff") format("woff"); unicode-range: U+6617, U+9859; }
+@font-face { font-family: "田楷替補"; src: url("ref/z6h2/田楷替補.woff2") format("woff2"); }
+@font-face { font-family: "華數碼"; src: url("ref/z6h2/筭數.woff2") format("woff2"), url("ref/z6h2/筭數.woff") format("woff"); font-stretch: 30% 120%; }
 :root {
   --bg: #e6dfd0;
   --panel: #faf6ee;

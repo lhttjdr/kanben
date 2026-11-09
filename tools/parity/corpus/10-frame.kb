@@ -1,0 +1,1 @@
+甲\frame{平頭}乙\frame[round]{圓頭}丙\frame[hex]{六角}丁\frame[each]{帶圈}戊\frame[lantern]{燈籠}己\frame[round, narrow]{窄圓}庚\frame[hex, narrow]{窄角}辛

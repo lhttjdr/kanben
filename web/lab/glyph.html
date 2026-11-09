@@ -1,0 +1,31 @@
+<!doctype html><meta charset="utf-8"><title>字形實驗</title>
+<link rel="stylesheet" href="../ref/style.css"><link rel="stylesheet" href="../ref/book.css">
+<style>
+body{margin:0;background:#fff}
+#h{position:absolute;left:40px;top:20px;writing-mode:vertical-rl;font-size:30px;line-height:48px;height:400px}
+#s{position:absolute;left:200px;top:20px}
+#s text{dominant-baseline:central;text-anchor:middle}
+</style>
+<div id="h"><p id="p">臣光曰臣聞天子之職莫</p></div>
+<svg id="s" width="120" height="420" viewBox="0 0 120 420"></svg>
+<script>
+const p = document.getElementById("p");
+const cs = getComputedStyle(p);
+const svg = document.getElementById("s");
+const r0 = document.getElementById("h").getBoundingClientRect();
+const range = document.createRange();
+const t = p.firstChild;
+const out = [];
+for (let i = 0; i < t.length; i++) {
+  range.setStart(t, i); range.setEnd(t, i + 1);
+  const r = range.getBoundingClientRect();
+  const cx = r.left + r.width / 2 - r0.left, cy = r.top + r.height / 2 - r0.top;
+  out.push([cx, cy]);
+  const e = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  e.setAttribute("x", cx); e.setAttribute("y", cy);
+  e.setAttribute("style", `font-family:${cs.fontFamily};font-size:${cs.fontSize};font-weight:${cs.fontWeight};writing-mode:${location.hash === "#h" ? "horizontal-tb" : "vertical-rl"};text-orientation:upright`);
+  e.textContent = t.data[i];
+  svg.appendChild(e);
+}
+window.__boxes = out;
+</script>

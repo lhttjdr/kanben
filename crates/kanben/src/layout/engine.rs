@@ -11,15 +11,20 @@ use crate::syntax::span::{Diagnostic, Span};
 
 // 尺寸（单位：字）。
 // 雙行夾注：0.8 字号（原版写了 75% 字宽，但常用字体没有窄体，实际渲染就是 0.8 见方），
-// 左右两小行的中线在 +0.45 / -0.35，每行比正文字心高 0.062（加上字形本身上移，墨迹比正文高约 0.09）。这些都是照原版实测的。
+// 左右两小行的中线在 +0.45 / -0.35，字盒中心比所在格低 0.08。这些都是照原版实测的。
+/// 正文字盒的中心比行中綫偏右 1px（原版每行左邊有 1px 界綫）。
+const MAIN_X: f32 = 1.0 / 30.0;
 const NOTE_SIZE: f32 = 0.8;
 const NOTE_STRETCH: f32 = 1.0;
 const NOTE_R: f32 = 0.45;
 const NOTE_L: f32 = -0.35;
-const NOTE_DROP: f32 = -0.062;
-const SINGLE_SIZE: f32 = 0.62;
-const SIDE_SIZE: f32 = 0.36;
-const SIDE_STEP: f32 = 0.42;
+const NOTE_DROP: f32 = 0.08;
+/// 單行小注：原版 28px（正文 30px）。
+const SINGLE_SIZE: f32 = 28.0 / 30.0;
+/// 句段旁注：原版 15px（正文一半），逐字相接，排在行的右沿（字盒中心在行中綫右 0.85）。
+const SIDE_SIZE: f32 = 0.5;
+const SIDE_STEP: f32 = 0.5;
+const SIDE_X: f32 = 0.85;
 const HEAD_SIZE: f32 = 0.46;
 const HEAD_STEP: f32 = 0.5;
 const LINE_GAP: f32 = 0.06;
@@ -171,7 +176,8 @@ impl<'d> Engine<'d> {
         for block in &doc.blocks {
             match block {
                 Block::Heading { level, content, .. } => {
-                    let indent = if *level == 1 { 0 } else { i32::from(*level) };
+                    // 原版：n 級標題低 n-1 格。
+                    let indent = i32::from(*level) - 1;
                     let fmt = LineFmt {
                         indent,
                         ..LineFmt::default()
@@ -188,7 +194,9 @@ impl<'d> Engine<'d> {
                     let before = self.glyphs.len();
                     self.paragraph(vec![(fmt, items)]);
                     for g in &mut self.glyphs[before..] {
-                        g.bold = g.role == Role::Main;
+                        if g.role == Role::Main {
+                            g.level = *level;
+                        }
                     }
                     let col = self.glyphs.get(before).map_or(self.col, |g| g.col);
                     if after_toc {
@@ -260,6 +268,7 @@ impl<'d> Engine<'d> {
                         tone: None,
                         style: Default::default(),
                         compose: false,
+                        rod: false,
                         hidden: false,
                     })
                     .collect();
@@ -344,7 +353,7 @@ impl<'d> Engine<'d> {
                     if self.row >= self.cells() && self.used && is_hanging(&u.cell) {
                         let slot = Slot {
                             col: self.col,
-                            x: 0.0,
+                            x: MAIN_X,
                             y: self.cells() as f32 + HANG,
                             size: 1.0,
                             stretch: 1.0,
@@ -358,7 +367,7 @@ impl<'d> Engine<'d> {
                     self.ensure_room();
                     let slot = Slot {
                         col: self.col,
-                        x: 0.0,
+                        x: MAIN_X,
                         y: self.row as f32 + 0.5,
                         size: 1.0,
                         stretch: 1.0,
@@ -378,13 +387,13 @@ impl<'d> Engine<'d> {
                     self.ensure_room();
                     let slot = Slot {
                         col: self.col,
-                        x: 0.0,
+                        x: MAIN_X,
                         y: self.row as f32 + 0.5,
                         size: SINGLE_SIZE,
                         stretch: 1.0,
                         half_w: SINGLE_SIZE / 2.0,
                         ext: 1.0,
-                        role: Role::Note,
+                        role: Role::NoteSingle,
                     };
                     self.place(u, slot, true);
                     self.row += 1;
@@ -408,6 +417,7 @@ impl<'d> Engine<'d> {
                     self.place(u, slot, true);
                     self.row += 1;
                 }
+                self.main_anchor_after_note();
                 self.pending.extend(g.tail);
             }
             Item::Span { toks, prev, n, at } => self.span(toks, prev, i32::from(n), at),
@@ -450,58 +460,36 @@ impl<'d> Engine<'d> {
     }
 
     /// 兼行：字排在本行与后（前）`n` 行的正中，佔去这几行的同样几格。
+    /// 照原版：夾注之後的正文標點按正文排，附在夾注最後一格（正文字盒的位置）。
+    fn main_anchor_after_note(&mut self) {
+        if self.row > 0 {
+            self.last = Some(Anchor {
+                col: self.col,
+                x: MAIN_X,
+                y: (self.row - 1) as f32 + 0.5,
+                size: 1.0,
+                posts: 0,
+            });
+        }
+    }
+
+    /// 兼行：照原版，字照常佔本行的格，只是整體向後（前）一行挪半行寬乘 `n`；
+    /// 鄰行不讓格，界行也不斷開。
     fn span(&mut self, toks: Vec<Tok>, prev: bool, n: i32, at: Span) {
         let g = group(toks);
         self.lead(g.lead);
-        let len = g.units.len() as i32;
-        self.ensure_room();
-        if self.row + len > self.room_until(self.col, self.row) && self.row > self.cont {
-            self.col += 1;
-            self.row = self.cont;
-            self.ensure_room();
-        }
-        let start = self.row;
-        let end = start + len;
         let shift = n as f32 * self.o.column_width / 2.0;
-        let x = if prev { shift } else { -shift };
-        let cols: Vec<i32> = if prev {
-            (self.col - n..self.col).collect()
-        } else {
-            (self.col + 1..=self.col + n).collect()
-        };
+        let x = MAIN_X + if prev { shift } else { -shift };
+        let target = if prev { self.col - n } else { self.col + n };
         let half = |c: i32| c.div_euclid(self.o.columns);
-        if self.o.format == Format::Leaves && cols.iter().any(|&c| half(c) != half(self.col)) {
+        if self.o.format == Format::Leaves && half(target) != half(self.col) {
             self.diags.push(Diagnostic::warning(
                 at,
                 "兼行跨過了半葉的邊界（版心或版框），請換一行再寫",
             ));
         }
-        if prev {
-            let clash = self.glyphs.iter().any(|gl| {
-                cols.contains(&gl.col)
-                    && !gl.hidden
-                    && gl.y > start as f32
-                    && gl.y < end as f32
-                    && matches!(gl.role, Role::Main | Role::Note | Role::Punct)
-            });
-            if clash {
-                self.diags.push(Diagnostic::warning(
-                    at,
-                    "兼行與前面的行重疊：前行在這幾格已經有字",
-                ));
-            }
-        }
-        for c in cols {
-            self.reserved.entry(c).or_default().push((start, end));
-        }
-        self.decos.push(Deco::Gap {
-            col: self.col,
-            x,
-            half_w: 0.5,
-            y0: start as f32,
-            y1: end as f32,
-        });
         for u in g.units {
+            self.ensure_room();
             let slot = Slot {
                 col: self.col,
                 x,
@@ -566,6 +554,7 @@ impl<'d> Engine<'d> {
             self.row += k as i32;
             rest = tail;
         }
+        self.main_anchor_after_note();
         self.pending.extend(g.tail);
     }
 
@@ -583,7 +572,7 @@ impl<'d> Engine<'d> {
         if ec == col && y < ey {
             y = ey;
         }
-        let x = (0.5 + SIDE_SIZE * 0.35) * if left { -1.0 } else { 1.0 };
+        let x = if left { -SIDE_X } else { SIDE_X };
         for u in g.units {
             if y + SIDE_STEP > cells + 0.01 {
                 col += 1;
@@ -645,7 +634,7 @@ impl<'d> Engine<'d> {
                     cell.kind = TokKind::Cell;
                     let slot = Slot {
                         col: self.col,
-                        x: 0.0,
+                        x: MAIN_X,
                         y: self.row as f32 + 0.5,
                         size: 1.0,
                         stretch: 1.0,
@@ -676,14 +665,10 @@ impl<'d> Engine<'d> {
         };
         pre.extend(unit.pre);
         // 前引號先于字输出，这样 SVG 里文字的先后就是阅读顺序，复制出来不乱。
-        for (i, p) in pre.iter().enumerate() {
-            // 前引號：字的右上角，几个就往下错开。
-            // 前引號（┐）：照原版，墨迹中心在字心右 0.30、上 0.33。
-            let (x, y) = (
-                s.x + 0.3 * s.size,
-                s.y - 0.33 * s.size + i as f32 * s.size * 0.12,
-            );
-            self.punct(p, s.col, x, y, s.size);
+        for p in &pre {
+            // 前引號：照原版，在下一字的位置上移 0.65（夾注裏上移 0.8 個夾注字）。
+            let dy = if s.size < 0.9 { -0.64 } else { -0.65 };
+            self.punct(p, s.col, s.x, s.y + dy, s.size);
         }
         let placed = self.put(&unit.cell, s);
         let mut anchor = Anchor {
@@ -703,17 +688,14 @@ impl<'d> Engine<'d> {
     }
 
     fn post(&mut self, t: &Tok, a: Anchor) {
-        // 後引號在字的左下角；句讀在字的右侧、贴着字格下沿，几个就往下错开。
-        // 句讀墨迹中心的位置，照原版实测：正文在字心右 0.65、下 0.33；
-        // 夾注小字在右 0.2、下 0.54。後引號（└）在左下：左 0.25、下 0.32。
-        let close = t.text.chars().next().is_some_and(is_close_quote);
-        let note = a.size < 0.9;
-        let (x, y) = if close {
-            (a.x - 0.25 * a.size, a.y + 0.32 * a.size)
+        let c = t.text.chars().next().unwrap_or(' ');
+        let (dx, dy) = if (a.size - SINGLE_SIZE).abs() < 1e-3 {
+            // 單行小注（28px）：照原版實測。
+            (0.35 * a.size, 0.66)
         } else {
-            let (dx, dy) = if note { (0.2, 0.542) } else { (0.65, 0.33) };
-            (a.x + dx, a.y + dy + a.posts as f32 * 0.22)
+            punct_offset(c, a.size < 0.9)
         };
+        let (x, y) = (a.x + dx, a.y + dy);
         self.punct(t, a.col, x, y, a.size);
         if let Some(last) = &mut self.last
             && last.col == a.col
@@ -733,11 +715,12 @@ impl<'d> Engine<'d> {
             stretch: 1.0,
             text: t.text.clone(),
             compose: false,
+            rod: false,
             color: Some(t.style.color.unwrap_or(self.o.punct_color)),
             inverse: false,
             hidden: t.hidden,
             role: Role::Punct,
-            bold: false,
+            level: 0,
         });
         self.max_col = self.max_col.max(col);
     }
@@ -800,11 +783,12 @@ impl<'d> Engine<'d> {
             stretch: s.stretch,
             text: t.text.clone(),
             compose: t.compose,
+            rod: t.rod,
             color: t.style.color,
             inverse,
             hidden: false,
             role: s.role,
-            bold: false,
+            level: 0,
         });
         true
     }
@@ -869,7 +853,7 @@ impl<'d> Engine<'d> {
                 },
                 MarkKind::Inverse(e) | MarkKind::Frame(e) => {
                     // 正文的框默认贴着界行；窄式和小字的框只包住字。
-                    let wide = !e.narrow && s.x.abs() < 1e-3 && s.half_w >= 0.5;
+                    let wide = !e.narrow && (s.x - MAIN_X).abs() < 1e-3 && s.half_w >= 0.5;
                     Deco::Box {
                         col: s.col,
                         x: s.x,
@@ -898,8 +882,22 @@ impl<'d> Engine<'d> {
     }
 }
 
-fn is_close_quote(c: char) -> bool {
-    matches!(c, '」' | '』' | '”' | '’' | '﹂' | '﹄')
+/// 句讀相對所附字的盒心偏移（字），照原版 CSS：
+/// 標點不佔格（margin-bottom: -1em），原位在下一格，再按各類的 left、bottom 挪動。
+/// - 正文：，、。．左移 0.35、上提 0.4；：；左移 0.35、上提 0.6；？！左移 0.4、上提 1；後引號上提 0.35。
+/// - 夾注（0.8 字號）：，、。．：；上提 0.4 個夾注字；？！左移 0.2、上提 1；後引號上提 0.5。
+fn punct_offset(c: char, note: bool) -> (f32, f32) {
+    match (note, c) {
+        (false, '，' | '、' | '。' | '．') => (0.35, 0.6),
+        (false, '：' | '；') => (0.35, 0.4),
+        (false, '？' | '！') => (0.4, 0.0),
+        (false, '」' | '』' | '”' | '’') => (0.0, 0.65),
+        (true, '，' | '、' | '。' | '．' | '：' | '；') => (0.0, 1.0 - 0.4 * 0.8),
+        (true, '？' | '！') => (0.2 * 0.8, 1.0 - 0.8),
+        (true, '」' | '』' | '”' | '’') => (0.0, 1.0 - 0.5 * 0.8),
+        (false, _) => (0.35, 0.6),
+        (true, _) => (0.0, 1.0 - 0.4 * 0.8),
+    }
 }
 
 /// 目次里只留文字，不带标记。
@@ -1083,7 +1081,7 @@ mod tests {
     fn glyphs_are_in_reading_order() {
         let l = run(r"曰：「天\note{繫，戶計翻。}地。」", 10);
         let text: String = l.glyphs.iter().map(|g| g.text.as_str()).collect();
-        assert_eq!(text, "曰：﹁天繫，戶計翻。地。﹂");
+        assert_eq!(text, "曰：「天繫，戶計翻。地。」");
     }
 
     #[test]
@@ -1134,18 +1132,18 @@ mod feature_tests {
     }
 
     #[test]
-    fn span_reserves_next_column() {
-        // 「明算」跨到下一行：排在两行正中，下一行的这两格空出来。
+    fn span_shifts_without_reserving() {
+        // 照原版：「明算」整體挪向下一行半行寬，鄰行不讓格。
         let l = run("甲\\span{明算}乙\n丙丁戊", cells(10));
         let g: Vec<(i32, f32, f32, &str)> = l
             .glyphs
             .iter()
             .map(|g| (g.col, g.x, g.y, g.text.as_str()))
             .collect();
-        assert_eq!(g[1], (0, -0.8, 1.5, "明"));
-        assert_eq!(g[2], (0, -0.8, 2.5, "算"));
+        assert_eq!((g[1].0, g[1].2, g[1].3), (0, 1.5, "明"));
+        assert!((g[1].1 - (super::MAIN_X - 0.8)).abs() < 1e-6);
         let next: Vec<f32> = g.iter().filter(|g| g.0 == 1).map(|g| g.2).collect();
-        assert_eq!(next, [0.5, 3.5, 4.5], "丙在第一格，丁戊跳过被佔的两格");
+        assert_eq!(next, [0.5, 1.5, 2.5]);
     }
 
     #[test]
@@ -1157,19 +1155,19 @@ mod feature_tests {
             .filter(|g| g.role == Role::Note)
             .map(|g| (g.x, g.y))
             .collect();
-        assert_eq!(notes, [(-0.35, 1.438), (-0.35, 2.438)]);
+        assert_eq!(notes, [(-0.35, 1.58), (-0.35, 2.58)]);
         assert_eq!(l.glyphs.last().unwrap().y, 3.5);
     }
 
     #[test]
-    fn rods_alternate_vertical_and_horizontal() {
-        let l = run("\\rod{1971}", cells(10));
-        let text: String = l.glyphs.iter().map(|g| g.text.as_str()).collect();
-        // 千位橫、百位縱、十位橫、個位縱。
-        assert_eq!(text, "\u{1D369}\u{1D368}\u{1D36F}\u{1D360}");
+    fn rods_fill_one_cell_like_original() {
+        // 照原版：整串碼子字排在一格裏（字形由「華數碼」字體畫成算籌）。
+        let l = run("\\rod{1971}年", cells(10));
+        let g: Vec<(&str, f32)> = l.glyphs.iter().map(|g| (g.text.as_str(), g.y)).collect();
+        assert_eq!(g, [("〡〩〧〡", 0.5), ("年", 1.5)]);
+        assert!(l.glyphs[0].rod);
         let l = run("\\rod{105}", cells(10));
-        let text: String = l.glyphs.iter().map(|g| g.text.as_str()).collect();
-        assert_eq!(text, "\u{1D360}〇\u{1D364}");
+        assert_eq!(l.glyphs[0].text, "〡〇〥");
     }
 
     #[test]

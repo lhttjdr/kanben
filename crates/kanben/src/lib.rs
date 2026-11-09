@@ -41,6 +41,17 @@ pub fn typeset(src: &str, overrides: &[(&str, &str)]) -> Output {
     }
 }
 
+/// 只做到排版這一步，返回每個字的格位（調試、與原版比對用）。
+pub fn layout_only(src: &str, overrides: &[(&str, &str)]) -> layout::Layout {
+    let parsed = syntax::parse(src);
+    let mut diagnostics = parsed.diagnostics;
+    let mut options = Options::from_meta(&parsed.document.meta, &mut diagnostics);
+    for (k, v) in overrides {
+        let _ = options.set(k, v);
+    }
+    layout::layout(&parsed.document, options, &mut diagnostics)
+}
+
 /// 按可用高度算每行字數：让一个字大约 `cell_px` 像素高，结果限制在 4–60。
 /// `available_px` 是 SVG 要占的高度（整页高，含天頭、地腳）。
 pub fn fit_cells(src: &str, overrides: &[(&str, &str)], available_px: f32, cell_px: f32) -> i32 {

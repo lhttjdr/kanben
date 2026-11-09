@@ -1,8 +1,8 @@
 //! 把刊本源碼譯成原版排版器的標記，交給原版排法（web/classic）排印。
 //!
 //! 譯法按含義對應，例如 `\note{…}` → `((=…=))`、`\name{…}` → `‹…›`、`\inv[round]{…}` → `(【…】)`。
-//! 原版沒有的寫法取最接近的，並給出提示：行內字色略去；花頭作平頭；整段低格改為各行行首空格；
-//! 靠底排改為原版的段樣式 `({⇥})`（不能指定離底幾格）。
+//! 原版沒有的寫法取最接近的，並給出提示：行內字色略去；花頭作平頭；
+//! 整段低格、靠底排用原版的段樣式 `({首縮進:n})`、`({⇥;尾縮進:n})`。
 
 use crate::syntax::ast::{AttrKind, Block, Document, ElementKind, EmphMark, Inline, Shape};
 use crate::syntax::parse;
@@ -76,25 +76,39 @@ impl Translator {
                     out.push_str(&self.inlines(content));
                 }
                 Block::Paragraph { attrs, lines, .. } => {
-                    let mut indent = 0;
+                    // 整段低格用原版的段樣式「首縮進」（整段下移，折行也低格），靠底用「⇥」。
+                    let mut indent = 0usize;
                     let mut raise = 0;
+                    let mut bottom: Option<u8> = None;
                     for a in attrs {
                         match a.kind {
                             AttrKind::Indent(n) => indent += usize::from(n),
                             AttrKind::Raise(n) => raise = n,
-                            AttrKind::Bottom(n) => {
-                                out.push_str("({⇥})");
-                                if n > 0 {
-                                    self.note(a.span, "靠底排不能指定離底幾格，已按貼底排");
-                                }
-                            }
+                            AttrKind::Bottom(n) => bottom = Some(n),
                         }
+                    }
+                    if indent > 9 || bottom.is_some_and(|n| n > 9) {
+                        self.note(Span::default(), "原版的段首、段尾縮進最多 9 格");
+                    }
+                    let mut style = Vec::new();
+                    if indent > 0 {
+                        style.push(format!("首縮進:{}", indent.min(9)));
+                    }
+                    if let Some(n) = bottom {
+                        style.push("⇥".to_string());
+                        if n > 0 {
+                            style.push(format!("尾縮進:{}", n.min(9)));
+                        }
+                    }
+                    if !style.is_empty() {
+                        out.push_str(&format!("({{{}}})", style.join(";")));
                     }
                     for (k, line) in lines.iter().enumerate() {
                         if k > 0 {
                             out.push('\n');
                         }
-                        let mut line_indent = indent;
+                        // 段落的低格已由段樣式負責；行首屬性只管這一行（用行首空格）。
+                        let mut line_indent = 0;
                         let mut line_raise = if k == 0 { raise } else { 0 };
                         for a in &line.attrs {
                             match a.kind {
@@ -289,9 +303,11 @@ mod tests {
             "*　卷一\n\n甲\n乙\n\n\n丙"
         );
         assert_eq!(tr("\\heading[2]{紀}"), "*　　紀");
-        assert_eq!(tr("\\indent[2] 甲\n乙"), "　　甲\n　　乙");
+        assert_eq!(tr("\\indent[2] 甲\n乙"), "({首縮進:2})甲\n乙");
+        assert_eq!(tr("\\indent[2]\\bottom 甲"), "({首縮進:2;⇥})甲");
         assert_eq!(tr("\\raise[1] 甲"), "〚單擡〛甲");
         assert_eq!(tr("\\bottom 某撰"), "({⇥})某撰");
+        assert_eq!(tr("\\bottom[1] 某撰"), "({⇥;尾縮進:1})某撰");
         assert_eq!(tr("甲\\\\[1]乙"), "甲\n〚單擡〛乙");
     }
 

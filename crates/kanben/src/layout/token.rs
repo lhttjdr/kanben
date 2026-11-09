@@ -11,6 +11,8 @@ pub struct Tok {
     pub tone: Option<Tone>,
     pub style: Style,
     pub compose: bool,
+    /// 算籌數碼：`text` 是碼子字（〇〡…〩），整串排在一格裏。
+    pub rod: bool,
     /// 不显示、但复制时要有的字（画成波綫的書名號的括號）。
     pub hidden: bool,
 }
@@ -106,12 +108,9 @@ pub fn classify(c: char, style: PunctStyle) -> Option<(TokKind, char)> {
         (PunctStyle::Bare, Some(_)) => return None,
         (PunctStyle::Grid, Some(_)) => (TokKind::Cell, vertical.unwrap_or(c)),
         (PunctStyle::Judou, Some(PunctClass::After)) => (TokKind::After, c),
-        (PunctStyle::Judou, Some(PunctClass::CloseQuote)) => {
-            (TokKind::After, vertical.unwrap_or(c))
-        }
-        (PunctStyle::Judou, Some(PunctClass::OpenQuote)) => {
-            (TokKind::Before, vertical.unwrap_or(c))
-        }
+        // 引號保持原字：SVG 文字竪排，瀏覽器自會換成直排字形（與原版相同）。
+        (PunctStyle::Judou, Some(PunctClass::CloseQuote)) => (TokKind::After, c),
+        (PunctStyle::Judou, Some(PunctClass::OpenQuote)) => (TokKind::Before, c),
     })
 }
 
@@ -285,6 +284,7 @@ mod tests {
                 tone: None,
                 style: Style::default(),
                 compose: false,
+                rod: false,
                 hidden: false,
             })
             .collect()
@@ -296,14 +296,14 @@ mod tests {
         let cells: String = g.units.iter().map(|u| u.cell.text.as_str()).collect();
         assert_eq!(cells, "曰天尊地卑");
         assert_eq!(g.units[0].post[0].text, "：");
-        assert_eq!(g.units[1].pre[0].text, "﹁");
+        assert_eq!(g.units[1].pre[0].text, "「");
         assert_eq!(
             g.units[4]
                 .post
                 .iter()
                 .map(|t| t.text.as_str())
                 .collect::<String>(),
-            "。﹂"
+            "。」"
         );
     }
 

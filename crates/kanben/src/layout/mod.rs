@@ -29,20 +29,24 @@ pub struct Glyph {
     pub text: String,
     /// `text` 是 IDS 组字式。
     pub compose: bool,
+    /// 算籌數碼（見 [`token::Tok::rod`]）。
+    pub rod: bool,
     pub color: Option<Color>,
     /// 陰文：用纸色写字。
     pub inverse: bool,
     /// 透明：只为复制时文字完整（画成波綫的書名號的括號）。
     pub hidden: bool,
     pub role: Role,
-    /// 粗體（標題）。
-    pub bold: bool,
+    /// 標題級別（0 = 不是標題）；標題用原版的標題字體與字重。
+    pub level: u8,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Role {
     Main,
     Note,
+    /// 單行小注（原版 `dhgd`）。
+    NoteSingle,
     Side,
     Head,
     Punct,

@@ -6,6 +6,8 @@ use crate::syntax::span::Diagnostic;
 /// 正文字體。
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Font {
+    /// 照原版排版器各類文字的字體棧（與原版逐像素相同）。
+    Original,
     /// 仿宋（刻本字）。
     Fangsong,
     /// 明朝（老宋體）。
@@ -17,6 +19,7 @@ pub enum Font {
 impl Font {
     pub fn name(self) -> &'static str {
         match self {
+            Font::Original => "original",
             Font::Fangsong => "fangsong",
             Font::Mincho => "mincho",
             Font::System => "system",
@@ -89,7 +92,7 @@ impl Default for Options {
             punct: PunctStyle::Judou,
             punct_color: Color::Red,
             title_mark: TitleMark::Wavy,
-            font: Font::Mincho,
+            font: Font::Original,
             engine: "classic".into(),
             numbers: true,
             title: String::new(),
@@ -210,10 +213,11 @@ impl Options {
             }
             "font" => {
                 self.font = match value {
+                    "original" => Font::Original,
                     "fangsong" => Font::Fangsong,
                     "mincho" => Font::Mincho,
                     "system" => Font::System,
-                    _ => return Err(choice("fangsong, mincho, system")),
+                    _ => return Err(choice("original, mincho, fangsong, system")),
                 }
             }
             "engine" => {

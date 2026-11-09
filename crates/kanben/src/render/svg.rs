@@ -5,7 +5,6 @@ use std::fmt::Write;
 use super::ids;
 use super::numerals::hanzi;
 use super::page::{FRAME_PAD, Geometry, MARGIN};
-use crate::layout::flatten::rod_digit;
 use crate::layout::{Deco, Format, Glyph, Layout, Role};
 use crate::syntax::ast::{EmphMark, Shape};
 
@@ -233,36 +232,45 @@ fn vertical_text(s: &mut String, text: &str, x: f32, mut y: f32, size: f32) -> f
     y
 }
 
-/// 浏览器竖排时直立的汉字比字格中线偏右、偏上一点；照原版实测补上，
-/// 墨迹才和原版重合（正文右 0.09、上 0.035，字号越小按比例越小）。
-const GLYPH_DX: f32 = 0.09;
-const GLYPH_DY: f32 = -0.035;
+/// 原版有字距（letter-spacing）的幾類：字距加在字後，字盒中心比字形中心低半個字距。
+/// 排版器給的是字盒中心，這裏換成字形中心（單位：字）。
+fn letter_spacing_shift(g: &Glyph) -> f32 {
+    match g.role {
+        // 雙行夾注與其標點：6px（正文 30px）。
+        Role::Note => 0.1,
+        Role::Punct if g.size < 0.9 && !matches!(punct_class(g), "p-nq") => 0.1,
+        // 單行小注：2px。
+        Role::NoteSingle => 1.0 / 30.0,
+        _ => 0.0,
+    }
+}
 
 fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
-    let (dx, dy) = match g.role {
-        Role::Punct => (0.0, 0.0),
-        Role::Main => (GLYPH_DX * g.size, GLYPH_DY * g.size),
-        _ => (0.0, GLYPH_DY * g.size),
-    };
-    let x = cx + g.x + dx;
-    let y = top + g.y + dy;
+    let x = cx + g.x;
+    let y = top + g.y - letter_spacing_shift(g);
     let size = g.size * FONT;
-    let mut class = String::new();
-    if let Some(c) = g.color {
+    // 各類文字的字體、字重照原版（見 style.css 的 g-*、p-* 類）。
+    let mut class = String::from(match (g.role, g.level) {
+        (Role::Main, 0) => "",
+        (Role::Main, 1) => "g-h1",
+        (Role::Main, 2) => "g-h2",
+        (Role::Main, 3) => "g-h3",
+        (Role::Main, 4) => "g-h4",
+        (Role::Main, 5) => "g-h5",
+        (Role::Main, _) => "g-h6",
+        (Role::Note, _) => "g-note",
+        (Role::NoteSingle, _) => "g-note1",
+        (Role::Side, _) => "g-side",
+        (Role::Head, _) => "g-head",
+        (Role::Punct, _) => punct_class(g),
+    });
+    if let Some(c) = g.color
+        && g.role != Role::Punct
+    {
+        if !class.is_empty() {
+            class.push(' ');
+        }
         class.push_str(c.css_class());
-    }
-    if g.bold {
-        if !class.is_empty() {
-            class.push(' ');
-        }
-        class.push('b');
-    }
-    // 旁批、眉批用楷書。
-    if matches!(g.role, Role::Side | Role::Head) {
-        if !class.is_empty() {
-            class.push(' ');
-        }
-        class.push_str("kai");
     }
     if g.hidden {
         class = "cp".into();
@@ -279,14 +287,43 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
     };
 
     if g.role == Role::Punct && !g.hidden {
-        judou(s, g, x, y);
+        // 原版的標點按簡體中文取字形。
+        let _ = write!(
+            s,
+            r#"<text{class_attr} lang="zh-Hans-CN" xml:lang="zh-Hans-CN" x="{}" y="{}" font-size="{}">{}</text>"#,
+            n(x),
+            n(y),
+            n(size),
+            escape(&g.text)
+        );
         return;
     }
-    let mut chars = g.text.chars();
-    if let (Some(c), None) = (chars.next(), chars.next())
-        && let Some((d, vertical)) = rod_digit(c)
-    {
-        rod(s, &g.text, d, vertical, x, y, size, &class);
+    if g.rod {
+        // 照原版 cnumDr：碼子字橫排在一格裏，字寬壓到 120%/位數（一位用全角字形、80%），
+        // 最高位縱橫由 ss01 / ss02 選（个位縱）。
+        let digits = g.text.chars().count();
+        let vertical_high = (1 + digits).is_multiple_of(2);
+        let stretch = if digits > 1 {
+            120.0 / digits as f32
+        } else {
+            80.0
+        };
+        let feature = if vertical_high { "rod-v" } else { "rod-h" };
+        let one = if digits == 1 { " rod-1" } else { "" };
+        let _ = write!(
+            s,
+            r#"<text class="g-rod {feature}{one}{}" style="font-stretch:{}%" x="{}" y="{}" font-size="{}">{}</text>"#,
+            if class.is_empty() {
+                String::new()
+            } else {
+                format!(" {class}")
+            },
+            stretch,
+            n(x),
+            n(y),
+            n(size),
+            escape(&g.text)
+        );
         return;
     }
     if g.compose
@@ -361,155 +398,17 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
     }
 }
 
-/// 句讀：画成小圈、小點、小鉤，不借字体里的標點字形（那些字形偏在字身一角）。
-/// (x, y) 是墨迹的中心，由排版器按原版实测定好；这里只管画形状，尺寸也照原版：
-/// 。外径 0.25，，约 0.22×0.24，、约 0.24×0.26，：的点径 0.12，「」约 0.44×0.26。
-/// 原字作透明文字留给复制。
-fn judou(s: &mut String, g: &Glyph, x: f32, y: f32) {
-    // 夾注（0.8 字号）的標點按比例缩小。
-    let z = g.size.min(1.0);
-    let color = g.color.map_or("c-red", |c| c.css_class());
-    let _ = write!(
-        s,
-        r#"<text class="cp" x="{}" y="{}" font-size="{}">{}</text><g class="jd nosel {color}">"#,
-        n(x),
-        n(y),
-        n(z * 0.3),
-        escape(&g.text)
-    );
-    let pt = |dx: f32, dy: f32| format!("{} {}", n(x + dx * z), n(y + dy * z));
-    let mut stroke = |d: String, w: f32| {
-        let _ = write!(
-            s,
-            r#"<path class="s" d="{d}" stroke-width="{}"/>"#,
-            n(w * z)
-        );
-    };
-    let circle = |dx: f32, dy: f32, r: f32| {
-        format!(
-            "M{} a{r} {r} 0 1 0 {d} 0 a{r} {r} 0 1 0 -{d} 0",
-            pt(dx - r, dy),
-            r = n(r * z),
-            d = n(2.0 * r * z)
-        )
-    };
-    // 逗號：圆头在右上，尾向左下甩出，宽略大于高。
-    let comma = |dy: f32| {
-        (
-            circle(0.03, dy - 0.045, 0.03),
-            format!(
-                "M{} Q{} {}",
-                pt(0.075, dy - 0.03),
-                pt(0.06, dy + 0.07),
-                pt(-0.1, dy + 0.095)
-            ),
-        )
-    };
-    match g.text.chars().next().unwrap_or(' ') {
-        '。' | '︒' | '．' | '.' => stroke(circle(-0.025, 0.02, 0.11), 0.03),
-        '，' | '︐' | ',' => {
-            let (head, tail) = comma(0.0);
-            stroke(head, 0.07);
-            stroke(tail, 0.04);
-        }
-        '、' | '︑' => stroke(format!("M{} L{}", pt(-0.13, -0.06), pt(0.04, 0.1)), 0.085),
-        '：' | '︓' | ':' => {
-            stroke(circle(0.025, -0.24, 0.03), 0.06);
-            stroke(circle(0.025, 0.01, 0.03), 0.06);
-        }
-        '；' | '︔' | ';' => {
-            stroke(circle(0.02, -0.24, 0.03), 0.06);
-            let (head, tail) = comma(0.06);
-            stroke(head, 0.07);
-            stroke(tail, 0.04);
-        }
-        // 前引號 ┐、後引號 └；雙引號在里面再套一层。
-        '「' | '﹁' | '“' | '‘' => stroke(
-            format!(
-                "M{} L{} L{}",
-                pt(-0.205, -0.115),
-                pt(0.205, -0.115),
-                pt(0.205, 0.115)
-            ),
-            0.045,
-        ),
-        '『' | '﹃' => {
-            stroke(
-                format!(
-                    "M{} L{} L{}",
-                    pt(-0.205, -0.115),
-                    pt(0.205, -0.115),
-                    pt(0.205, 0.115)
-                ),
-                0.04,
-            );
-            stroke(
-                format!(
-                    "M{} L{} L{}",
-                    pt(-0.205, -0.03),
-                    pt(0.12, -0.03),
-                    pt(0.12, 0.115)
-                ),
-                0.04,
-            );
-        }
-        '」' | '﹂' | '”' | '’' => stroke(
-            format!(
-                "M{} L{} L{}",
-                pt(-0.205, -0.115),
-                pt(-0.205, 0.115),
-                pt(0.205, 0.115)
-            ),
-            0.045,
-        ),
-        '』' | '﹄' => {
-            stroke(
-                format!(
-                    "M{} L{} L{}",
-                    pt(-0.205, -0.115),
-                    pt(-0.205, 0.115),
-                    pt(0.205, 0.115)
-                ),
-                0.04,
-            );
-            stroke(
-                format!(
-                    "M{} L{} L{}",
-                    pt(-0.12, -0.115),
-                    pt(-0.12, 0.03),
-                    pt(0.205, 0.03)
-                ),
-                0.04,
-            );
-        }
-        // 問號、嘆號等：与字心齐平，用字形。
-        other => {
-            let _ = write!(
-                s,
-                r#"<text class="f" x="{}" y="{}" font-size="{}">{}</text>"#,
-                n(x - 0.017 * z),
-                n(y - 0.288 * z),
-                n(z * 0.85),
-                escape(&other.to_string())
-            );
-        }
+/// 標點用原版的哪一類字體（見 style.css）。
+fn punct_class(g: &Glyph) -> &'static str {
+    let note = g.size < 0.9;
+    match (note, g.text.chars().next().unwrap_or(' ')) {
+        (false, '：' | '；') => "p-md",
+        (false, '？' | '！') => "p-tl",
+        (false, '「' | '」' | '『' | '』' | '“' | '”' | '‘' | '’') => "p-q",
+        (false, _) => "p-sm",
+        (true, '「' | '」' | '『' | '』' | '“' | '”' | '‘' | '’') => "p-nq",
+        (true, _) => "p-n",
     }
-    s.push_str("</g>");
-}
-
-/// 算籌：用直綫画，复制时得到 Unicode 算籌字符。
-#[allow(clippy::too_many_arguments)]
-fn rod(s: &mut String, text: &str, d: u8, vertical: bool, x: f32, y: f32, size: f32, class: &str) {
-    let _ = write!(
-        s,
-        r#"<text class="cp" x="{}" y="{}" font-size="{}">{}</text><g class="rod nosel {class}">"#,
-        n(x),
-        n(y),
-        n(size),
-        escape(text)
-    );
-    rod_lines(s, d, vertical, x, y, size);
-    s.push_str("</g>");
 }
 
 /// 一位算籌：一至五是并排（縱）或叠起（橫）的筹，六至九上面一筹当五；零是圈。
