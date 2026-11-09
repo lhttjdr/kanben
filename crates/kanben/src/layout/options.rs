@@ -90,7 +90,7 @@ impl Default for Options {
             punct_color: Color::Red,
             title_mark: TitleMark::Wavy,
             font: Font::Mincho,
-            engine: "svg".into(),
+            engine: "classic".into(),
             numbers: true,
             title: String::new(),
             volume: String::new(),
