@@ -1989,46 +1989,36 @@ impl Engine<'_> {
                             "f-frame",
                         );
                     }
-                    // 六角（mh6grug、窄式 mh8grugNR）：上下沿居中 65% 寬的 1px 綫，四角斜切 1px 綫。
+                    // 六角（mh6grug、窄式 mh8grugNR）：上下沿與四角斜邊連成一圈 1px 的綫。
+                    // 原版是六塊背景各畫各的，斜邊與上下沿接不上，還伸出界行；這裏畫成一筆。
                     (Shape::Hex, narrow) => {
                         let (y0, y1) = if narrow {
                             (y0 + 0.2, y1 - 0.2)
                         } else {
                             (y0, y1)
                         };
-                        let d = if narrow { 0.14 } else { 0.2 };
-                        let w = (x1 - x0) * 0.65;
-                        let xm = (x0 + x1) / 2.0;
+                        let d = if narrow { 0.14 } else { 0.2 } * z;
+                        // 正文的框正好一行寬：斜邊的端點落在左右界行上（界行在行左、右沿往右 1px）。
+                        let cw = self.o.column_width;
+                        let (xl, xr) = if note || narrow {
+                            (x0, x1)
+                        } else {
+                            (-cw / 2.0, cw / 2.0 + PX)
+                        };
+                        let c = d * std::f32::consts::SQRT_2;
+                        // 內圈：斜邊往裏平移 1px，上下沿各收 1px。
+                        let ci = c + PX * (std::f32::consts::SQRT_2 - 1.0);
+                        let outer = cut_corners(xl, y0, xr, y1, c);
+                        let inner = cut_corners(xl, y0 + PX, xr, y1 - PX, ci);
+                        // 去掉左右兩條（界行或窄式的豎綫已有）。
                         self.shape(
                             col,
-                            rect(xm - w / 2.0, xm + w / 2.0, y0, y0 + PX),
+                            Figure::Clip(
+                                Box::new(Figure::Minus(Box::new(outer), Box::new(inner))),
+                                [xl, y0, xr, y1],
+                            ),
                             "f-frame",
                         );
-                        self.shape(
-                            col,
-                            rect(xm - w / 2.0, xm + w / 2.0, y1 - PX, y1),
-                            "f-frame",
-                        );
-                        let k = std::f32::consts::SQRT_2;
-                        for (cx, cy, sx, sy) in [
-                            (x1, y0, -1.0, 1.0),
-                            (x1, y1, -1.0, -1.0),
-                            (x0, y1, 1.0, -1.0),
-                            (x0, y0, 1.0, 1.0),
-                        ] {
-                            // 距角 d 到 d+1px 的斜帶。
-                            let (a, b) = (d * k, (d + PX) * k);
-                            self.shape(
-                                col,
-                                Figure::Polygon(vec![
-                                    (cx + sx * a, cy),
-                                    (cx + sx * b, cy),
-                                    (cx, cy + sy * b),
-                                    (cx, cy + sy * a),
-                                ]),
-                                "f-frame crisp",
-                            );
-                        }
                         if narrow {
                             // 窄六角左右兩邊各 1px。
                             self.shape(col, rect(x0, x0 + PX, y0 - 0.2, y1 + 0.2), "f-frame");
