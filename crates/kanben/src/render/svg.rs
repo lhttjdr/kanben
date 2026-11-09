@@ -736,12 +736,74 @@ fn punct_class(g: &Glyph) -> &'static str {
         (false, '「' | '」' | '『' | '』' | '“' | '”' | '‘' | '’') => "p-q",
         (false, _) => "p-sm",
         (true, '「' | '」' | '『' | '』' | '“' | '”' | '‘' | '’') => "p-nq",
+        // 原版夾注的：；（zzbdMd）開 aalt，取橫置的字形。
+        (true, '：' | '；') => "p-nmd",
         (true, _) => "p-n",
     }
 }
 
 fn color_class(c: Option<crate::syntax::ast::Color>) -> &'static str {
     c.map_or("c-ink", |c| c.css_class())
+}
+
+/// 夾注裏的書名波綫，照原版 `.grebdriuo .xiomeng`：兩層 radial-gradient 圓環
+/// （內徑 0.1625em、外徑 0.25em，半透明朱色），鋪成 0.4em 寬、0.525em 一節的豎條，
+/// 只露出圓環靠中綫的一段，左右交替成波。`xl`：字盒左沿，`y0..y1` 含上下 margin；em 是夾注字號。
+/// 篇名（右側）照樣畫在字盒右沿。
+fn note_wave(s: &mut String, xl: f32, y0: f32, y1: f32, em: f32, right: bool) {
+    let (ro, ri) = (0.25 * em, 0.1625 * em);
+    // 圓心離切綫 0.15em：外圓、內圓與切綫的交點。
+    let d = 0.15 * em;
+    let (ho, hi) = ((ro * ro - d * d).sqrt(), (ri * ri - d * d).sqrt());
+    let step = 0.525 * em;
+    // 字盒不含上 0.15em、下 0.35em 的 margin（原版 .grebdriuo .xiomeng）。
+    let (y0, y1) = (y0 + 0.15 * em, y1 - 0.35 * em);
+    // 背景從 padding box 左沿往左 0.2em 鋪起，波的中綫正落在字盒左沿（實測與原版差不到 1px）；
+    // 篇名在右沿。
+    let w = if right { xl + em } else { xl };
+    let mut path = String::new();
+    // 向右凸的一層：圓心 (w − d, 0.2em + k·step)；向左凸的：(w + d, 0.4625em + k·step)。
+    // 每段是圓環在切綫一側的部分：外弧、沿切綫、內弧、沿切綫。
+    let mut arc = |cy: f32, dir: f32| {
+        let _ = write!(
+            path,
+            "M{} {}A{} {} 0 0 {} {} {}L{} {}A{} {} 0 0 {} {} {}Z",
+            n(w),
+            n(cy - ho),
+            n(ro),
+            n(ro),
+            if dir > 0.0 { 1 } else { 0 },
+            n(w),
+            n(cy + ho),
+            n(w),
+            n(cy + hi),
+            n(ri),
+            n(ri),
+            if dir > 0.0 { 0 } else { 1 },
+            n(w),
+            n(cy - hi),
+        );
+    };
+    let mut k = -1.0;
+    while y0 + k * step < y1 {
+        arc(y0 + 0.2 * em + k * step, 1.0);
+        arc(y0 + 0.4625 * em + k * step, -1.0);
+        k += 1.0;
+    }
+    // 只在字盒範圍內顯示（background 不出 padding box）。
+    let _ = write!(
+        s,
+        r#"<svg class="nosel" aria-hidden="true" x="{}" y="{}" width="{}" height="{}" viewBox="{} {} {} {}" overflow="hidden"><path class="wave-t" d="{}"/></svg>"#,
+        n(w - 0.2 * em),
+        n(y0),
+        n(0.4 * em),
+        n(y1 - y0),
+        n(w - 0.2 * em),
+        n(y0),
+        n(0.4 * em),
+        n(y1 - y0),
+        path
+    );
 }
 
 /// `filled_pass` 为真时只画填充的底，否则只画其余的。
@@ -755,15 +817,23 @@ fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
         first,
         last,
         size,
+        role,
         ..
     } = d
     {
-        if filled_pass {
+        if filled_pass && matches!(role, Role::Note | Role::NoteSingle) {
+            note_wave(s, cx + x - size / 2.0, top + y0, top + y1, *size, *right);
+        } else if filled_pass {
             // 字透明、只顯波綫；不可選，免得複製時字重複。
             let _ = write!(
                 s,
-                r#"<text class="wave{} nosel" aria-hidden="true" x="{}" y="{}" font-size="{}"><tspan>{}</tspan></text>"#,
+                r#"<text class="wave{}{} nosel" aria-hidden="true" x="{}" y="{}" font-size="{}"><tspan>{}</tspan></text>"#,
                 if *right { " wave-r" } else { "" },
+                if *role == Role::Head {
+                    " wave-head"
+                } else {
+                    ""
+                },
                 n(cx + x),
                 n(top + y0),
                 n(FONT * size),
@@ -779,14 +849,14 @@ fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
                         n(cx + x - 0.8 * size),
                         n(top + ya),
                         n(0.22 * size),
-                        n(3.0 * px * size)
+                        n(3.0 * px)
                     );
                 };
                 if *first {
                     cap(s, *y0);
                 }
                 if *last {
-                    cap(s, *y1 - 3.0 * px * size);
+                    cap(s, *y1 - 3.0 * px);
                 }
             }
         }

@@ -93,7 +93,8 @@
 .kb text.p-q { font-family: var(--kb-f-p-q); font-weight: 500; }
 .kb text.p-n { font-family: var(--kb-f-p-n); font-weight: 240; font-stretch: 75%; }
 .kb text.p-nq { font-family: var(--kb-f-p-q); font-weight: 240; font-stretch: 75%; }
-.kb text.p-sm, .kb text.p-md, .kb text.p-tl, .kb text.p-q, .kb text.p-n, .kb text.p-nq { fill: var(--kb-red-c); }
+.kb text.p-nmd { font-family: var(--kb-f-p-n); font-weight: 240; font-stretch: 75%; font-feature-settings: "aalt" 1; }
+.kb text.p-sm, .kb text.p-md, .kb text.p-tl, .kb text.p-q, .kb text.p-n, .kb text.p-nq, .kb text.p-nmd { fill: var(--kb-red-c); }
 /* 算籌：照原版 cnumDr，用「華數碼」字體，碼子字橫排在一格裏。 */
 .kb text.g-rod { font-family: 華數碼; writing-mode: horizontal-tb; font-variant-ligatures: contextual; font-kerning: normal; letter-spacing: 0; }
 .kb text.rod-v { font-feature-settings: "ss01"; }
@@ -115,6 +116,9 @@
 .kb text.wave { text-anchor: start; text-decoration: underline wavy; fill: var(--kb-red-c); }
 .kb text.wave-r { text-decoration: overline wavy; }
 .kb text.wave tspan { fill: transparent; }
+/* 眉批裏的書名波綫用眉批色（原版 text-decoration-color: inherit）。 */
+.kb text.wave-head { fill: var(--kb-head-c); }
+.kb .wave-t { fill: #dd3b4477; }
 /* 照原版 CSS 畫的圖形（陰文底、墨圍綫、專名號、圈點、校勘底色）。 */
 .kb .f-red { fill: var(--kb-red-c); }
 .kb .f-red-t { fill: #dd3b4477; }
@@ -124,6 +128,7 @@
 .kb .f-emph { fill: var(--kb-emph-c); }
 .kb .f-collate { fill: #9198e5; }
 .kb .c-chestnut { fill: #673424; }
+.kb .c-purple { fill: purple; }
 .kb .f-strike { fill: #fbb957; }
 .kb .f-del { fill: rgba(238, 238, 238, 0.7); opacity: 0.6; }
 .kb .f-delline { fill: rgb(153, 23, 34); opacity: 0.6; }

@@ -7,7 +7,7 @@ use super::token::{Ann, MarkKind, Tok, TokKind, Tone, Unit, group, is_hanging};
 use super::{Deco, Figure, Format, Glyph, Layout, Options, Role};
 use crate::render::numerals::hanzi;
 use crate::syntax::ast::{
-    AttrKind, Block, Document, EmphMark, EnvKind, Inline, ParaStyle, Shape, TableHeader,
+    AttrKind, Block, Color, Document, EmphMark, EnvKind, Inline, ParaStyle, Shape, TableHeader,
 };
 use crate::syntax::span::{Diagnostic, Span};
 
@@ -130,6 +130,8 @@ struct Seg {
     half_w: f32,
     y0: f32,
     y1: f32,
+    /// 所標的字是正文、夾注還是眉批（書名波綫畫法不同）。
+    role: Role,
 }
 
 /// 目次的一條。
@@ -1570,6 +1572,7 @@ impl<'d> Engine<'d> {
         }
         let mut inverse = false;
         let mut faded = false;
+        let in_note = matches!(s.role, Role::Note | Role::NoteSingle);
         let z = s.size;
         for m in &t.style.marks {
             match m.kind {
@@ -1666,6 +1669,8 @@ impl<'d> Engine<'d> {
                         },
                     );
                 }
+                // 夾注裏的篇名：原版改字色為紫（`<span style="color:purple">`），不畫波綫。
+                MarkKind::TitleRight if in_note => {}
                 kind => {
                     inverse |= matches!(kind, MarkKind::Inverse(_));
                     faded |= kind == MarkKind::Delete;
@@ -1698,7 +1703,11 @@ impl<'d> Engine<'d> {
             text: t.text.clone(),
             compose: t.compose,
             rod: t.rod,
-            color: t.style.color,
+            color: if in_note && t.style.marks.iter().any(|m| m.kind == MarkKind::TitleRight) {
+                Some(Color::Purple)
+            } else {
+                t.style.color
+            },
             inverse,
             hidden: false,
             faded,
@@ -1803,6 +1812,7 @@ impl<'d> Engine<'d> {
                     half_w: s.half_w,
                     y0,
                     y1,
+                    role: s.role,
                 });
             }
         }
@@ -1885,6 +1895,7 @@ impl Engine<'_> {
                 first,
                 last,
                 size: z,
+                role: sg.role,
             }),
             // 抹（原版 colateMS）：字盒中間 60% 寬的橙色底。
             MarkKind::Stroke => self.shape(col, rect(x - 0.3 * z, x + 0.3 * z, y0, y1), "f-strike"),
@@ -1995,11 +2006,6 @@ impl Engine<'_> {
                     // 六角（mh6grug、窄式 mh8grugNR）：上下沿與四角斜邊連成一圈 1px 的綫。
                     // 原版是六塊背景各畫各的，斜邊與上下沿接不上，還伸出界行；這裏畫成一筆。
                     (Shape::Hex, narrow) => {
-                        let (y0, y1) = if narrow {
-                            (y0 + 0.2, y1 - 0.2)
-                        } else {
-                            (y0, y1)
-                        };
                         let d = if narrow { 0.14 } else { 0.2 } * z;
                         // 正文的框正好一行寬：斜邊的端點落在左右界行上（界行在行左、右沿往右 1px）。
                         let cw = self.o.column_width;
@@ -2023,9 +2029,10 @@ impl Engine<'_> {
                             "f-frame",
                         );
                         if narrow {
-                            // 窄六角左右兩邊各 1px。
-                            self.shape(col, rect(x0, x0 + PX, y0 - 0.2, y1 + 0.2), "f-frame");
-                            self.shape(col, rect(x1 - PX, x1, y0 - 0.2, y1 + 0.2), "f-frame");
+                            // 窄六角（原版 mh8grugNR）：左右豎綫只到斜邊端點，上下各收 0.2；
+                            // 六角（內層 span 外擴 0.2）佔滿整段。
+                            self.shape(col, rect(x0, x0 + PX, y0 + 0.2, y1 - 0.2), "f-frame");
+                            self.shape(col, rect(x1 - PX, x1, y0 + 0.2, y1 - 0.2), "f-frame");
                         }
                     }
                     // 平頭（mhVang）：上下沿各 1px，左右靠界行。
@@ -2325,6 +2332,25 @@ mod tests {
     fn head_note_goes_above_frame() {
         let l = run(r"甲\head{眉批文字}乙", 10);
         assert!(at(&l, Role::Head).iter().all(|g| g.2 < 0));
+    }
+
+    #[test]
+    fn chapter_title_in_note_is_purple() {
+        // 原版：夾注裏的〈篇名〉改為紫字，不畫波綫；正文裏照畫。
+        let l = run("甲\\note{見〈禮運〉篇}〈月令〉", 10);
+        let purple: String = l
+            .glyphs
+            .iter()
+            .filter(|g| g.color == Some(crate::syntax::ast::Color::Purple))
+            .map(|g| g.text.as_str())
+            .collect();
+        assert_eq!(purple, "禮運");
+        let waves = l
+            .decos
+            .iter()
+            .filter(|d| matches!(d, crate::layout::Deco::Wave { .. }))
+            .count();
+        assert_eq!(waves, 1, "只有正文的〈月令〉有波綫");
     }
 
     #[test]

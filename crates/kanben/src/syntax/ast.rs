@@ -278,6 +278,8 @@ pub enum Color {
     Gray,
     /// 淡栗椶：校勘改色的字（`\stroke[tint]`），不給用戶直接選。
     Chestnut,
+    /// 紫：夾注裏的篇名（原版如此），不給用戶直接選。
+    Purple,
 }
 
 impl Color {
@@ -290,6 +292,7 @@ impl Color {
             Color::Ochre => "c-ochre",
             Color::Gray => "c-gray",
             Color::Chestnut => "c-chestnut",
+            Color::Purple => "c-purple",
         }
     }
 

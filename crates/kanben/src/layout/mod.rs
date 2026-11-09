@@ -83,6 +83,8 @@ pub enum Deco {
         last: bool,
         /// 所標的字的字號（正文 1；夾注、眉批更小，波綫隨之縮小）。
         size: f32,
+        /// 夾注裏原版不用 text-decoration，而用圓弧鋪成波綫；眉批的波綫用眉批色。
+        role: Role,
     },
     /// 照原版 CSS 畫的圖形（陰文底、墨圍綫、專名號、圈點、校勘底色等）。
     Shape {
