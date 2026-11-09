@@ -360,6 +360,64 @@ fn x_shift(g: &Glyph) -> f32 {
 const X_SHIFT_ENCL: f32 = 0.5 / 30.0;
 const X_SHIFT_SINGLE: f32 = 0.0;
 
+/// 碼子、阿拉伯數字、數字卦（原版 cnumMZ、lrtb o*d、divine3）。
+fn numeral(s: &mut String, g: &Glyph, kind: &str, class: &str, x: f32, y: f32, size: f32) {
+    let extra = if class.is_empty() || class == kind {
+        String::new()
+    } else {
+        format!(" {class}")
+    };
+    match kind {
+        "num-ar" => {
+            let (digits, colon) = match g.text.strip_suffix(':') {
+                Some(d) => (d, true),
+                None => (g.text.as_str(), false),
+            };
+            // 三、四位的壓扁到 70%，字距 -1px。逐像素比對：比字心高 1px。
+            let squeeze = digits.len() >= 3;
+            let y = y - size / 30.0;
+            let tf = if squeeze {
+                format!(
+                    r#" transform="translate({} {}) scale(0.7 1)" letter-spacing="-1""#,
+                    n(x),
+                    n(y)
+                )
+            } else {
+                String::new()
+            };
+            let (px, py) = if squeeze { (0.0, 0.0) } else { (x, y) };
+            let _ = write!(
+                s,
+                r#"<text class="num-ar{extra}"{tf} x="{}" y="{}" font-size="{}">{}</text>"#,
+                n(px),
+                n(py),
+                n(size * 0.9),
+                escape(digits)
+            );
+            // 冒號：疊在本格與下一格之間，右移 0.145 字、上提 0.15 字。
+            if colon {
+                let _ = write!(
+                    s,
+                    r#"<text class="num-colon{extra}" x="{}" y="{}" font-size="{}">:</text>"#,
+                    n(x + 0.145 * size),
+                    n(y + 0.5 * size - 0.15 * size),
+                    n(size)
+                );
+            }
+        }
+        _ => {
+            let _ = write!(
+                s,
+                r#"<text class="{kind}{extra}" x="{}" y="{}" font-size="{}">{}</text>"#,
+                n(x),
+                n(y),
+                n(size),
+                escape(&g.text)
+            );
+        }
+    }
+}
+
 fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
     let x = cx + g.x + x_shift(g);
     let y = top + g.y - letter_spacing_shift(g);
@@ -440,6 +498,10 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
         );
         return;
     }
+    if let Some(kind @ ("num-mz" | "num-ar" | "num-gua")) = g.extra {
+        numeral(s, g, kind, &class, x, y, size);
+        return;
+    }
     if g.rod {
         // 照原版 cnumDr：碼子字橫排在一格裏，字寬壓到 120%/位數（一位用全角字形、80%），
         // 最高位縱橫由 ss01 / ss02 選（个位縱）。
@@ -452,6 +514,17 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
         };
         let feature = if vertical_high { "rod-v" } else { "rod-h" };
         let one = if digits == 1 { " rod-1" } else { "" };
+        // 負數：原版 DrNegSgn，斜綫居中疊在數上（同一字體、字寬）。
+        if g.extra == Some("num-neg") {
+            let _ = write!(
+                s,
+                r#"<text class="g-rod" style="font-stretch:{}%" x="{}" y="{}" font-size="{}">＼</text>"#,
+                stretch,
+                n(x),
+                n(y),
+                n(size),
+            );
+        }
         let _ = write!(
             s,
             r#"<text class="g-rod {feature}{one}{}" style="font-stretch:{}%" x="{}" y="{}" font-size="{}">{}</text>"#,

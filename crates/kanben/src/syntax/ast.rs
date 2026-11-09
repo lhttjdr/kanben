@@ -276,6 +276,8 @@ pub enum Color {
     Green,
     Ochre,
     Gray,
+    /// 淡栗椶：校勘改色的字（`\stroke[tint]`），不給用戶直接選。
+    Chestnut,
 }
 
 impl Color {
@@ -287,6 +289,7 @@ impl Color {
             Color::Green => "c-green",
             Color::Ochre => "c-ochre",
             Color::Gray => "c-gray",
+            Color::Chestnut => "c-chestnut",
         }
     }
 

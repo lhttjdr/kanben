@@ -70,6 +70,8 @@ pub struct Style {
     pub color: Option<Color>,
     /// 字上附的小標：韻標、平仄、樂譜旁字。
     pub ann: Option<Ann>,
+    /// 數碼的畫法（字體類，見 style.css 的 `num-*`）。
+    pub num: Option<&'static str>,
 }
 
 /// 附在字上的小標。
@@ -97,6 +99,8 @@ pub enum MarkKind {
     /// 篇名（〈〉）：原版的波綫在字的右側。
     TitleRight,
     Emphasis(EmphMark),
+    /// 校勘的點、圈（原版 colateOF、colateOO）：與圈點同形，校注圈點色。
+    Collate(EmphMark),
     Stroke,
     Inverse(Encl),
     Frame(Encl),

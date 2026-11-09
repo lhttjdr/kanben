@@ -872,9 +872,42 @@ impl<'d> Engine<'d> {
                 self.main_anchor_after_note();
                 self.pending.extend(g.tail);
             }
+            Item::Pair { right, left } => {
+                // 原版 twoLCmt：與側行小注同樣的小字，右段排右半、左段排左半，並起於同一格。
+                let start = self.row;
+                let mut end = start;
+                for (toks, left) in [(right, false), (left, true)] {
+                    let g = group(toks);
+                    self.lead(g.lead);
+                    self.row = start;
+                    for u in g.units {
+                        self.ensure_room();
+                        let slot = Slot {
+                            col: self.col,
+                            x: if left { NOTE_L } else { NOTE_R },
+                            y: self.row as f32 + 0.5 + NOTE_DROP,
+                            size: NOTE_SIZE,
+                            stretch: NOTE_STRETCH,
+                            half_w: NOTE_SIZE / 2.0,
+                            ext: 1.0,
+                            role: Role::Note,
+                        };
+                        self.place(u, slot, true);
+                        self.row += 1;
+                    }
+                    end = end.max(self.row);
+                    self.pending.extend(g.tail);
+                }
+                self.row = end;
+                self.main_anchor_after_note();
+            }
             Item::Span { toks, prev, n, at } => self.span(toks, prev, i32::from(n), at),
             Item::Double(toks) => self.double(toks),
-            Item::Side { toks, left } => self.side(toks, left),
+            Item::Side {
+                toks,
+                left,
+                stagger,
+            } => self.side(toks, left, stagger),
             Item::Head(toks) => self.head(toks),
             Item::Break { .. } => unreachable!("breaks are split out in paragraph()"),
         }
@@ -1011,7 +1044,10 @@ impl<'d> Engine<'d> {
     }
 
     /// 句段旁注：沿行的右侧（或左侧）排小字，不佔正文字格。
-    fn side(&mut self, toks: Vec<Tok>, left: bool) {
+    fn side(&mut self, toks: Vec<Tok>, left: bool, stagger: bool) {
+        // 錯開（rubyGap）：字距一字，每字佔一格；整段上提半個旁注字。
+        let step = if stagger { 2.0 * SIDE_STEP } else { SIDE_STEP };
+        let lift = if stagger { SIDE_SIZE / 2.0 } else { 0.0 };
         let g = group(toks);
         let cells = self.cells() as f32;
         let (mut col, mut y) = if self.row >= self.cells() {
@@ -1044,7 +1080,7 @@ impl<'d> Engine<'d> {
             }
         };
         for u in g.units {
-            if y + SIDE_STEP > cells + 0.01 {
+            if y + step > cells + 0.01 {
                 paper(self, run, y);
                 col += 1;
                 y = self.cont as f32;
@@ -1053,7 +1089,7 @@ impl<'d> Engine<'d> {
             let slot = Slot {
                 col,
                 x,
-                y: y + SIDE_STEP / 2.0,
+                y: y + SIDE_STEP / 2.0 - lift,
                 size: SIDE_SIZE,
                 stretch: 1.0,
                 half_w: SIDE_SIZE / 2.0,
@@ -1061,7 +1097,7 @@ impl<'d> Engine<'d> {
                 role: Role::Side,
             };
             self.place(u, slot, false);
-            y += SIDE_STEP;
+            y += step;
         }
         paper(self, run, y);
         self.side_end[slot_i] = (col, y);
@@ -1221,24 +1257,25 @@ impl<'d> Engine<'d> {
         for m in &t.style.marks {
             match m.kind {
                 // 圈點：照原版 strROO / strROF，在字右 0.604 處，半徑 0.096（空心圈內半徑 0.0384）。
-                MarkKind::Emphasis(EmphMark::Circle) => self.shape(
-                    s.col,
-                    Figure::Ring {
-                        x: s.x + 0.604 * z,
-                        y: s.y,
-                        r0: 0.0384 * z,
-                        r1: 0.096 * z,
-                    },
-                    "f-emph crisp",
-                ),
-                MarkKind::Emphasis(EmphMark::Dot) => self.shape(
+                MarkKind::Emphasis(EmphMark::Circle) | MarkKind::Collate(EmphMark::Circle) => self
+                    .shape(
+                        s.col,
+                        Figure::Ring {
+                            x: s.x + 0.604 * z,
+                            y: s.y,
+                            r0: 0.0384 * z,
+                            r1: 0.096 * z,
+                        },
+                        emph_class(m.kind),
+                    ),
+                MarkKind::Emphasis(EmphMark::Dot) | MarkKind::Collate(_) => self.shape(
                     s.col,
                     Figure::Circle {
                         x: s.x + 0.604 * z,
                         y: s.y,
                         r: 0.096 * z,
                     },
-                    "f-emph crisp",
+                    emph_class(m.kind),
                 ),
                 // 旁點（﹅﹆）：原版是字，排在字後、右 0.72、上提 0.84（18px 字）。
                 MarkKind::Emphasis(mark) => {
@@ -1350,7 +1387,7 @@ impl<'d> Engine<'d> {
             role: s.role,
             level: 0,
             paint: None,
-            extra: None,
+            extra: t.style.num,
         });
         // 圈發：原版是「標點符號」字體裏的圈，排在字後，照原版實測的盒位。
         if let Some(tone) = tone {
@@ -1684,8 +1721,16 @@ impl Engine<'_> {
                     }
                 }
             }
-            MarkKind::Emphasis(_) => {}
+            MarkKind::Emphasis(_) | MarkKind::Collate(_) => {}
         }
+    }
+}
+
+fn emph_class(k: MarkKind) -> &'static str {
+    if matches!(k, MarkKind::Collate(_)) {
+        "f-collate crisp"
+    } else {
+        "f-emph crisp"
     }
 }
 
@@ -1773,6 +1818,7 @@ fn measure(items: &[Item]) -> i32 {
             | Item::Half { toks: t, .. }
             | Item::Span { toks: t, .. } => cells(t),
             Item::Double(t) => (cells(t) + 1) / 2,
+            Item::Pair { right, left } => cells(right).max(cells(left)),
             _ => 0,
         })
         .sum()

@@ -91,6 +91,11 @@
 .kb text.g-rod { font-family: 華數碼; writing-mode: horizontal-tb; font-variant-ligatures: contextual; font-kerning: normal; letter-spacing: 0; }
 .kb text.rod-v { font-feature-settings: "ss01"; }
 .kb text.rod-h { font-feature-settings: "ss02"; }
+/* 碼子（cnumMZ）、阿拉伯數字（o1d–o4d）、數字卦（divine3）。 */
+.kb text.num-mz { font-family: 華數碼; font-stretch: 30%; writing-mode: horizontal-tb; letter-spacing: 0; font-variant-ligatures: contextual; }
+.kb text.num-ar { font-family: "Arial Narrow", "Times New Roman", Times; font-weight: 500; writing-mode: horizontal-tb; }
+.kb text.num-colon { font-family: "Times New Roman", Times, 宋体, 微軟正黑體, "Noto Sans CJK SC", sans-serif; }
+.kb text.num-gua { font-family: 華數碼; font-stretch: 40%; text-orientation: mixed; }
 .kb text.rod-1 { font-variant-east-asian: full-width; }
 /* 圈發、旁點：原版「標點符號」字體裏的字。 */
 .kb text.g-tone { font-family: 標點符號; font-weight: 400; fill: var(--kb-tone-c); }
@@ -110,6 +115,8 @@
 /* 原版用漸變畫的圖形，邊不抗鋸齒。 */
 .kb .crisp { shape-rendering: crispEdges; }
 .kb .f-emph { fill: var(--kb-emph-c); }
+.kb .f-collate { fill: #9198e5; }
+.kb .c-chestnut { fill: #673424; }
 .kb .f-strike { fill: #fbb957; }
 .kb .f-del { fill: rgba(238, 238, 238, 0.7); opacity: 0.6; }
 .kb .f-delline { fill: rgb(153, 23, 34); opacity: 0.6; }

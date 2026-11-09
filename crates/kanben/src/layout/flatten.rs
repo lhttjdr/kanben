@@ -19,6 +19,8 @@ pub enum Item {
         left: bool,
         line: bool,
     },
+    /// 並行：兩行小字並排，右、左各一段，佔較長一段的格數。
+    Pair { right: Vec<Tok>, left: Vec<Tok> },
     /// 兼行：排在當前行與後（前）`n` 行的正中。
     Span {
         toks: Vec<Tok>,
@@ -27,9 +29,11 @@ pub enum Item {
         /// 源碼位置，用于提示。
         at: Span,
     },
+    /// 句段旁注。`stagger`：字距一字（原版 rubyGap）。
     Side {
         toks: Vec<Tok>,
         left: bool,
+        stagger: bool,
     },
     Head(Vec<Tok>),
     Break {
@@ -177,15 +181,15 @@ impl<'d> Flattener<'d> {
                 let c = styled(self, MarkKind::Emphasis(*m));
                 self.walk(&el.children, &c, out, cur);
             }
-            // TODO(SVG)：校勘的點、圈、改色還沒有照原版畫，暫用最接近的圈點。
             ElementKind::Stroke(m) => {
                 let c = match m {
                     StrokeMark::Line => styled(self, MarkKind::Stroke),
-                    StrokeMark::Dot => styled(self, MarkKind::Emphasis(EmphMark::Dot)),
-                    StrokeMark::Circle => styled(self, MarkKind::Emphasis(EmphMark::Circle)),
+                    StrokeMark::Dot => styled(self, MarkKind::Collate(EmphMark::Dot)),
+                    StrokeMark::Circle => styled(self, MarkKind::Collate(EmphMark::Circle)),
+                    // 原版 colateTC：校注所及之字改作淡栗椶色。
                     StrokeMark::Tint => {
                         let mut c = ctx.clone();
-                        c.style.color = Some(Color::Ochre);
+                        c.style.color = Some(Color::Chestnut);
                         c
                     }
                 };
@@ -215,10 +219,8 @@ impl<'d> Flattener<'d> {
             // TODO(SVG)：插圖還沒有畫。
             ElementKind::Figure => self.walk(&el.children, ctx, out, cur),
             ElementKind::Image(_) | ElementKind::Map(_) => {}
-            ElementKind::Digits(t)
-            | ElementKind::Suzhou(t)
-            | ElementKind::Divination(t)
-            | ElementKind::Glyph(t) => self.text(t, el.span, ctx, cur),
+            // TODO(SVG)：字樣還沒有用字圖。
+            ElementKind::Glyph(t) => self.text(t, el.span, ctx, cur),
             ElementKind::Inverse(s) => {
                 let c = styled(self, MarkKind::Inverse(*s));
                 self.walk(&el.children, &c, out, cur);
@@ -241,25 +243,74 @@ impl<'d> Flattener<'d> {
                 c.style.color = Some(*color);
                 self.walk(&el.children, &c, out, cur);
             }
-            ElementKind::Rod(digits) => {
-                // 照原版：整串碼子字排在一格裏，由「華數碼」字體畫成算籌。
-                // TODO(SVG)：負數、一串裏的幾個數還沒有分開排。
-                const 碼子: [char; 10] =
-                    ['〇', '〡', '〢', '〣', '〤', '〥', '〦', '〧', '〨', '〩'];
-                if !digits.is_empty() {
-                    cur.push(Tok {
-                        text: digits
-                            .bytes()
-                            .filter(u8::is_ascii_digit)
-                            .map(|d| 碼子[usize::from(d - b'0')])
-                            .collect(),
-                        kind: TokKind::Cell,
-                        tone: None,
-                        style: ctx.style.clone(),
-                        compose: false,
-                        rod: true,
-                        hidden: false,
-                    });
+            ElementKind::Rod(nums) => {
+                // 照原版：每個數的碼子字排在一格裏，由「華數碼」字體畫成算籌；負數另疊一斜綫。
+                for n in nums.split(',').filter(|n| !n.is_empty()) {
+                    let (neg, d) = match n.strip_prefix('-') {
+                        Some(d) => (true, d),
+                        None => (false, n),
+                    };
+                    let mut style = ctx.style.clone();
+                    if neg {
+                        style.num = Some("num-neg");
+                    }
+                    cur.push(num_tok(rod_codes(d), style, true));
+                }
+            }
+            ElementKind::Suzhou(t) => {
+                // 蘇州碼子：整串橫排在一格裏（原版 cnumMZ，字寬 30%）。
+                let mut style = ctx.style.clone();
+                style.num = Some("num-mz");
+                cur.push(num_tok(rod_codes(t), style, false));
+            }
+            ElementKind::Divination(t) => {
+                // 數字卦：華數碼竪排，字寬 40%，每字高三分之一格，三字一格。
+                let mut style = ctx.style.clone();
+                style.num = Some("num-gua");
+                let digits: Vec<char> = t.chars().collect();
+                for chunk in digits.chunks(3) {
+                    cur.push(num_tok(chunk.iter().collect(), style.clone(), false));
+                }
+            }
+            ElementKind::Digits(t) => {
+                // 縱中橫的阿拉伯數字：四位一格（整數從高位起、小數從低位止取餘），
+                // 負號作「＼」、小數點作「又」，各佔一格；冒號疊在兩格之間。
+                let mut style = ctx.style.clone();
+                style.num = Some("num-ar");
+                let (neg, body) = match t.strip_prefix(['-', '−']) {
+                    Some(b) => (true, b),
+                    None => (false, t.trim_start_matches('+')),
+                };
+                if neg {
+                    self.text("＼", el.span, ctx, cur);
+                }
+                for (k, part) in body.split(':').enumerate() {
+                    if k > 0
+                        && let Some(last) = cur.last_mut()
+                    {
+                        last.text.push(':');
+                    }
+                    let mut it = part.splitn(2, '.');
+                    let int = it.next().unwrap_or("");
+                    let int = if int.is_empty() { "0" } else { int };
+                    let r = int.len() % 4;
+                    let mut groups: Vec<&str> = Vec::new();
+                    if r > 0 {
+                        groups.push(&int[..r]);
+                    }
+                    groups.extend(int.as_bytes()[r..].chunks(4).map(|c| {
+                        std::str::from_utf8(c).expect("ascii digits")
+                    }));
+                    for g in groups {
+                        cur.push(num_tok(g.into(), style.clone(), false));
+                    }
+                    if let Some(frac) = it.next() {
+                        self.text("又", el.span, ctx, cur);
+                        for g in frac.as_bytes().chunks(4) {
+                            let g = std::str::from_utf8(g).expect("ascii digits");
+                            cur.push(num_tok(g.into(), style.clone(), false));
+                        }
+                    }
                 }
             }
             ElementKind::Span { prev, n } => {
@@ -337,8 +388,23 @@ impl<'d> Flattener<'d> {
                 if matches!(el.kind, ElementKind::Comment { .. }) && c.style.color.is_none() {
                     c.style.color = Some(Color::Red);
                 }
+                if el.kind == ElementKind::PairNote {
+                    let mut parts = el.children.splitn(2, |n| {
+                        matches!(n, Inline::Element(e) if matches!(e.kind, ElementKind::Break { .. }))
+                    });
+                    let (mut right, mut left) = (Vec::new(), Vec::new());
+                    if let Some(p) = parts.next() {
+                        self.walk(p, &c, out, &mut right);
+                    }
+                    if let Some(p) = parts.next() {
+                        self.walk(p, &c, out, &mut left);
+                    }
+                    flush(out, cur);
+                    out.push(Item::Pair { right, left });
+                    return;
+                }
                 let mut buf = Vec::new();
-                // TODO(SVG)：並行的右、左兩行還沒有分開排，尾注還沒有移到段後。
+                // TODO(SVG)：尾注還沒有移到段後。
                 let children: Vec<Inline> = el
                     .children
                     .iter()
@@ -350,9 +416,7 @@ impl<'d> Flattener<'d> {
                 self.walk(&children, &c, out, &mut buf);
                 flush(out, cur);
                 out.push(match el.kind {
-                    ElementKind::DoubleNote | ElementKind::PairNote | ElementKind::Endnote { .. } => {
-                        Item::Double(buf)
-                    }
+                    ElementKind::DoubleNote | ElementKind::Endnote { .. } => Item::Double(buf),
                     ElementKind::SingleNote => Item::Single(buf),
                     ElementKind::HalfNote { left } => Item::Half {
                         toks: buf,
@@ -365,14 +429,38 @@ impl<'d> Flattener<'d> {
                         left,
                         line: true,
                     },
-                    ElementKind::Comment { .. } => Item::Side {
+                    ElementKind::Comment { stagger } => Item::Side {
                         toks: buf,
                         left: false,
+                        stagger,
                     },
                     _ => Item::Head(buf),
                 });
             }
         }
+    }
+}
+
+/// 阿拉伯數字 → 碼子字（〇〡…〩）。
+fn rod_codes(digits: &str) -> String {
+    const 碼子: [char; 10] = ['〇', '〡', '〢', '〣', '〤', '〥', '〦', '〧', '〨', '〩'];
+    digits
+        .bytes()
+        .filter(u8::is_ascii_digit)
+        .map(|d| 碼子[usize::from(d - b'0')])
+        .collect()
+}
+
+/// 佔一格的數碼。
+fn num_tok(text: String, style: Style, rod: bool) -> Tok {
+    Tok {
+        text,
+        kind: TokKind::Cell,
+        tone: None,
+        style,
+        compose: false,
+        rod,
+        hidden: false,
     }
 }
 
