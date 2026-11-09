@@ -1521,11 +1521,17 @@ impl<'d> Engine<'d> {
             return false;
         }
         let tone = t.tone;
+        // 夾注裏的小注：字號為夾注的 0.625（15px）。
+        let size = if t.style.num == Some("g-note-in") {
+            s.size * 0.625
+        } else {
+            s.size
+        };
         self.glyphs.push(Glyph {
             col: s.col,
             x: s.x,
             y: s.y,
-            size: s.size,
+            size,
             stretch: s.stretch,
             text: t.text.clone(),
             compose: t.compose,

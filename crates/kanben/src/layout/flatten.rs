@@ -403,6 +403,13 @@ impl<'d> Flattener<'d> {
                     ElementKind::Side { .. } => "單側行",
                     _ => "旁注",
                 };
+                // 雙行夾注裏的單行小注（原版 .grebdriuo .dhgd）：仍按夾注逐格排，字小一半。
+                if ctx.nested == Some("雙行夾注") && el.kind == ElementKind::SingleNote {
+                    let mut c = ctx.clone();
+                    c.style.num = Some("g-note-in");
+                    self.walk(&el.children, &c, out, cur);
+                    return;
+                }
                 if let Some(inside) = ctx.nested {
                     self.diags.push(Diagnostic::warning(
                         el.span,
@@ -463,6 +470,8 @@ impl<'d> Flattener<'d> {
                     },
                     _ => Item::Head(buf),
                 });
+                // 注裏的尾注：按出現的先後，列在這條注之後。
+                out.append(&mut self.nested_endnotes);
             }
         }
     }

@@ -60,6 +60,7 @@
 .kb text.g-encl { font-family: var(--kb-f-encl); font-weight: 400; }
 .kb text.g-note { font-family: var(--kb-f-note); font-weight: 240; font-stretch: 75%; }
 .kb text.g-line { font-weight: 400; }
+.kb text.g-note-in { font-family: "FOT-筑紫Aオールド明朝 Pr6N", "FOT-筑紫明朝 Pr6N", "Noto Serif CJK KR", 宋体, 仿宋, 統刊朙, "Typography Old P"; font-weight: 240; }
 /* 特殊段落（原版 .譔者 .綱 .目 .按 .琵琶）。 */
 .kb text.g-byline { font-family: var(--kb-f-heading4); font-weight: 400; }
 .kb text.g-gang { font-family: var(--kb-f-gang); font-weight: 500; }
