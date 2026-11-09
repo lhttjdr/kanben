@@ -2,7 +2,6 @@
 
 use std::fmt::Write;
 
-use super::ids;
 use super::page::{Geometry, PX1};
 use crate::layout::{Deco, Figure, Format, Glyph, Layout, Role};
 use crate::syntax::ast::{EmphMark, Shape};
@@ -13,8 +12,6 @@ const U: f32 = 100.0;
 const PX: f32 = 28.0;
 /// 字号相对字格的比例，留一点字间距。
 const FONT: f32 = 1.0;
-/// 组字部件相对其格子的放大比例。
-const COMPOSE_FILL: f32 = 1.12;
 
 fn n(v: f32) -> String {
     let r = (v * U * 10.0).round() / 10.0;
@@ -455,56 +452,11 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
         );
         return;
     }
-    if g.compose
-        && let Some(parts) = ids::components(&g.text)
-    {
-        let (bw, bh) = (size, size * g.stretch);
-        // 复制时得到原 IDS 串：放一个透明的整字，部件本身不可选。
-        let _ = write!(
-            s,
-            r#"<text class="cp" x="{}" y="{}" font-size="{}">{}</text><g class="nosel">"#,
-            n(x),
-            n(y),
-            n(size),
-            escape(&g.text)
-        );
-        // 部件的目标框写在 data-box 里，页面脚本按字形实际的墨迹把部件填满这个框
-        // （见 web/fontload.js 的 fitCompose）；没有脚本时按下面的缩放近似。
-        let part_class = if class.is_empty() {
-            "idsp".to_string()
-        } else {
-            format!("idsp {class}")
-        };
-        for (t, r) in parts {
-            let (bx, by) = (x - bw / 2.0 + r.x * bw, y - bh / 2.0 + r.y * bh);
-            let (pw, ph) = (r.w * bw, r.h * bh);
-            let _ = write!(
-                s,
-                r#"<text class="{part_class}" data-box="{} {} {} {}" transform="translate({} {}) scale({:.3} {:.3})" font-size="{}">{}</text>"#,
-                n(bx),
-                n(by),
-                n(pw),
-                n(ph),
-                n(bx + pw / 2.0),
-                n(by + ph / 2.0),
-                (r.w * COMPOSE_FILL).min(1.0),
-                (r.h * COMPOSE_FILL).min(1.0) * g.stretch,
-                n(size),
-                escape(&t)
-            );
-        }
-        s.push_str("</g>");
+    if g.compose {
+        compose(s, g, &class_attr, x, y, size);
         return;
     }
-    let text = if g.compose {
-        // IDS 不合法：去掉结构符，按普通字排。
-        g.text
-            .chars()
-            .filter(|c| !('\u{2FF0}'..='\u{2FFF}').contains(c))
-            .collect()
-    } else {
-        g.text.clone()
-    };
+    let text = g.text.clone();
     if (g.stretch - 1.0).abs() > 1e-3 {
         let _ = write!(
             s,
@@ -525,6 +477,69 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
             escape(&text)
         );
     }
+}
+
+/// 組字，照原版 構字 與 .charComp：
+/// 只有「結構符 + 兩字」（UTF-16 長三）且結構符是 ⿰⿱⿸ 時拼字，部件是整字按 CSS transform 壓扁；
+/// 其餘去掉結構符，各部件原大疊在同一格。
+/// 部件盒子寬一行（行寬一半 = 0.8 字）、高一字，所以 ⿱⿸ 的部件比格心偏右。
+fn compose(s: &mut String, g: &Glyph, class_attr: &str, x: f32, y: f32, size: f32) {
+    let chars: Vec<char> = g.text.chars().collect();
+    let three = g.text.encode_utf16().count() == 3;
+    // 复制时得到原 IDS 串：放一个透明的整字，部件本身不可选。
+    let _ = write!(
+        s,
+        r#"<text class="cp" x="{}" y="{}" font-size="{}">{}</text><g class="nosel">"#,
+        n(x),
+        n(y),
+        n(size),
+        escape(&g.text)
+    );
+    let h = 0.8 * size;
+    // （部件，x 偏移，y 偏移，横缩放，竪缩放），偏移單位是字號。
+    let parts: Vec<(char, f32, f32, f32, f32)> = match chars.first() {
+        // 逐像素比對另加：⿰ 右 1px，⿱ 上 1px（瀏覽器變形後取整的差別）。
+        Some('⿰') if three => vec![
+            (chars[1], -0.55 + h / size * 0.4 + PX1, 0.0, 0.4, 1.0),
+            (chars[2], 0.55 - h / size * 0.6 + PX1, 0.0, 0.6, 1.0),
+        ],
+        Some('⿱') if three => vec![
+            (chars[1], -0.5 + h / size, -0.3 - PX1, 1.0, 0.5),
+            (chars[2], -0.5 + h / size, 0.3 - PX1, 1.0, 0.5),
+        ],
+        Some('⿸') if three => vec![
+            (chars[1], -0.5 + h / size, 0.0, 1.0, 1.0),
+            (chars[2], 0.5 - h / size * 0.8, 0.1, 0.8, 0.8),
+        ],
+        _ => chars
+            .iter()
+            .filter(|c| !('\u{2FF0}'..='\u{2FFB}').contains(*c))
+            .map(|&c| (c, 0.0, 0.0, 1.0, 1.0))
+            .collect(),
+    };
+    for (c, dx, dy, sx, sy) in parts {
+        let (px, py) = (x + dx * size, y + dy * size);
+        if sx == 1.0 && sy == 1.0 {
+            let _ = write!(
+                s,
+                r#"<text{class_attr} x="{}" y="{}" font-size="{}">{}</text>"#,
+                n(px),
+                n(py),
+                n(size),
+                escape(&c.to_string())
+            );
+        } else {
+            let _ = write!(
+                s,
+                r#"<text{class_attr} transform="translate({} {}) scale({sx} {sy})" font-size="{}">{}</text>"#,
+                n(px),
+                n(py),
+                n(size),
+                escape(&c.to_string())
+            );
+        }
+    }
+    s.push_str("</g>");
 }
 
 /// 遮罩、裁切的編號，整頁唯一。

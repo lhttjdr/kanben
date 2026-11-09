@@ -23,6 +23,8 @@ pub struct Geometry {
     pub head: f32,
     /// 长卷的总行数（只有長卷用）。
     pub scroll_cols: i32,
+    /// 長卷紙上要容下的行數（眉批可能伸到版框左邊外）。
+    pub scroll_extent: i32,
 }
 
 impl Geometry {
@@ -34,6 +36,7 @@ impl Geometry {
             col_w: o.column_width,
             head: o.head,
             scroll_cols: 0,
+            scroll_extent: 0,
         }
     }
 
@@ -77,7 +80,9 @@ impl Geometry {
 
     pub fn width(&self, page: i32) -> f32 {
         match self.format {
-            Format::Scroll => 2.0 * MARGIN + self.scroll_cols.max(1) as f32 * self.col_w,
+            Format::Scroll => {
+                2.0 * MARGIN + self.scroll_cols.max(self.scroll_extent).max(1) as f32 * self.col_w
+            }
             Format::Leaves => {
                 // 單頁右邊：内綫 1px、内距 3px、外框 2px、紙邊 30px；雙頁右邊露半個版心（24px）。
                 let right = if page % 2 == 0 { 36.0 } else { 24.0 };

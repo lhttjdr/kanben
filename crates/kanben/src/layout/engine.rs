@@ -14,6 +14,12 @@ use crate::syntax::span::{Diagnostic, Span};
 // 左右两小行的中线在 +0.45 / -0.35，字盒中心比所在格低 0.08。这些都是照原版实测的。
 /// 正文字盒的中心比行中綫偏右 1px（原版每行左邊有 1px 界綫）。
 const MAIN_X: f32 = 1.0 / 30.0;
+/// 陰文、墨圍的字（原版 cite，南監體、方正金陵、仿宋）的內容區相對字心的左右寬（字）。
+/// 原版的底色、邊綫都從內容區量起；這是在比對環境裏量得的（隨字體而變）。
+const ENCL_L: f32 = 17.0 / 30.0;
+const ENCL_R: f32 = 18.0 / 30.0;
+/// 圓形、疊燈籠的圓心（底圖從內容區左沿起鋪，圓心在左沿右 0.5 字）。
+const ENCL_DX: f32 = 0.5 - ENCL_L;
 const NOTE_SIZE: f32 = 0.8;
 const NOTE_STRETCH: f32 = 1.0;
 const NOTE_R: f32 = 0.45;
@@ -129,6 +135,8 @@ pub struct Engine<'d> {
     /// 右、左旁行各自排到了哪里，避免重叠。
     side_end: [(i32, f32); 2],
     max_col: i32,
+    /// 眉批最左到第幾行。
+    head_col: i32,
     /// 兼行佔去的格：行 → [起, 止)。
     reserved: HashMap<i32, Vec<(i32, i32)>>,
     /// 目次内容（由上一遍排版得出）。
@@ -154,6 +162,7 @@ impl<'d> Engine<'d> {
             head_next: f32::MIN,
             side_end: [(-1, 0.0); 2],
             max_col: 0,
+            head_col: 0,
             reserved: HashMap::new(),
             toc: Vec::new(),
         }
@@ -340,6 +349,9 @@ impl<'d> Engine<'d> {
                 }
                 self.row = first;
                 self.cont = indent;
+                if first < 0 {
+                    self.headup(-first);
+                }
                 for item in items {
                     self.item(item);
                 }
@@ -577,10 +589,30 @@ impl<'d> Engine<'d> {
             y = ey;
         }
         let x = if left { -SIDE_X } else { SIDE_X };
+        // 原版旁注底下有紙色底（寬一個旁注字），蓋住界行、版框；每行一段。
+        let mut run = (col, y);
+        let paper = |e: &mut Self, (c, y0): (i32, f32), y1: f32| {
+            if y1 > y0 {
+                e.shape(
+                    c,
+                    Figure::Rect {
+                        x0: x - SIDE_SIZE / 2.0,
+                        y0,
+                        x1: x + SIDE_SIZE / 2.0,
+                        y1,
+                        rx: 0.0,
+                        ry: 0.0,
+                    },
+                    "paper",
+                );
+            }
+        };
         for u in g.units {
             if y + SIDE_STEP > cells + 0.01 {
+                paper(self, run, y);
                 col += 1;
                 y = self.cont as f32;
+                run = (col, y);
             }
             let slot = Slot {
                 col,
@@ -595,6 +627,7 @@ impl<'d> Engine<'d> {
             self.place(u, slot, false);
             y += SIDE_STEP;
         }
+        paper(self, run, y);
         self.side_end[slot_i] = (col, y);
     }
 
@@ -755,7 +788,7 @@ impl<'d> Engine<'d> {
                         r0: 0.0384 * z,
                         r1: 0.096 * z,
                     },
-                    "f-emph",
+                    "f-emph crisp",
                 ),
                 MarkKind::Emphasis(EmphMark::Dot) => self.shape(
                     s.col,
@@ -764,19 +797,20 @@ impl<'d> Engine<'d> {
                         y: s.y,
                         r: 0.096 * z,
                     },
-                    "f-emph",
+                    "f-emph crisp",
                 ),
                 // 旁點（﹅﹆）：原版是字，排在字後、右 0.72、上提 0.84（18px 字）。
                 MarkKind::Emphasis(mark) => {
-                    let c = if mark == EmphMark::Sesame {
-                        "﹅"
+                    // 字盒落點相同，兩個字形在字體裏的高低不同：逐像素比對，﹅ 再上 3px、﹆ 上 2px。
+                    let (c, dy) = if mark == EmphMark::Sesame {
+                        ("﹅", 0.16 - 3.0 / 30.0)
                     } else {
-                        "﹆"
+                        ("﹆", 0.16 - 2.0 / 30.0)
                     };
                     self.glyphs.push(Glyph {
                         col: s.col,
                         x: s.x + 0.72 * z,
-                        y: s.y + 0.16 * z,
+                        y: s.y + dy * z,
                         size: 0.6 * z,
                         stretch: 1.0,
                         text: c.into(),
@@ -794,7 +828,9 @@ impl<'d> Engine<'d> {
                 MarkKind::Inverse(e) | MarkKind::Frame(e) if e.shape.is_each() => {
                     let filled = matches!(m.kind, MarkKind::Inverse(_));
                     inverse |= filled;
-                    let (x, y) = (s.x, s.y);
+                    // 正文裏圓心照原版在內容區中間（比字心偏左）；夾注照舊。
+                    let dx = if z < 0.9 { 0.0 } else { ENCL_DX * z };
+                    let (x, y) = (s.x + dx, s.y);
                     let fig = match (filled, e.shape == Shape::Lantern) {
                         // 圓形陰文：每字一個實心圓，直徑一字。
                         (true, false) => Figure::Circle { x, y, r: 0.5 * z },
@@ -821,7 +857,16 @@ impl<'d> Engine<'d> {
                             [x - 0.7 * z, y - 0.5, x + 0.7 * z, y + 0.5],
                         ),
                     };
-                    self.shape(s.col, fig, if filled { "f-red" } else { "f-frame" });
+                    // 原版用 radial-gradient 畫，邊不抗鋸齒。
+                    self.shape(
+                        s.col,
+                        fig,
+                        if filled {
+                            "f-red crisp"
+                        } else {
+                            "f-frame crisp"
+                        },
+                    );
                 }
                 kind => {
                     inverse |= matches!(kind, MarkKind::Inverse(_));
@@ -830,7 +875,12 @@ impl<'d> Engine<'d> {
                 }
             }
         }
-        self.max_col = self.max_col.max(s.col);
+        // 眉批在天頭，不佔行（原版的行數只算正文）。
+        if s.role == Role::Head {
+            self.head_col = self.head_col.max(s.col);
+        } else {
+            self.max_col = self.max_col.max(s.col);
+        }
         if t.kind == TokKind::Space {
             return false;
         }
@@ -883,6 +933,36 @@ impl<'d> Engine<'d> {
             });
         }
         true
+    }
+
+    /// 擡頭伸出版框的一截，照原版 .headupN：紙色底蓋住版框上沿，
+    /// 頂上 2px 綫、其下 3px 處 1px 綫，左右各 1px 界行，一直到字頂。
+    fn headup(&mut self, n: i32) {
+        let cw = self.o.column_width;
+        let l = -cw / 2.0 + PX;
+        let top = -(n as f32) - 15.0 * PX;
+        let rect = |x0: f32, x1: f32, y0: f32, y1: f32| Figure::Rect {
+            x0,
+            y0,
+            x1,
+            y1,
+            rx: 0.0,
+            ry: 0.0,
+        };
+        let col = self.col;
+        self.shape(col, rect(l, l + cw, top, 0.0), "paper");
+        self.shape(col, rect(l, l + cw, top, top + 2.0 * PX), "f-frame");
+        self.shape(
+            col,
+            rect(l, l + cw, top + 5.0 * PX, top + 6.0 * PX),
+            "f-frame",
+        );
+        self.shape(
+            col,
+            rect(l + cw - PX, l + cw, top + 2.0 * PX, 0.0),
+            "f-frame",
+        );
+        self.shape(col, rect(l - PX, l, top, 0.0), "f-frame");
     }
 
     fn shape(&mut self, col: i32, figure: Figure, class: &'static str) {
@@ -940,6 +1020,7 @@ impl<'d> Engine<'d> {
         let last_col = if self.used { self.col } else { self.col - 1 };
         Layout {
             columns: self.max_col.max(last_col) + 1,
+            extent: self.max_col.max(last_col).max(self.head_col) + 1,
             glyphs: self.glyphs,
             decos: self.decos,
             options: self.o,
@@ -1003,8 +1084,9 @@ impl Engine<'_> {
                 self.shape(col, rect(x - 0.5 * z, x + 0.5 * z, y0, y1), "f-del");
                 self.decos.push(Deco::Shape {
                     col,
-                    figure: rect(x - 0.75 * PX, x + 0.75 * PX, y0, y1),
-                    class: "f-delline",
+                    // 刪除綫在字形中綫左 1–4px，寬 3px（原版 line-through 照字體的位置、粗細）。
+                    figure: rect(x - 4.0 * PX, x - PX, y0, y1),
+                    class: "f-delline crisp",
                     over: true,
                 });
             }
@@ -1012,9 +1094,15 @@ impl Engine<'_> {
             MarkKind::Insert => self.shape(col, rect(x - 0.5 * z, x + 0.5 * z, y0, y1), "f-ins"),
             MarkKind::Inverse(e) => {
                 // 陰文：字盒左右各加 (行寬 - 1)/2，正好一行寬（夾注同理用夾注行寬）。
+                // 正文：內容區左右各加 (行寬 - 1)/2（原版 padding）；夾注照舊取夾注行寬。
                 let half = if note { 0.5 } else { self.o.column_width / 2.0 };
                 let (y0, y1) = if note { (y0 - 0.1, y1 - 0.1) } else { (y0, y1) };
-                let (x0, x1) = (x - half, x + half);
+                let pad = (self.o.column_width - z) / 2.0;
+                let (x0, x1) = if note {
+                    (x - half, x + half)
+                } else {
+                    (x - ENCL_L * z - pad, x + ENCL_R * z + pad)
+                };
                 let fig = match e.shape {
                     Shape::Round => Figure::Rect {
                         x0,
@@ -1038,7 +1126,17 @@ impl Engine<'_> {
                 } else {
                     self.o.column_width / 2.0
                 };
-                let (x0, x1) = (x - half, x + half);
+                // 正文照原版：內容區加 padding（窄式 0.1，其餘 (行寬 - 1)/2）。
+                let pad = if e.narrow {
+                    0.1
+                } else {
+                    (self.o.column_width - z) / 2.0
+                };
+                let (x0, x1) = if note {
+                    (x - half, x + half)
+                } else {
+                    (x - ENCL_L * z - pad, x + ENCL_R * z + pad)
+                };
                 match (e.shape, e.narrow) {
                     // 窄圓頭（mhHiuanNR）：圓角 0.6/0.3 的框，四邊 1px。
                     (Shape::Round, true) => {
@@ -1122,7 +1220,7 @@ impl Engine<'_> {
                                     (cx, cy + sy * b),
                                     (cx, cy + sy * a),
                                 ]),
-                                "f-frame",
+                                "f-frame crisp",
                             );
                         }
                         if narrow {
@@ -1448,7 +1546,8 @@ mod feature_tests {
     #[test]
     fn frames_touch_rules_unless_narrow() {
         use crate::layout::Figure;
-        // 平頭墨圍照原版是上下兩條綫：正文的與行同寬，窄式只寬出字 0.1。
+        // 平頭墨圍照原版是上下兩條綫，寬是字的內容區（ENCL_L + ENCL_R）加左右 padding：
+        // 正文 (行寬 - 1)/2，窄式 0.1。
         let width = |l: &crate::layout::Layout| match &l.decos[0] {
             Deco::Shape {
                 figure: Figure::Rect { x0, x1, .. },
@@ -1458,7 +1557,9 @@ mod feature_tests {
         };
         let wide = run("\\frame{甲}", cells(10));
         let narrow = run("\\frame[narrow]{甲}", cells(10));
-        assert!((width(&wide) - 1.6).abs() < 1e-4 && (width(&narrow) - 1.2).abs() < 1e-4);
+        let content = super::ENCL_L + super::ENCL_R;
+        assert!((width(&wide) - (content + 0.6)).abs() < 1e-4);
+        assert!((width(&narrow) - (content + 0.2)).abs() < 1e-4);
         // 疊燈籠陰文：每字一個裁在本格的圓。
         let lantern = run("\\inv[lantern]{甲乙}", cells(10));
         let clips = lantern

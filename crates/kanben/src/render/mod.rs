@@ -4,7 +4,6 @@
 //! SVG 不内嵌样式，样式见 [`STYLE`]（页面里引入一次即可）；
 //! 颜色、字体都是 CSS 变量，可以在页面上改。
 
-pub mod ids;
 pub mod numerals;
 mod page;
 mod svg;
@@ -20,6 +19,7 @@ pub fn render(layout: &Layout) -> Vec<String> {
     let mut geo = Geometry::new(&layout.options);
     // 原版長卷總比正文多一行空行。
     geo.scroll_cols = layout.columns + 1;
+    geo.scroll_extent = layout.extent;
     let pages = match layout.options.format {
         Format::Leaves => geo.leaf_pages(layout.columns),
         Format::Scroll => 1,
@@ -45,7 +45,7 @@ pub fn html(title: &str, pages: &[String], font_loader: Option<&str>) -> String 
     if let Some(src) = font_loader {
         // 只登记页面上用到的字，浏览器按需下载。
         out.push_str(&format!(
-            "<script type=\"module\">import {{ loadFonts, fitCompose }} from \"{}\"; loadFonts(document.body.textContent); fitCompose(); document.fonts.addEventListener(\"loadingdone\", () => fitCompose());</script>",
+            "<script type=\"module\">import {{ loadFonts }} from \"{}\"; loadFonts(document.body.textContent);</script>",
             svg::escape(src)
         ));
     }

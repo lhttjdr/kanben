@@ -184,8 +184,10 @@ impl Deco {
 #[derive(Clone, Debug, PartialEq)]
 pub struct Layout {
     pub options: Options,
-    /// 共用了多少行（版面上的列）。
+    /// 正文共用了多少行（版面上的列）。
     pub columns: i32,
+    /// 連天頭的眉批一起算，最左用到第幾行之後（長卷紙寬要包住眉批）。
+    pub extent: i32,
     pub glyphs: Vec<Glyph>,
     pub decos: Vec<Deco>,
 }

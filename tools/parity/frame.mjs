@@ -44,9 +44,9 @@ for (const f of readdirSync(corpusDir).filter((f) => f.endsWith(".kb")).sort()) 
     return { box: [r.left, r.top, r.width, r.height], cells: 每行格數 };
   })()`);
   const [l, t, w, h] = g1.box;
-  // 截到外框以下 45px（行號），寬取到不超過 1600。
-  const W = Math.min(w, 1500), H = h + 45;
-  const a = await shot({ x: l + w - W, y: t, width: W, height: H });
+  // 截外框以上 50px（擡頭）到外框以下 45px（行號），寬取到不超過 1600。
+  const W = Math.min(w, 1500), H = h + 95;
+  const a = await shot({ x: l + w - W, y: t - 50, width: W, height: H });
   const g2 = await ev(`(async () => {
     const box = document.getElementById("svgbox"); box.style.display = "block";
     const r = __k.typeset(${JSON.stringify(src)}, "cells=${g1.cells}\\nformat=scroll\\nengine=svg\\nfont=original");
@@ -57,7 +57,7 @@ for (const f of readdirSync(corpusDir).filter((f) => f.endsWith(".kb")).sort()) 
     const top = svg.querySelector("rect.rule-fill").getBoundingClientRect();
     return { right: top.right, top: top.top };
   })()`);
-  const b = await shot({ x: g2.right - W, y: g2.top, width: W, height: H });
+  const b = await shot({ x: g2.right - W, y: g2.top - 50, width: W, height: H });
   writeFileSync(join(outDir, `${name}-classic.png`), a);
   writeFileSync(join(outDir, `${name}-svg.png`), b);
   results[name] = [W, H];

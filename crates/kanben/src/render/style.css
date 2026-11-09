@@ -86,13 +86,13 @@
 .kb .f-red { fill: var(--kb-red-c); }
 .kb .f-red-t { fill: #dd3b4477; }
 .kb .f-frame { fill: var(--kb-rule-c); }
+/* 原版用漸變畫的圖形，邊不抗鋸齒。 */
+.kb .crisp { shape-rendering: crispEdges; }
 .kb .f-emph { fill: var(--kb-emph-c); }
 .kb .f-strike { fill: #fbb957; }
 .kb .f-del { fill: rgba(238, 238, 238, 0.7); opacity: 0.6; }
 .kb .f-delline { fill: rgb(153, 23, 34); opacity: 0.6; }
 .kb .f-ins { fill: #f3f3f37f; }
-/* 組字部件按橫排量墨迹，保持橫排。 */
-.kb text.idsp { writing-mode: horizontal-tb; }
 .kb .paper { fill: var(--kb-paper-c); }
 .kb .rule { stroke: var(--kb-rule-c); fill: none; }
 .kb .rule-fill { fill: var(--kb-rule-c); }
@@ -138,4 +138,3 @@
 .kb .jd .f { fill: currentColor; stroke: none; }
 .kb .jd text.f { fill: currentColor; }
 /* 组字部件经脚本量过墨迹后，按字形原点（左、基线）定位。 */
-.kb text.idsp.fitted { text-anchor: start; dominant-baseline: alphabetic; }
