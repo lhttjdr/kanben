@@ -745,38 +745,22 @@ impl<'d> Engine<'d> {
 
     /// 校勘記編號的六角框（原版 pCmtAfN，與六角墨圍同畫法）：寬 62px，高一格。
     fn afn_box(&mut self, col: i32, y0: f32, y1: f32) {
-        let (x0, x1) = (-31.0 / 30.0, 31.0 / 30.0);
-        let rect = |x0: f32, x1: f32, y0: f32, y1: f32| Figure::Rect {
-            x0,
-            y0,
-            x1,
-            y1,
-            rx: 0.0,
-            ry: 0.0,
-        };
-        let d = 0.2;
-        let w = (x1 - x0) * 0.65;
-        self.shape(col, rect(-w / 2.0, w / 2.0, y0, y0 + PX), "f-afn");
-        self.shape(col, rect(-w / 2.0, w / 2.0, y1 - PX, y1), "f-afn");
-        let k = std::f32::consts::SQRT_2;
-        for (cx, cy, sx, sy) in [
-            (x1, y0, -1.0, 1.0),
-            (x1, y1, -1.0, -1.0),
-            (x0, y1, 1.0, -1.0),
-            (x0, y0, 1.0, 1.0),
-        ] {
-            let (a, b) = (d * k, (d + PX) * k);
-            self.shape(
-                col,
-                Figure::Polygon(vec![
-                    (cx + sx * a, cy),
-                    (cx + sx * b, cy),
-                    (cx, cy + sy * b),
-                    (cx, cy + sy * a),
-                ]),
-                "f-afn crisp",
-            );
-        }
+        // 原版是四塊斜角各畫各的，伸出界行、與上下沿接不上；這裏照正文六角墨圍，
+        // 斜邊端點落在左右界行上，畫成一圈 1px 的綫，左右兩條讓給界行。
+        let cw = self.o.column_width;
+        let (xl, xr) = (-cw / 2.0, cw / 2.0 + PX);
+        let c = 0.2 * std::f32::consts::SQRT_2;
+        let ci = c + PX * (std::f32::consts::SQRT_2 - 1.0);
+        let outer = cut_corners(xl, y0, xr, y1, c);
+        let inner = cut_corners(xl, y0 + PX, xr, y1 - PX, ci);
+        self.shape(
+            col,
+            Figure::Clip(
+                Box::new(Figure::Minus(Box::new(outer), Box::new(inner))),
+                [xl, y0, xr, y1],
+            ),
+            "f-afn",
+        );
     }
 
     /// 字上的小標，照原版：
