@@ -239,14 +239,25 @@ fn letter_spacing_shift(g: &Glyph) -> f32 {
         // 雙行夾注與其標點：6px（正文 30px）。
         Role::Note => 0.1,
         Role::Punct if g.size < 0.9 && !matches!(punct_class(g), "p-nq") => 0.1,
-        // 單行小注：2px。
-        Role::NoteSingle => 1.0 / 30.0,
+        // 單行小注裏的標點繼承小注的 2px 字距。
+        Role::Punct if (g.size - 28.0 / 30.0).abs() < 1e-3 => 1.0 / 30.0,
+        // 單行小注：字距 2px 與 `top: 1px` 相抵。
+        Role::NoteSingle => 0.0,
         _ => 0.0,
     }
 }
 
+/// 字形橫向的細調（字）：原版小字竪排時字形中綫與字盒中心的微小差別，照逐像素比對定出。
+fn x_shift(g: &Glyph) -> f32 {
+    match g.role {
+        Role::NoteSingle => X_SHIFT_SINGLE,
+        _ => 0.0,
+    }
+}
+const X_SHIFT_SINGLE: f32 = 0.0;
+
 fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
-    let x = cx + g.x;
+    let x = cx + g.x + x_shift(g);
     let y = top + g.y - letter_spacing_shift(g);
     let size = g.size * FONT;
     // 各類文字的字體、字重照原版（見 style.css 的 g-*、p-* 類）。
