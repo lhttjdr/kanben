@@ -374,7 +374,7 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
         (Role::Main, 5) => "g-h5",
         (Role::Main, _) => "g-h6",
         (Role::Note, _) => "g-note",
-        (Role::Line, _) => "g-line",
+        (Role::Line, _) => g.extra.unwrap_or("g-line"),
         (Role::NoteSingle, _) => "g-note1",
         (Role::Side, _) => "g-side",
         (Role::Head, _) => "g-head",
@@ -385,6 +385,11 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
     });
     if g.encl && class.is_empty() {
         class.push_str("g-encl");
+    }
+    if let Some(x) = g.extra
+        && class.is_empty()
+    {
+        class.push_str(x);
     }
     if g.faded {
         if !class.is_empty() {
@@ -408,11 +413,19 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
         }
         class.push_str("inv");
     }
-    let class_attr = if class.is_empty() {
+    let mut class_attr = if class.is_empty() {
         String::new()
     } else {
         format!(r#" class="{class}""#)
     };
+    // 段落字色（交替行色）：標點不變色。
+    if let Some(p) = g.paint
+        && g.role != Role::Punct
+        && !g.hidden
+        && !g.inverse
+    {
+        let _ = write!(class_attr, r#" style="fill:{p}""#);
+    }
 
     if g.role == Role::Punct && !g.hidden {
         // 原版的標點按簡體中文取字形。
@@ -642,6 +655,7 @@ fn punct_class(g: &Glyph) -> &'static str {
     let note = g.size < 0.9;
     match (note, g.text.chars().next().unwrap_or(' ')) {
         (_, '﹅' | '﹆') => "p-em",
+        (_, 'ロ') => "p-box",
         (false, '：' | '；') => "p-md",
         (false, '？' | '！') => "p-tl",
         (false, '「' | '」' | '『' | '』' | '“' | '”' | '‘' | '’') => "p-q",

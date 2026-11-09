@@ -32,6 +32,9 @@
   --kb-f-num: 華數碼, Times;
   --kb-f-encl: 南監體, 方正金陵, 仿宋, fangsong;
   --kb-f-banxin: 倉耳聚珍長仿, 仿宋;
+  --kb-f-gang: 統刊朙, "Noto Sans CJK KR", 宋体, 黑体;
+  --kb-f-an: "华康玉刻仿宋 W6", DFRareBookMagnoliaTC13-W3, FZJuZhenXinFang-R-JF, "文悦古体仿宋 (非商业用途)", 仿宋, FangSong, STFangsong, "漢儀仿宋(GB18030超大字符集版)", HYFangSong_GB18030Super-ExtB, fangsong, "Noto Serif CJK KR", 본명조, "Source Han Serif K";
+  --kb-f-pipa: 琵琶譜字, 楷体;
   --kb-sys: "Noto Serif CJK TC", "Source Han Serif TC", "Noto Serif TC", "Songti TC", "SimSun", serif;
 }
 .kb.f-mincho { --kb-f-main: "KB Mincho", var(--kb-sys); --kb-f-heading: "KB Mincho", var(--kb-sys); --kb-f-note: "KB Mincho", var(--kb-sys); --kb-f-note1: "KB Mincho", var(--kb-sys); }
@@ -57,6 +60,13 @@
 .kb text.g-encl { font-family: var(--kb-f-encl); font-weight: 400; }
 .kb text.g-note { font-family: var(--kb-f-note); font-weight: 240; font-stretch: 75%; }
 .kb text.g-line { font-weight: 400; }
+/* 特殊段落（原版 .譔者 .綱 .目 .按 .琵琶）。 */
+.kb text.g-byline { font-family: var(--kb-f-heading4); font-weight: 400; }
+.kb text.g-gang { font-family: var(--kb-f-gang); font-weight: 500; }
+.kb text.g-mu { font-weight: 400; }
+.kb text.g-an { font-family: var(--kb-f-an); font-weight: 400; }
+.kb text.g-pipa { font-family: var(--kb-f-pipa); font-weight: 500; }
+.kb text.g-pipa-line { font-family: var(--kb-f-pipa); font-weight: 400; }
 .kb text.g-note1 { font-family: var(--kb-f-note1); font-weight: 320; }
 .kb text.g-side { font-family: var(--kb-f-side); font-weight: 500; fill: var(--kb-side-c); }
 .kb text.g-head { font-family: var(--kb-f-head); font-weight: 400; fill: var(--kb-head-c); }
@@ -76,6 +86,7 @@
 /* 圈發、旁點：原版「標點符號」字體裏的字。 */
 .kb text.g-tone { font-family: 標點符號; font-weight: 400; fill: var(--kb-tone-c); }
 .kb text.tone-h { writing-mode: horizontal-tb; }
+.kb text.p-box { font-family: 標點符號, var(--kb-f-pipa), 仿宋, FangSong, 宋体; font-weight: 400; fill: var(--kb-emph-c); }
 .kb text.p-em { font-family: var(--kb-f-p-tl); font-weight: 400; fill: var(--kb-emph-c); }
 /* 刪去的字：原版整體 60% 不透明。 */
 .kb text.o60 { opacity: 0.6; }

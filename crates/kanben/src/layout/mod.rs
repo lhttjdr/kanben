@@ -43,6 +43,10 @@ pub struct Glyph {
     pub role: Role,
     /// 標題級別（0 = 不是標題）；標題用原版的標題字體與字重。
     pub level: u8,
+    /// 段落字色（`\colors`），CSS 顏色；優先於 `color`。
+    pub paint: Option<&'static str>,
+    /// 特殊段落（撰者、綱、目、按語、琵琶譜）的字體類。
+    pub extra: Option<&'static str>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

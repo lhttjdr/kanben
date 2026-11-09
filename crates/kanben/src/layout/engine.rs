@@ -6,7 +6,9 @@ use super::flatten::{Flattener, Item};
 use super::token::{MarkKind, Tok, TokKind, Tone, Unit, group, is_hanging};
 use super::{Deco, Figure, Format, Glyph, Layout, Options, Role};
 use crate::render::numerals::hanzi;
-use crate::syntax::ast::{AttrKind, Block, Document, EmphMark, EnvKind, Inline, Shape};
+use crate::syntax::ast::{
+    AttrKind, Block, Document, EmphMark, EnvKind, Inline, ParaStyle, Shape,
+};
 use crate::syntax::span::{Diagnostic, Span};
 
 // 尺寸（单位：字）。
@@ -21,6 +23,10 @@ const ENCL_R: f32 = 18.0 / 30.0;
 /// 圓形、疊燈籠的圓心（底圖從內容區左沿起鋪，圓心在左沿右 0.5 字）。
 const ENCL_DX: f32 = 0.5 - ENCL_L;
 const NOTE_SIZE: f32 = 0.8;
+/// 琵琶譜字的字身高（像素，正文 30px）：字體沒有竪排字寬，瀏覽器取 ascent + descent，各取整。
+const PIPA_PX: i32 = 34;
+/// 琵琶譜裏單側行一格的高。
+const PIPA_LINE_PX: f32 = 33.0;
 const NOTE_STRETCH: f32 = 1.0;
 const NOTE_R: f32 = 0.45;
 const NOTE_L: f32 = -0.35;
@@ -53,7 +59,12 @@ impl LineFmt {
             AttrKind::Indent(n) => self.indent += i32::from(n),
             AttrKind::Raise(n) => self.raise = self.raise.max(i32::from(n)),
             AttrKind::Bottom(n) => self.bottom = Some(i32::from(n)),
-            // TODO(SVG)：撰者、綱目、琵琶譜、單兒、字色還沒有照原版排。
+            // 原版：撰者靠底，下留二格（padding-bottom: 2em）；目整段下移一格（margin-top: 1em）。
+            AttrKind::Style(ParaStyle::Byline) => {
+                self.bottom = Some(self.bottom.unwrap_or(0) + 2);
+            }
+            AttrKind::Style(ParaStyle::Detail) => self.indent += 1,
+            // TODO(SVG)：單兒還沒有照原版排。
             AttrKind::Style(_) | AttrKind::List { .. } | AttrKind::Colors(_) => {}
         }
     }
@@ -256,7 +267,45 @@ impl<'d> Engine<'d> {
                             (fmt, self.flatten(&l.content))
                         })
                         .collect();
+                    let before = self.glyphs.len();
+                    let deco_before = self.decos.len();
+                    // 琵琶譜字的字身比一字高（34px / 30px），一行排得少些，再把各格拉開。
+                    let pipa = attrs
+                        .iter()
+                        .any(|a| a.kind == AttrKind::Style(ParaStyle::Pipa));
+                    let saved = self.o.cells;
+                    if pipa {
+                        self.o.cells = (saved * 30 / PIPA_PX).max(1);
+                    }
                     self.paragraph(lines);
+                    if pipa {
+                        self.o.cells = saved;
+                        self.stretch_rows(before, deco_before);
+                    }
+                    for a in attrs {
+                        match &a.kind {
+                            AttrKind::Colors(names) => self.paint(before, names),
+                            AttrKind::Style(s) => {
+                                let class = match s {
+                                    ParaStyle::Byline => "g-byline",
+                                    ParaStyle::Outline => "g-gang",
+                                    ParaStyle::Detail => "g-mu",
+                                    ParaStyle::Remark => "g-an",
+                                    ParaStyle::Pipa => "g-pipa",
+                                };
+                                for g in &mut self.glyphs[before..] {
+                                    if g.role == Role::Main && g.level == 0 && !g.encl {
+                                        g.extra = Some(class);
+                                    }
+                                    // 琵琶譜裏的單側行也用譜字字體。
+                                    if g.role == Role::Line && *s == ParaStyle::Pipa {
+                                        g.extra = Some("g-pipa-line");
+                                    }
+                                }
+                            }
+                            _ => {}
+                        }
+                    }
                 }
                 Block::Blank { count, .. } => {
                     self.start_block();
@@ -282,6 +331,74 @@ impl<'d> Engine<'d> {
                     }
                     self.blocks(blocks, fmt, heads, after_toc);
                 }
+            }
+        }
+    }
+
+    /// 琵琶譜：按格排好後，把每格拉成譜字的字身高（34px）；只有單側行的格 33px。
+    fn stretch_rows(&mut self, from: usize, deco_from: usize) {
+        use std::collections::BTreeMap;
+        let main = PIPA_PX as f32 / 30.0;
+        let line = PIPA_LINE_PX / 30.0;
+        // 每行：各格是否只有單側行。
+        let mut kinds: BTreeMap<i32, Vec<(i32, bool)>> = BTreeMap::new();
+        for g in &self.glyphs[from..] {
+            let r = g.y.floor() as i32;
+            let v = kinds.entry(g.col).or_default();
+            let is_line = g.role == Role::Line;
+            match v.iter_mut().find(|(row, _)| *row == r) {
+                Some(e) => e.1 &= is_line,
+                None => v.push((r, is_line)),
+            }
+        }
+        let map = |col: i32, y: f32| -> f32 {
+            let Some(v) = kinds.get(&col) else { return y };
+            let r = y.floor() as i32;
+            let adv = |k: i32| {
+                if v.iter().any(|&(row, l)| row == k && l) {
+                    line
+                } else {
+                    main
+                }
+            };
+            let start: f32 = (0..r).map(adv).sum();
+            start + (y - r as f32) * adv(r)
+        };
+        for g in &mut self.glyphs[from..] {
+            g.y = map(g.col, g.y);
+        }
+        for d in &mut self.decos[deco_from..] {
+            match d {
+                Deco::Mark { col, y, .. } | Deco::Tone { col, y, .. } | Deco::Ring { col, y, .. } => {
+                    *y = map(*col, *y)
+                }
+                Deco::Line { col, y0, y1, .. }
+                | Deco::Wave { col, y0, y1, .. }
+                | Deco::Box { col, y0, y1, .. }
+                | Deco::Gap { col, y0, y1, .. } => {
+                    *y0 = map(*col, *y0);
+                    *y1 = map(*col, *y1);
+                }
+                Deco::Shape { .. } => {}
+            }
+        }
+    }
+
+    /// 段落字色：照原版（背景漸變裁成字形），從段首那一行起逐行輪換顏色；標點不變色。
+    fn paint(&mut self, from: usize, names: &[String]) {
+        let colors: Vec<&'static str> = names
+            .iter()
+            .filter_map(|n| crate::syntax::palette::lookup(n))
+            .collect();
+        let Some(first) = self.glyphs[from..].iter().map(|g| g.col).min() else {
+            return;
+        };
+        if colors.is_empty() {
+            return;
+        }
+        for g in &mut self.glyphs[from..] {
+            if g.role != Role::Punct && g.color.is_none() {
+                g.paint = Some(colors[(g.col - first) as usize % colors.len()]);
             }
         }
     }
@@ -364,7 +481,20 @@ impl<'d> Engine<'d> {
                     other => segments.last_mut().expect("non-empty").1.push(other),
                 }
             }
-            for (r, items) in segments {
+            for (r, mut items) in segments {
+                // 原版靠底排（text-align: right）：行末的全角空格挂在行外，不佔格。
+                if fmt.bottom.is_some() {
+                    while let Some(Item::Main(t)) = items.last_mut() {
+                        while t.last().is_some_and(|t| t.kind == TokKind::Space) {
+                            t.pop();
+                        }
+                        if t.is_empty() {
+                            items.pop();
+                        } else {
+                            break;
+                        }
+                    }
+                }
                 if !first_segment {
                     self.new_column();
                 }
@@ -797,6 +927,8 @@ impl<'d> Engine<'d> {
             encl: false,
             role: Role::Punct,
             level: 0,
+            paint: None,
+            extra: None,
         });
         self.max_col = self.max_col.max(col);
     }
@@ -831,10 +963,11 @@ impl<'d> Engine<'d> {
                 // 旁點（﹅﹆）：原版是字，排在字後、右 0.72、上提 0.84（18px 字）。
                 MarkKind::Emphasis(mark) => {
                     // 字盒落點相同，兩個字形在字體裏的高低不同：逐像素比對，﹅ 再上 3px、﹆ 上 2px。
-                    let (c, dy) = if mark == EmphMark::Sesame {
-                        ("﹅", 0.16 - 3.0 / 30.0)
-                    } else {
-                        ("﹆", 0.16 - 2.0 / 30.0)
+                    let (c, dy) = match mark {
+                        EmphMark::Sesame => ("﹅", 0.16 - 3.0 / 30.0),
+                        // 方框（琵琶譜）由譜字字體出，字盒高 21px（﹅ 18px），中心低 1.5px。
+                        EmphMark::Box => ("ロ", 0.16 - 3.0 / 30.0 + 1.5 / 30.0),
+                        _ => ("﹆", 0.16 - 2.0 / 30.0),
                     };
                     self.glyphs.push(Glyph {
                         col: s.col,
@@ -852,6 +985,8 @@ impl<'d> Engine<'d> {
                         encl: false,
                         role: Role::Punct,
                         level: 0,
+                        paint: None,
+                        extra: None,
                     });
                 }
                 MarkKind::Inverse(e) | MarkKind::Frame(e) if e.shape.is_each() => {
@@ -934,6 +1069,8 @@ impl<'d> Engine<'d> {
                 .any(|m| matches!(m.kind, MarkKind::Inverse(_) | MarkKind::Frame(_))),
             role: s.role,
             level: 0,
+            paint: None,
+            extra: None,
         });
         // 圈發：原版是「標點符號」字體裏的圈，排在字後，照原版實測的盒位。
         if let Some(tone) = tone {
@@ -959,6 +1096,8 @@ impl<'d> Engine<'d> {
                 encl: false,
                 role: Role::Tone,
                 level: 0,
+                paint: None,
+                extra: None,
             });
         }
         true

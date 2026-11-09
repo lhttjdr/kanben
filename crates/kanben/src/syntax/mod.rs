@@ -16,6 +16,7 @@
 pub mod ast;
 pub mod commands;
 pub mod inline;
+pub mod palette;
 pub mod span;
 
 use ast::{
@@ -123,6 +124,13 @@ fn attr_kind(name: &str, args: &[commands::Arg]) -> Result<AttrKind, (Span, Stri
         "list" => list_kind(name, args).map(|ordered| AttrKind::List { ordered }),
         "colors" => {
             let names: Vec<String> = args.iter().map(|a| a.value.clone()).collect();
+            if let Some(a) = args.iter().find(|a| palette::lookup(&a.value).is_none()) {
+                let all: Vec<&str> = palette::PALETTE.iter().map(|(n, _)| *n).collect();
+                return Err((
+                    a.span,
+                    format!("不認得顏色「{}」（可用：{}）", a.value, all.join("、")),
+                ));
+            }
             if names.is_empty() || args.iter().any(|a| a.key.is_some()) {
                 Err((
                     args.first().map_or(Span::default(), |a| a.span),
