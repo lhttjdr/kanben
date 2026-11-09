@@ -1,0 +1,18 @@
+南徼圖-CHGIS.geojson
+
+來源：CHGIS, Version 5. (c) Fairbank Center for Chinese Studies and the Institute for
+Chinese Historical Geography at Fudan University, 2012.
+  數據集：CHGIS V5 Shapefiles (2012), doi:10.7910/DVN/M7WEFY（Harvard Dataverse 標為 CC0 1.0）
+  圖層：v5_time_pref_pgn_utf（府州界）、v5_time_cnty_pts_utf（縣治）
+
+改動（2026-11-09，tools/map/chgis.py）：
+  摘取公元 42 年存在、治所在東經 104–116°、北緯 15–26° 內的郡界與縣治；
+  去掉「非政區國土」；由原投影（橫軸墨卡托，中央經綫 111°）轉為 WGS84 經緯度；
+  郡界以 0.005° 容差化簡，坐標取四位小數；每郡另加一個寫名用的代表點。
+  為與數據包內 README 所列許可相容，本摘錄另以 CC BY-NC-SA 3.0 提供。
+
+南徼圖.json 中交趾、九真、日南三郡的範圍與進軍路綫、戰地，是據史籍大意手繪的示意，
+不出自 CHGIS。
+
+底圖：OpenFreeMap（OpenStreetMap 數據，ODbL）、Natural Earth、Mapterhorn；
+地圖庫：MapLibre GL（BSD-3-Clause）。

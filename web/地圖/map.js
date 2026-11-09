@@ -192,16 +192,44 @@ function addOverlays(map, spec) {
       paint: { "raster-opacity": r.opacity ?? 0.75, "raster-fade-duration": 0 },
     });
   });
-  (spec.geojson ?? []).forEach((url, i) => {
-    map.addSource(`gj${i}`, { type: "geojson", data: url });
+  // 現成的 GeoJSON（如 CHGIS 摘錄）：面畫成淡色區、虛綫邊，點畫小圓點；都照 label 竪排寫名。
+  // 每項可寫網址，或 {url, color}。
+  (spec.geojson ?? []).forEach((g, i) => {
+    const { url, color = "#8a6d1f" } = typeof g === "string" ? { url: g } : g;
+    const c = ["coalesce", ["get", "color"], color];
+    const id = `gj${i}`;
+    const poly = ["any", ["==", ["geometry-type"], "Polygon"], ["==", ["geometry-type"], "MultiPolygon"]];
+    // 郡名寫在 kind 為 pref-label 的點上；沒有這種點的數據就寫在面上。
+    const isLabel = ["==", ["get", "kind"], "pref-label"];
+    const point = ["all", ["==", ["geometry-type"], "Point"], ["!", isLabel]];
+    map.addSource(id, { type: "geojson", data: url });
     map.addLayer({
-      id: `gj${i}-fill`, type: "fill", source: `gj${i}`,
-      filter: ["==", ["geometry-type"], "Polygon"],
-      paint: { "fill-color": ["coalesce", ["get", "color"], "#c9a227"], "fill-opacity": ["coalesce", ["get", "opacity"], 0.25] },
+      id: `${id}-fill`, type: "fill", source: id, filter: poly,
+      paint: { "fill-color": c, "fill-opacity": ["coalesce", ["get", "opacity"], 0.12] },
     });
     map.addLayer({
-      id: `gj${i}-line`, type: "line", source: `gj${i}`,
-      paint: { "line-color": ["coalesce", ["get", "color"], "#8a6d1f"], "line-width": ["coalesce", ["get", "width"], 1.2] },
+      id: `${id}-line`, type: "line", source: id, filter: ["!=", ["geometry-type"], "Point"],
+      paint: { "line-color": c, "line-width": ["coalesce", ["get", "width"], 1.2], "line-dasharray": [4, 2] },
+    });
+    map.addLayer({
+      id: `${id}-pt`, type: "circle", source: id, filter: point,
+      paint: { "circle-radius": 2.2, "circle-color": c },
+    });
+    map.addLayer({
+      id: `${id}-pt-label`, type: "symbol", source: id, filter: point, minzoom: 6.5,
+      layout: {
+        "text-field": ["get", "label"], "text-font": ["Noto Sans Regular"], "text-size": 11,
+        "text-writing-mode": ["vertical"], "text-anchor": "left", "text-offset": [0.5, 0],
+      },
+      paint: { "text-color": c, "text-halo-color": "rgba(248,244,232,0.9)", "text-halo-width": 1 },
+    });
+    map.addLayer({
+      id: `${id}-label`, type: "symbol", source: id, filter: ["any", isLabel, poly],
+      layout: {
+        "text-field": ["get", "label"], "text-font": ["Noto Sans Regular"], "text-size": 16,
+        "text-writing-mode": ["vertical"], "text-letter-spacing": 0.4,
+      },
+      paint: { "text-color": c, "text-opacity": 0.85, "text-halo-color": "rgba(248,244,232,0.8)", "text-halo-width": 1 },
     });
   });
   for (const k of ["areas", "lines", "heads", "places"]) map.addSource(k, { type: "geojson", data: d[k] });
