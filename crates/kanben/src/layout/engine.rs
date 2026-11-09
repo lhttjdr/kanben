@@ -87,6 +87,8 @@ struct Slot {
 struct Seg {
     id: u32,
     kind: MarkKind,
+    /// 段內各字（書名波綫要用）。
+    text: String,
     col: i32,
     x: f32,
     half_w: f32,
@@ -665,10 +667,17 @@ impl<'d> Engine<'d> {
         };
         pre.extend(unit.pre);
         // 前引號先于字输出，这样 SVG 里文字的先后就是阅读顺序，复制出来不乱。
-        for p in &pre {
+        let double = pre.len() == 2 && pre[0].text == "「" && pre[1].text == "『" && s.size >= 0.9;
+        for (i, p) in pre.iter().enumerate() {
             // 前引號：照原版，在下一字的位置上移 0.65（夾注裏上移 0.8 個夾注字）。
-            let dy = if s.size < 0.9 { -0.64 } else { -0.65 };
-            self.punct(p, s.col, s.x, s.y + dy, s.size);
+            // 「『 連用時原版另有樣式（hgbd2Qt1）：「 在右上 (+0.1, -1.35)，『 在 (0, -1.25)。
+            let (dx, dy) = match (double, i) {
+                (true, 0) => (0.1, -1.35),
+                (true, _) => (0.0, -1.25),
+                _ if s.size < 0.9 => (0.0, -0.64),
+                _ => (0.0, -0.65),
+            };
+            self.punct(p, s.col, s.x + dx, s.y + dy, s.size);
         }
         let placed = self.put(&unit.cell, s);
         let mut anchor = Anchor {
@@ -814,7 +823,7 @@ impl<'d> Engine<'d> {
                 kind => {
                     inverse |= matches!(kind, MarkKind::Inverse(_));
                     faded |= kind == MarkKind::Delete;
-                    self.extend_seg(m.id, kind, s);
+                    self.extend_seg(m.id, kind, s, &t.text);
                 }
             }
         }
@@ -882,7 +891,7 @@ impl<'d> Engine<'d> {
         });
     }
 
-    fn extend_seg(&mut self, id: u32, kind: MarkKind, s: Slot) {
+    fn extend_seg(&mut self, id: u32, kind: MarkKind, s: Slot, text: &str) {
         let key = (id, s.col, (s.x * 1000.0).round() as i32);
         let (y0, y1) = (s.y - s.ext / 2.0, s.y + s.ext / 2.0);
         match self.seg_at.get(&key) {
@@ -890,12 +899,14 @@ impl<'d> Engine<'d> {
                 let seg = &mut self.segs[i];
                 seg.y0 = seg.y0.min(y0);
                 seg.y1 = seg.y1.max(y1);
+                seg.text.push_str(text);
             }
             None => {
                 self.seg_at.insert(key, self.segs.len());
                 self.segs.push(Seg {
                     id,
                     kind,
+                    text: text.to_string(),
                     col: s.col,
                     x: s.x,
                     half_w: s.half_w,
@@ -972,15 +983,15 @@ impl Engine<'_> {
                     "f-red-t",
                 );
             }
-            // 書名號（波綫）暫照舊。
-            MarkKind::Title => self.decos.push(Deco::Line {
+            MarkKind::Title | MarkKind::TitleRight => self.decos.push(Deco::Wave {
                 col,
-                x: x - sg.half_w * 0.97,
-                y0: y0 + 0.175 * z,
-                y1: y1 - 0.215 * z,
-                wavy: true,
-                color: Some(self.o.punct_color),
-                width: 0.03,
+                x,
+                y0,
+                y1,
+                text: sg.text.clone(),
+                right: sg.kind == MarkKind::TitleRight,
+                first,
+                last,
             }),
             // 抹（原版 colateMS）：字盒中間 60% 寬的橙色底。
             MarkKind::Stroke => self.shape(col, rect(x - 0.3 * z, x + 0.3 * z, y0, y1), "f-strike"),

@@ -592,6 +592,51 @@ fn color_class(c: Option<crate::syntax::ast::Color>) -> &'static str {
 
 /// `filled_pass` 为真时只画填充的底，否则只画其余的。
 fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
+    if let Deco::Wave {
+        x,
+        y0,
+        y1,
+        text,
+        right,
+        first,
+        last,
+        ..
+    } = d
+    {
+        if filled_pass {
+            // 字透明、只顯波綫；不可選，免得複製時字重複。
+            let _ = write!(
+                s,
+                r#"<text class="wave{} nosel" aria-hidden="true" x="{}" y="{}" font-size="{}"><tspan>{}</tspan></text>"#,
+                if *right { " wave-r" } else { "" },
+                n(cx + x),
+                n(top + y0),
+                n(FONT),
+                escape(text)
+            );
+            // 原版書名號頭尾用紙色小塊蓋去波綫端點（3px 高）。
+            if !*right {
+                let px = 1.0 / 30.0;
+                let cap = |s: &mut String, ya: f32| {
+                    let _ = write!(
+                        s,
+                        r#"<rect class="paper" x="{}" y="{}" width="{}" height="{}"/>"#,
+                        n(cx + x - 0.8),
+                        n(top + ya),
+                        n(0.22),
+                        n(3.0 * px)
+                    );
+                };
+                if *first {
+                    cap(s, *y0);
+                }
+                if *last {
+                    cap(s, *y1 - 3.0 * px);
+                }
+            }
+        }
+        return;
+    }
     if let Deco::Shape {
         figure,
         class,
@@ -745,7 +790,7 @@ fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
                 );
             }
         }
-        Deco::Shape { .. } => {}
+        Deco::Shape { .. } | Deco::Wave { .. } => {}
         _ if filled_pass => {}
         Deco::Line {
             x,

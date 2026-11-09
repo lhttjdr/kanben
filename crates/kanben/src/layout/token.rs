@@ -81,6 +81,8 @@ pub struct Mark {
 pub enum MarkKind {
     Name,
     Title,
+    /// 篇名（〈〉）：原版的波綫在字的右側。
+    TitleRight,
     Emphasis(EmphMark),
     Stroke,
     Inverse(Encl),

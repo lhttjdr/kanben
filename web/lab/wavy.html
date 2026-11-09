@@ -1,0 +1,32 @@
+<!doctype html><meta charset="utf-8"><title>波綫實驗</title>
+<link rel="stylesheet" href="../ref/style.css"><link rel="stylesheet" href="../ref/book.css">
+<style>
+body{margin:0;background:#EEEADA}
+#h{position:absolute;left:40px;top:20px;writing-mode:vertical-rl;font-size:30px;line-height:48px;height:400px}
+#s{position:absolute;left:200px;top:20px}
+</style>
+<div id="h"><p id="p">序<u class="xiomeng" id="u">史記之書</u>云</p></div>
+<svg id="s" width="120" height="420" viewBox="0 0 120 420"></svg>
+<script>
+const p = document.getElementById("p"), u = document.getElementById("u");
+const cs = getComputedStyle(p), us = getComputedStyle(u);
+const svg = document.getElementById("s");
+const r0 = document.getElementById("h").getBoundingClientRect();
+const range = document.createRange();
+const ns = "http://www.w3.org/2000/svg";
+const put = (node, i, el) => { range.setStart(node, i); range.setEnd(node, i + 1); const r = range.getBoundingClientRect(); return [r.left + r.width / 2 - r0.left, r.top + r.height / 2 - r0.top]; };
+const base = `font-family:${cs.fontFamily};font-size:${cs.fontSize};font-weight:${cs.fontWeight};writing-mode:vertical-rl;text-orientation:upright;dominant-baseline:central`;
+for (const [node, i] of [[p.firstChild, 0], [p.lastChild, 0]]) {
+  const [x, y] = put(node, i);
+  const t = document.createElementNS(ns, "text"); t.setAttribute("x", x); t.setAttribute("y", y); t.setAttribute("style", base + ";text-anchor:middle"); t.textContent = node.data[i]; svg.appendChild(t);
+}
+// 書名整串一個 text：起點放在第一字盒的上沿
+const tn = u.firstChild;
+range.setStart(tn, 0); range.setEnd(tn, tn.length);
+const rr = range.getBoundingClientRect();
+const t = document.createElementNS(ns, "text");
+t.setAttribute("x", rr.left + rr.width / 2 - r0.left); t.setAttribute("y", rr.top - r0.top);
+t.setAttribute("style", base + `;text-anchor:start;text-decoration:${us.textDecoration};fill:${us.textDecorationColor}`);
+const ts = document.createElementNS(ns, "tspan"); ts.setAttribute("style", "fill:" + us.color); ts.textContent = tn.data; t.appendChild(ts);
+svg.appendChild(t);
+</script>

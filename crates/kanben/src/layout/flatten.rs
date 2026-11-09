@@ -160,7 +160,12 @@ impl<'d> Flattener<'d> {
                     if let Some((open, _)) = brackets {
                         cur.push(hidden(open, TokKind::Before));
                     }
-                    let c = styled(self, MarkKind::Title);
+                    let kind = if matches!(brackets, Some(('〈', _))) {
+                        MarkKind::TitleRight
+                    } else {
+                        MarkKind::Title
+                    };
+                    let c = styled(self, kind);
                     self.walk(&el.children, &c, out, cur);
                     if let Some((_, close)) = brackets {
                         cur.push(hidden(close, TokKind::After));

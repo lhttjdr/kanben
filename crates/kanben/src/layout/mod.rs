@@ -60,6 +60,20 @@ pub enum Role {
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Deco {
+    /// 書名、篇名的波綫：原版是瀏覽器畫的 `text-decoration: wavy`。這裏同樣交給瀏覽器：
+    /// 在字的位置再放一串同樣的字（字透明，只顯波綫），起點是首字字盒的上沿。
+    Wave {
+        col: i32,
+        x: f32,
+        y0: f32,
+        y1: f32,
+        text: String,
+        /// 篇名（右側，overline）；否則書名（左側，underline）。
+        right: bool,
+        /// 原版書名號頭尾用紙色小塊蓋去波綫的端點。
+        first: bool,
+        last: bool,
+    },
     /// 照原版 CSS 畫的圖形（陰文底、墨圍綫、專名號、圈點、校勘底色等）。
     Shape {
         col: i32,
@@ -156,6 +170,7 @@ impl Deco {
     pub fn col(&self) -> i32 {
         match *self {
             Deco::Shape { col, .. }
+            | Deco::Wave { col, .. }
             | Deco::Box { col, .. }
             | Deco::Ring { col, .. }
             | Deco::Line { col, .. }

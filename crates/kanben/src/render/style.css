@@ -77,6 +77,10 @@
 .kb text.p-em { font-family: var(--kb-f-p-tl); font-weight: 400; fill: var(--kb-emph-c); }
 /* 刪去的字：原版整體 60% 不透明。 */
 .kb text.o60 { opacity: 0.6; }
+/* 書名、篇名的波綫：與原版同樣由瀏覽器畫（字透明）。 */
+.kb text.wave { text-anchor: start; text-decoration: underline wavy; fill: var(--kb-red-c); }
+.kb text.wave-r { text-decoration: overline wavy; }
+.kb text.wave tspan { fill: transparent; }
 /* 照原版 CSS 畫的圖形（陰文底、墨圍綫、專名號、圈點、校勘底色）。 */
 .kb .f-red { fill: var(--kb-red-c); }
 .kb .f-red-t { fill: #dd3b4477; }
