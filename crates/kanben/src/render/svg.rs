@@ -442,8 +442,9 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
         (Role::Tone, _) => "g-tone tone-h",
         (Role::Punct, _) => punct_class(g),
     });
-    if g.encl && class.is_empty() {
-        class.push_str("g-encl");
+    // 陰文、墨圍裏的字（原版 cite）在標題裏也用 cite 的字體、字重。
+    if g.encl && g.role == Role::Main {
+        class = String::from("g-encl");
     }
     if let Some(x) = g.extra
         && class.is_empty()
