@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use super::flatten::{Flattener, Item};
+use super::flatten::{Flattener, Item, Pic};
 use super::token::{Ann, MarkKind, Tok, TokKind, Tone, Unit, group, is_hanging};
 use super::{Deco, Figure, Format, Glyph, Layout, Options, Role};
 use crate::render::numerals::hanzi;
@@ -504,7 +504,7 @@ impl<'d> Engine<'d> {
 
     /// 整行的插圖（原版 figure）：寬九行，從字頂上 9px 到行底，紙色底、左右 1px 絲欄色邊，
     /// 圖按比例放在框內。
-    fn block_figure(&mut self, images: &[String]) {
+    fn block_figure(&mut self, images: &[Pic]) {
         self.start_block();
         let col = self.col;
         let cw = self.o.column_width;
@@ -521,8 +521,9 @@ impl<'d> Engine<'d> {
                 y0,
                 x1: x1 - PX,
                 y1,
-                href: img.clone(),
+                href: img.href.clone(),
                 fallback: None,
+                embed: img.embed.clone(),
             });
         }
         self.col += FIGURE_COLS - 1;
@@ -531,7 +532,7 @@ impl<'d> Engine<'d> {
 
     /// 不佔整行的插圖（原版 fig-il，向上浮）：寬十行、高八格，佔去這幾行的上八格，
     /// 本行已排的字一併挪到圖下；右、下 1px 絲欄色邊。各圖自右而左排，高一格框高。
-    fn float_figure(&mut self, images: &[String]) {
+    fn float_figure(&mut self, images: &[Pic]) {
         let col = self.col;
         let cw = self.o.column_width;
         let h = FLOAT_ROWS;
@@ -567,8 +568,9 @@ impl<'d> Engine<'d> {
                 y0,
                 x1: right,
                 y1: y0 + side,
-                href: img.clone(),
+                href: img.href.clone(),
                 fallback: None,
+                embed: img.embed.clone(),
             });
             right -= side;
         }
@@ -596,6 +598,7 @@ impl<'d> Engine<'d> {
             y1: y + half,
             href: format!("圖/{c}.svg"),
             fallback: Some(format!("圖/{c}.png")),
+            embed: None,
         });
         self.glyphs.push(Glyph {
             col,

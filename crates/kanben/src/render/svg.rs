@@ -810,6 +810,7 @@ fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
         y1,
         href,
         fallback,
+        embed,
         ..
     } = d
     {
@@ -832,6 +833,24 @@ fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
                 n(x1 - x0),
                 n(y1 - y0)
             );
+            // 網頁照原版的大小排（一字 30px），整體縮放到框裏；不能顯示網頁時只見下面的靜態圖。
+            if let Some(src) = embed {
+                // 一字 = U 個 SVG 單位 = 30px。
+                let k = U / 30.0;
+                let px = |v: f32| format!("{}", (v * 30.0).round());
+                let _ = write!(
+                    s,
+                    r#"<foreignObject class="embed" x="{}" y="{}" width="{}" height="{}"><iframe xmlns="http://www.w3.org/1999/xhtml" src="{}" loading="lazy" style="border:0;width:{}px;height:{}px;transform:scale({});transform-origin:0 0"></iframe></foreignObject>"#,
+                    n(cx + x0),
+                    n(top + y0),
+                    n(x1 - x0),
+                    n(y1 - y0),
+                    escape(src),
+                    px(x1 - x0),
+                    px(y1 - y0),
+                    k
+                );
+            }
         }
         return;
     }

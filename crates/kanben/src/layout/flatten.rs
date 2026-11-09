@@ -8,6 +8,13 @@ use super::token::{Ann, Mark, MarkKind, Style, Tok, TokKind, Tone, classify, is_
 use crate::syntax::ast::{Color, Element, ElementKind, EmphMark, Inline, StrokeMark};
 use crate::syntax::span::{Diagnostic, Span};
 
+/// 插圖裏的一幅：圖片，或可嵌入的網頁（帶替補的靜態圖）。
+#[derive(Clone, Debug, PartialEq)]
+pub struct Pic {
+    pub href: String,
+    pub embed: Option<String>,
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub enum Item {
     Main(Vec<Tok>),
@@ -27,7 +34,7 @@ pub enum Item {
     },
     /// 插圖：整段只有它就佔整行（原版 figure），否則浮在行上（fig-il）。
     Figure {
-        images: Vec<String>,
+        images: Vec<Pic>,
     },
     /// 字樣：字圖佔兩格。
     Glyph(String),
@@ -236,7 +243,6 @@ impl<'d> Flattener<'d> {
                 self.walk(&el.children, &c, out, cur);
             }
             ElementKind::Figure => {
-                // 電子地圖（原版內嵌網頁）畫不出，只留空框。
                 let images = el
                     .children
                     .iter()
@@ -244,7 +250,19 @@ impl<'d> Flattener<'d> {
                         Inline::Element(Element {
                             kind: ElementKind::Image(f),
                             ..
-                        }) => Some(f.clone()),
+                        }) => Some(Pic {
+                            href: f.clone(),
+                            embed: None,
+                        }),
+                        // 電子地圖：嵌 地圖/ 下的地圖頁，不能顯示網頁時（如單獨打開 SVG、打印）
+                        // 顯示同名的靜態圖。
+                        Inline::Element(Element {
+                            kind: ElementKind::Map(n),
+                            ..
+                        }) => Some(Pic {
+                            href: format!("地圖/{n}.png"),
+                            embed: Some(format!("地圖/?圖={n}")),
+                        }),
                         _ => None,
                     })
                     .collect();

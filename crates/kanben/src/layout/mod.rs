@@ -143,6 +143,8 @@ pub enum Deco {
         href: String,
         /// 取不到 `href` 時改取這張（原版字樣先取 .svg，再取 .png）。
         fallback: Option<String>,
+        /// 蓋在圖上的網頁（電子地圖）；`href` 是它的靜態替補。
+        embed: Option<String>,
     },
     /// 兼行处断开界行：用纸色盖住。
     Gap {

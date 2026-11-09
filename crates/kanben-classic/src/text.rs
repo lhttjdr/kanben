@@ -513,7 +513,11 @@ pub fn 插圖(txt: &str) -> String {
         }
         *圖 = re!(r"〚圖片］(.+?)［圖片〛", "g").replace(圖, r#"<img src="$1">"#);
         *圖 = re!(r"〚地圖〛(.+?)(?=〚|<\/figure>|<\/fig-il>)", "g")
-            .replace(圖, r#"<iframe src="/地圖/" id="$1" alt="$1"></iframe>"#);
+            // 原版嵌它網站上的地圖頁；這裏改嵌本站 地圖/ 下的同名地圖。
+            .replace(
+                圖,
+                r#"<iframe src="地圖/?圖=$1" id="$1" alt="$1"></iframe>"#,
+            );
         let g = 圖.clone();
         txt = re!(r"〚圖］(.+?)［圖〛").replace(&txt, &g);
         ti += 1;
