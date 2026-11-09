@@ -25,8 +25,10 @@ const SINGLE_SIZE: f32 = 28.0 / 30.0;
 const SIDE_SIZE: f32 = 0.5;
 const SIDE_STEP: f32 = 0.5;
 const SIDE_X: f32 = 0.85;
-const HEAD_SIZE: f32 = 0.46;
-const HEAD_STEP: f32 = 0.5;
+/// 眉批照原版 #tentou：字 0.75、行高 1.4 倍（每行寬 1.05）。
+const HEAD_SIZE: f32 = 0.75;
+const HEAD_STEP: f32 = 0.75;
+const HEAD_PITCH: f32 = 1.05;
 /// 挂在行末的標點，字心比最后一格低多少（挤进版框留白）。
 const HANG: f32 = 0.2;
 
@@ -600,8 +602,9 @@ impl<'d> Engine<'d> {
     fn head(&mut self, toks: Vec<Tok>) {
         let g = group(toks);
         let cw = self.o.column_width;
-        let cap = (((self.o.head - 0.3) / HEAD_STEP).floor() as usize).max(1);
-        let step = HEAD_STEP * 1.1 / cw;
+        // 天頭從紙邊到版框外綫（字頂上 0.5）：字頂上方 head + 0.3。
+        let cap = (((self.o.head - 0.2) / HEAD_STEP).floor() as usize).max(1);
+        let step = HEAD_PITCH / cw;
         let mut u = (self.col as f32 - 0.5 + step / 2.0).max(self.head_next);
         for (i, unit) in g.units.into_iter().enumerate() {
             let k = i % cap;
@@ -612,7 +615,7 @@ impl<'d> Engine<'d> {
             let slot = Slot {
                 col,
                 x: (col as f32 - u) * cw,
-                y: -self.o.head + 0.15 + (k as f32 + 0.5) * HEAD_STEP,
+                y: -self.o.head - 0.3 + (k as f32 + 0.5) * HEAD_STEP,
                 size: HEAD_SIZE,
                 stretch: 1.0,
                 half_w: HEAD_SIZE / 2.0,
@@ -621,7 +624,7 @@ impl<'d> Engine<'d> {
             };
             self.place(unit, slot, false);
         }
-        self.head_next = u + step * 1.6;
+        self.head_next = u + step * 1.5;
     }
 
     /// 开头的後附標點：附到上一个字；没有上一个字就各佔一格。

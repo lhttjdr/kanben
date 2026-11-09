@@ -56,10 +56,10 @@ for (const f of readdirSync(corpusDir).filter((f) => f.endsWith(".kb")).sort()) 
     const svg = box.querySelector("svg");
     const vb = svg.viewBox.baseVal; svg.setAttribute("width", vb.width * 0.3); svg.setAttribute("height", vb.height * 0.3);
     await document.fonts.ready; await new Promise((r) => setTimeout(r, 300));
-    const inner = svg.querySelector("rect.rule");
+    // 第一塊是外框上邊：第一行右綫在外框右沿内 6px，行頂在外框上沿下 6px（照原版）。
+    const outer = svg.querySelector("rect.rule-fill").getBoundingClientRect();
     const m = svg.getScreenCTM();
-    const right = (+inner.getAttribute("x") + +inner.getAttribute("width")) * m.a + m.e, top = +inner.getAttribute("y") * m.d + m.f;
-    return { right, top, colw: 160 * m.a };
+    return { right: outer.right - 6, top: outer.top + 6, colw: 160 * m.a };
   })()`);
   const svgShots = [];
   g1.cols.forEach(([, , w, h], i) => svgShots.push({ x: g2.right - (i + 1) * g2.colw + 2, y: g2.top, width: w - 4, height: h }));

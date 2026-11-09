@@ -190,8 +190,8 @@ pub struct Layout {
     pub decos: Vec<Deco>,
 }
 
-/// 有眉批而天頭没指定时，天頭加高到这么多字。
-const HEAD_FOR_NOTES: f32 = 3.0;
+/// 有眉批時天頭至少這麼高：連紙邊共約 4.8 字，與原版天頭（16%，約 4.7 字）相近。
+const HEAD_FOR_NOTES: f32 = 4.0;
 
 pub fn layout(doc: &Document, mut options: Options, diags: &mut Vec<Diagnostic>) -> Layout {
     adjust(doc, &mut options);

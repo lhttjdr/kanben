@@ -199,6 +199,8 @@ mod tests {
 pub struct ClassicText {
     text: String,
     book: String,
+    volume: String,
+    studio: String,
     diagnostics: String,
 }
 
@@ -212,6 +214,16 @@ impl ClassicText {
     #[wasm_bindgen(getter)]
     pub fn book(&self) -> String {
         self.book.clone()
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn volume(&self) -> String {
+        self.volume.clone()
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn studio(&self) -> String {
+        self.studio.clone()
     }
 
     /// 同 [`Typeset::diagnostics`]。
@@ -229,6 +241,8 @@ pub fn to_classic(src: &str) -> ClassicText {
         diagnostics: diagnostics_json(src, &c.diagnostics),
         text: c.text,
         book: c.book,
+        volume: c.volume,
+        studio: c.studio,
     }
 }
 

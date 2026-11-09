@@ -42,7 +42,13 @@ if (embed) {
     ed.value = e.data.text;
     ed.dispatchEvent(new Event("input"));
     document.getElementById("bookName").textContent = e.data.book || "自排";
+    if (document.getElementById("冊䈎")) window.切䈎(-1);
     window.單卷.排版();
+    // 冊頁：書名、卷名、堂號都用源碼裏的（沒寫就空著，不用原版的預設）。
+    if (e.data.leaves > 0) {
+      document.getElementById("bookName").textContent = e.data.book || "";
+      window.切䈎(e.data.leaves, "inMain", { 卷名: e.data.volume || "", 版權: e.data.studio || "" });
+    }
     window.parent.postMessage({ type: "kanben-classic-done" }, "*");
   });
   window.parent.postMessage({ type: "kanben-classic-ready" }, "*");

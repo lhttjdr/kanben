@@ -31,6 +31,7 @@
   --kb-f-tone: 標點符號;
   --kb-f-num: 華數碼, Times;
   --kb-f-encl: 南監體, 方正金陵, 仿宋, fangsong;
+  --kb-f-banxin: 倉耳聚珍長仿, 仿宋;
   --kb-sys: "Noto Serif CJK TC", "Source Han Serif TC", "Noto Serif TC", "Songti TC", "SimSun", serif;
 }
 .kb.f-mincho { --kb-f-main: "KB Mincho", var(--kb-sys); --kb-f-heading: "KB Mincho", var(--kb-sys); --kb-f-note: "KB Mincho", var(--kb-sys); --kb-f-note1: "KB Mincho", var(--kb-sys); }
@@ -111,7 +112,10 @@
 .kb .line.c-gray { stroke: var(--kb-gray-c); }
 .kb .line.c-ink { stroke: var(--kb-ink-c); }
 .kb text.inv { fill: var(--kb-paper-c); }
-.kb .banxin text { fill: var(--kb-ink-c); }
+/* 版心：書名、堂號用標題字體，卷名、葉碼用長仿宋；原版是純黑。 */
+.kb .banxin text { font-weight: 400; fill: #000; }
+.kb text.bx-title, .kb text.bx-studio { font-family: var(--kb-f-heading); }
+.kb text.bx-small { font-family: var(--kb-f-banxin); }
 .kb .nosel, .kb .nosel text {
   -webkit-user-select: none;
   user-select: none;
@@ -122,7 +126,8 @@
 .kb .rod.c-blue line { stroke: var(--kb-blue-c); }
 
 .kb .rod circle { stroke: var(--kb-ink-c); stroke-width: 6; fill: none; }
-.kb .colnum line, .kb .colnum circle { stroke: var(--kb-rule-c); stroke-width: 3; stroke-linecap: round; fill: none; opacity: 0.6; }
+/* 行號：照原版 .hangbiau。 */
+.kb text.colnum { font-family: var(--kb-f-num); font-weight: 400; writing-mode: horizontal-tb; fill: #999; font-variant-ligatures: contextual; font-kerning: normal; letter-spacing: 0; }
 .kb .jd { color: var(--kb-red-c); }
 .kb .jd.c-ink { color: var(--kb-ink-c); }
 .kb .jd.c-blue { color: var(--kb-blue-c); }

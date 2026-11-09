@@ -131,6 +131,10 @@ main {
   box-shadow: 0 1px 8px rgba(0, 0, 0, .25);
 }
 
+/* 冊頁：半葉一頁，像原版一樣排在深色底上，頁間 30px。 */
+.pages.leaves { background: #444; gap: 30px; }
+.pages.leaves svg { box-shadow: none; }
+
 @media (max-width: 760px) {
   main { grid-template-columns: 1fr; grid-template-rows: 50vh auto; }
   .editor { border-right: 0; border-bottom: 1px solid var(--line); }
@@ -141,7 +145,7 @@ main {
   .bar, .editor { display: none; }
   body, main { display: block; background: none; }
   .preview { overflow: visible; }
-  .pages { display: block; padding: 0; width: auto; }
+  .pages, .pages.leaves { display: block; padding: 0; width: auto; background: none; }
   .pages svg { display: block; width: 100%; height: auto; box-shadow: none; page-break-after: always; }
 }
 .status.fonts-loading::after { content: " · 字體載入中…"; }

@@ -127,8 +127,9 @@ function render() {
   document.title = result.title ? `${result.title} · 刊本` : "刊本排版";
   const settings = JSON.parse(result.settings);
   showSettings(settings);
+  pages.classList.toggle("leaves", settings.format === "leaves");
   result.free();
-  if (settings.engine === "classic") renderClassic(diags);
+  if (settings.engine === "classic") renderClassic(diags, settings);
   else showClassic(false);
 }
 
@@ -142,10 +143,18 @@ function showClassic(on) {
   pages.hidden = on;
 }
 
-function renderClassic(svgDiags) {
+function renderClassic(svgDiags, settings) {
   showClassic(true);
   const c = toClassic(source.value);
-  classicPending = { type: "kanben-classic", text: c.text, book: c.book };
+  classicPending = {
+    type: "kanben-classic",
+    text: c.text,
+    book: c.book,
+    volume: c.volume,
+    studio: c.studio,
+    // 冊頁：交給原版的「切䈎」，每半葉行數照設置。
+    leaves: settings.format === "leaves" ? Number(settings.columns) : 0,
+  };
   const notes = JSON.parse(c.diagnostics).filter((d) => d.message.startsWith("原版排法"));
   c.free();
   showDiagnostics([...svgDiags, ...notes]);

@@ -18,11 +18,10 @@ pub const STYLE: &str = include_str!("style.css");
 /// 渲染成若干页 SVG（冊頁每葉一页；長卷只有一页）。
 pub fn render(layout: &Layout) -> Vec<String> {
     let mut geo = Geometry::new(&layout.options);
-    geo.scroll_cols = layout.columns;
+    // 原版長卷總比正文多一行空行。
+    geo.scroll_cols = layout.columns + 1;
     let pages = match layout.options.format {
-        Format::Leaves => (layout.columns + geo.per_leaf() - 1)
-            .div_euclid(geo.per_leaf())
-            .max(1),
+        Format::Leaves => geo.leaf_pages(layout.columns),
         Format::Scroll => 1,
     };
     (0..pages).map(|p| svg::page(layout, &geo, p)).collect()

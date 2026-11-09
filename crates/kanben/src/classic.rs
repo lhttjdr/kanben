@@ -14,6 +14,9 @@ pub struct Classic {
     pub text: String,
     /// 書名（`\book{…}`），原版放在版心。
     pub book: String,
+    /// 卷名（`\volume{…}`）、堂號（`\studio{…}`），冊頁版心用。
+    pub volume: String,
+    pub studio: String,
     pub diagnostics: Vec<Diagnostic>,
 }
 
@@ -24,19 +27,24 @@ pub fn to_classic(src: &str) -> Classic {
         diags: parsed.diagnostics,
     };
     let text = t.document(&parsed.document);
-    let book = parsed
-        .document
-        .meta
-        .iter()
-        .rev()
-        .find(|m| m.key == "book")
-        .map(|m| m.value.clone())
-        .unwrap_or_default();
+    let meta = |key: &str| {
+        parsed
+            .document
+            .meta
+            .iter()
+            .rev()
+            .find(|m| m.key == key)
+            .map(|m| m.value.clone())
+            .unwrap_or_default()
+    };
+    let (book, volume, studio) = (meta("book"), meta("volume"), meta("studio"));
     let mut diagnostics = t.diags;
     diagnostics.sort_by_key(|d| d.span.start);
     Classic {
         text,
         book,
+        volume,
+        studio,
         diagnostics,
     }
 }
