@@ -100,8 +100,16 @@ const SPACE: [char; 2] = [' ', '\t'];
 fn is_attr(name: &str) -> bool {
     matches!(
         name,
-        "indent" | "raise" | "bottom" | "byline" | "outline" | "detail" | "remark" | "pipa"
-            | "list" | "colors"
+        "indent"
+            | "raise"
+            | "bottom"
+            | "byline"
+            | "outline"
+            | "detail"
+            | "remark"
+            | "pipa"
+            | "list"
+            | "colors"
     )
 }
 
@@ -154,7 +162,10 @@ fn list_kind(name: &str, args: &[commands::Arg]) -> Result<bool, (Span, String)>
             _ => {
                 return Err((
                     a.span,
-                    format!("\\{name} 不接受參數「{}」（可用：ordered, unordered）", commands::show(a)),
+                    format!(
+                        "\\{name} 不接受參數「{}」（可用：ordered, unordered）",
+                        commands::show(a)
+                    ),
                 ));
             }
         }
@@ -262,8 +273,7 @@ impl<'d> BlockParser<'d> {
         let line_attrs = match self.para {
             Some(_) => attrs,
             None => {
-                let mut all: Vec<Attr> =
-                    self.envs.iter().filter_map(|e| e.attr.clone()).collect();
+                let mut all: Vec<Attr> = self.envs.iter().filter_map(|e| e.attr.clone()).collect();
                 all.extend(attrs);
                 self.para = Some(ParaBuilder {
                     attrs: all,
@@ -312,7 +322,11 @@ impl<'d> BlockParser<'d> {
                     span: cmd.span,
                 }),
                 Err((span, msg)) => {
-                    let span = if span == Span::default() { cmd.span } else { span };
+                    let span = if span == Span::default() {
+                        cmd.span
+                    } else {
+                        span
+                    };
                     self.diags.push(Diagnostic::error(span, msg))
                 }
             }
@@ -403,7 +417,11 @@ impl<'d> BlockParser<'d> {
                     "quote" | "list" | "table" => match structural_env(&env, args) {
                         Ok(kind) => outer = Some((kind, std::mem::take(&mut self.blocks))),
                         Err((span, msg)) => {
-                            let span = if span == Span::default() { cmd.span } else { span };
+                            let span = if span == Span::default() {
+                                cmd.span
+                            } else {
+                                span
+                            };
                             self.diags.push(Diagnostic::error(span, msg));
                         }
                     },
@@ -648,7 +666,11 @@ mod tests {
         );
         assert_eq!(lines.len(), 3);
         assert_eq!(
-            lines[1].attrs.iter().map(|a| a.kind.clone()).collect::<Vec<_>>(),
+            lines[1]
+                .attrs
+                .iter()
+                .map(|a| a.kind.clone())
+                .collect::<Vec<_>>(),
             [AttrKind::Bottom(2)]
         );
         assert!(lines[2].attrs.is_empty());

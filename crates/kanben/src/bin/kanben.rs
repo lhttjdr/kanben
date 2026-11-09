@@ -22,14 +22,18 @@ fn main() -> ExitCode {
             "--font-loader" => font_loader = args.next(),
             "--classic" => classic = true,
             "-h" | "--help" => {
-                eprintln!("用法：kanben 輸入.kb [-o 輸出.html] [--svg 目錄] [--font-loader 網址] [--classic]");
+                eprintln!(
+                    "用法：kanben 輸入.kb [-o 輸出.html] [--svg 目錄] [--font-loader 網址] [--classic]"
+                );
                 return ExitCode::SUCCESS;
             }
             _ => input = Some(PathBuf::from(a)),
         }
     }
     let Some(input) = input else {
-        eprintln!("用法：kanben 輸入.kb [-o 輸出.html] [--svg 目錄] [--font-loader 網址] [--classic]");
+        eprintln!(
+            "用法：kanben 輸入.kb [-o 輸出.html] [--svg 目錄] [--font-loader 網址] [--classic]"
+        );
         return ExitCode::FAILURE;
     };
     let src = match std::fs::read_to_string(&input) {

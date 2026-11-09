@@ -26,12 +26,18 @@ pub fn reading(mut n: u32) -> String {
 
 /// 段後校勘記的編號（原版「讀百以內合文」）：十一 → 十一，二十一 → 廿一，三十 → 三十。
 pub fn heji(n: u32) -> String {
-    const 諸十: [&str; 9] = ["十", "廿", "卅", "卌", "五十", "六十", "七十", "八十", "九十"];
+    const 諸十: [&str; 9] = [
+        "十", "廿", "卅", "卌", "五十", "六十", "七十", "八十", "九十",
+    ];
     match n {
         0..=9 => DIGITS[n as usize].to_string(),
         10 => "十".into(),
         n if n % 10 == 0 && n < 100 => format!("{}十", DIGITS[(n / 10) as usize]),
-        n if n < 100 => format!("{}{}", 諸十[(n / 10 - 1) as usize], DIGITS[(n % 10) as usize]),
+        n if n < 100 => format!(
+            "{}{}",
+            諸十[(n / 10 - 1) as usize],
+            DIGITS[(n % 10) as usize]
+        ),
         n => hanzi(n),
     }
 }

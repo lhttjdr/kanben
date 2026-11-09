@@ -295,7 +295,10 @@ impl<'d> Engine<'d> {
                         continue;
                     }
                     // 單兒：每行一條，照原版（flex，每條至少三分之一行高）。
-                    if attrs.iter().any(|a| matches!(a.kind, AttrKind::List { .. })) {
+                    if attrs
+                        .iter()
+                        .any(|a| matches!(a.kind, AttrKind::List { .. }))
+                    {
                         let items: Vec<Vec<Item>> =
                             lines.into_iter().map(|(_, items)| items).collect();
                         self.flex(items, 0.333);
@@ -639,7 +642,14 @@ impl<'d> Engine<'d> {
             },
             "f-pcmtn",
         );
-        self.ann_glyph(col, xc, r - h / 2.0, 0.5, crate::render::numerals::heji(n as u32), "g-pcmtn");
+        self.ann_glyph(
+            col,
+            xc,
+            r - h / 2.0,
+            0.5,
+            crate::render::numerals::heji(n as u32),
+            "g-pcmtn",
+        );
     }
 
     /// 段後的校勘記（原版 ol.pCmnt）：先一行「校勘記」（上空一格），每條一行：
@@ -700,7 +710,15 @@ impl<'d> Engine<'d> {
     }
 
     /// 不佔格的小字（編號等）。
-    fn ann_glyph(&mut self, col: i32, x: f32, y: f32, size: f32, text: String, class: &'static str) {
+    fn ann_glyph(
+        &mut self,
+        col: i32,
+        x: f32,
+        y: f32,
+        size: f32,
+        text: String,
+        class: &'static str,
+    ) {
         self.glyphs.push(Glyph {
             col,
             x,
@@ -796,7 +814,15 @@ impl<'d> Engine<'d> {
             Ann::Ruby(text) => {
                 // 逐像素比對：再上 1px。
                 let y = s.y - 1.0 / 30.0;
-                push(self, text.clone(), s.x + 0.75 * z, y, 0.5 * z, "g-rruby", None);
+                push(
+                    self,
+                    text.clone(),
+                    s.x + 0.75 * z,
+                    y,
+                    0.5 * z,
+                    "g-rruby",
+                    None,
+                );
             }
             // 原版的左旁字（ruby-position: under）在竪排裏同樣排在右邊一行。
             Ann::Pitch { text, .. } => {
@@ -834,9 +860,7 @@ impl<'d> Engine<'d> {
         // 原第 c 行的新位置：之前（含本行右邊）加了幾行。
         let shift = |c: i32| -> i32 {
             need.iter()
-                .map(|(&k, &(r, l))| {
-                    (k < c) as i32 * (r as i32 + l as i32) + (k == c && r) as i32
-                })
+                .map(|(&k, &(r, l))| (k < c) as i32 * (r as i32 + l as i32) + (k == c && r) as i32)
                 .sum()
         };
         let total: i32 = need.values().map(|&(r, l)| r as i32 + l as i32).sum();
@@ -889,9 +913,9 @@ impl<'d> Engine<'d> {
         }
         for d in &mut self.decos[d0..] {
             match d {
-                Deco::Mark { col, y, .. } | Deco::Tone { col, y, .. } | Deco::Ring { col, y, .. } => {
-                    *y = f(*col, *y)
-                }
+                Deco::Mark { col, y, .. }
+                | Deco::Tone { col, y, .. }
+                | Deco::Ring { col, y, .. } => *y = f(*col, *y),
                 Deco::Line { col, y0, y1, .. }
                 | Deco::Wave { col, y0, y1, .. }
                 | Deco::Box { col, y0, y1, .. }

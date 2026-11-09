@@ -434,11 +434,14 @@ impl<'d> Parser<'d> {
         if text.is_empty() || !ok {
             self.diags.push(Diagnostic::error(
                 span,
-                format!("\\{name} 的內容不對：應是{}", match kind {
-                    ElementKind::Suzhou(_) | ElementKind::Divination(_) => "阿拉伯數字",
-                    ElementKind::Digits(_) => "阿拉伯數字（可帶小數點、冒號、負號）",
-                    _ => "文字",
-                }),
+                format!(
+                    "\\{name} 的內容不對：應是{}",
+                    match kind {
+                        ElementKind::Suzhou(_) | ElementKind::Divination(_) => "阿拉伯數字",
+                        ElementKind::Digits(_) => "阿拉伯數字（可帶小數點、冒號、負號）",
+                        _ => "文字",
+                    }
+                ),
             ));
         }
         let kind = match kind {
@@ -522,7 +525,9 @@ mod tests {
         assert!(d.is_empty(), "{d:?}");
         assert_eq!(
             kinds(&r),
-            ["DoubleNoteTitle { brackets: Some(('《', '》')) }T(史記)T(曰)Name { double: false }T(微子)"]
+            [
+                "DoubleNoteTitle { brackets: Some(('《', '》')) }T(史記)T(曰)Name { double: false }T(微子)"
+            ]
         );
     }
 

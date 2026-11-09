@@ -135,7 +135,9 @@ impl Translator {
                         out.push_str(&self.blocks(blocks, all));
                         out.push_str(&format!("\n［{k}〛"));
                     }
-                    EnvKind::Table { title, header } => self.table(title, *header, blocks, &mut out),
+                    EnvKind::Table { title, header } => {
+                        self.table(title, *header, blocks, &mut out)
+                    }
                 },
                 Block::Blank { .. } => unreachable!(),
             }
@@ -143,7 +145,12 @@ impl Translator {
         out
     }
 
-    fn paragraph(&mut self, attrs: &[crate::syntax::ast::Attr], lines: &[crate::syntax::ast::Line], out: &mut String) {
+    fn paragraph(
+        &mut self,
+        attrs: &[crate::syntax::ast::Attr],
+        lines: &[crate::syntax::ast::Line],
+        out: &mut String,
+    ) {
         // 整段低格用原版的段樣式「首縮進」（整段下移，折行也低格），靠底用「⇥」。
         let mut indent = 0usize;
         let mut raise = 0;
@@ -540,7 +547,10 @@ mod tests {
         );
         assert_eq!(tr(r"\rhyme[ru,1]{翟}\ruby[◓]{鳳}"), "翟[1▲]{鳳|◓}");
         assert_eq!(tr(r"\pitch[清黃]{呦}"), "{{呦⏷^¯清黃¯^⏶}}");
-        assert_eq!(tr(r"\emph[box]{七\side{ㄣ}}\emph[sesame]{ス}"), "七᚜[¯ㄣ¯]᚛¯¯ロス¯¯﹅");
+        assert_eq!(
+            tr(r"\emph[box]{七\side{ㄣ}}\emph[sesame]{ス}"),
+            "七᚜[¯ㄣ¯]᚛¯¯ロス¯¯﹅"
+        );
         assert_eq!(tr(r"\stroke[dot]{甲}\stroke[tint]{乙}"), "??•甲•¿¿??乙¿¿");
         assert_eq!(tr(r"\name[double]{蘇軾}"), r#"<u class="jmks">蘇軾</u>"#);
         assert_eq!(

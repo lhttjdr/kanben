@@ -24,10 +24,8 @@ pub enum Kind {
 pub fn kind_of(name: &str) -> Option<Kind> {
     Some(match name {
         "note" | "side" | "comment" | "head" | "name" | "title" | "emph" | "stroke" | "inv"
-        | "frame" | "del" | "ins" | "color" | "compose" | "span" | "rod" | "digits"
-        | "endnote" | "rhyme" | "ruby" | "pitch" | "glyph" | "figure" | "image" | "map" => {
-            Kind::Inline
-        }
+        | "frame" | "del" | "ins" | "color" | "compose" | "span" | "rod" | "digits" | "endnote"
+        | "rhyme" | "ruby" | "pitch" | "glyph" | "figure" | "image" | "map" => Kind::Inline,
         "setup" | "book" | "volume" | "studio" | "heading" | "begin" | "end" | "indent"
         | "raise" | "bottom" | "toc" | "byline" | "outline" | "detail" | "remark" | "pipa"
         | "list" | "colors" => Kind::Block,
@@ -50,8 +48,11 @@ pub fn resolve_inline(name: &str, args: &[Arg]) -> Resolved {
         choose_from(name, args, allowed, warnings)
     };
     let kind = match name {
-        "note" => match choose(&["double", "single", "right", "left", "pair"], &mut warnings)
-            .as_deref()
+        "note" => match choose(
+            &["double", "single", "right", "left", "pair"],
+            &mut warnings,
+        )
+        .as_deref()
         {
             Some("single") => ElementKind::SingleNote,
             Some("right") => ElementKind::HalfNote { left: false },
@@ -89,7 +90,10 @@ pub fn resolve_inline(name: &str, args: &[Arg]) -> Resolved {
                     None if anchor.is_none() => anchor = Some(a.value.clone()),
                     _ => warnings.push((
                         a.span,
-                        format!("\\endnote 只接受一個參數（所注之字），「{}」已忽略", show(a)),
+                        format!(
+                            "\\endnote 只接受一個參數（所注之字），「{}」已忽略",
+                            show(a)
+                        ),
                     )),
                 }
             }
@@ -103,10 +107,7 @@ pub fn resolve_inline(name: &str, args: &[Arg]) -> Resolved {
                     (None, "left") if name == "pitch" => left = true,
                     (None, "right") if name == "pitch" => left = false,
                     (None, v) if text.is_none() => text = Some(v.to_string()),
-                    _ => warnings.push((
-                        a.span,
-                        format!("\\{name} 多了參數「{}」", show(a)),
-                    )),
+                    _ => warnings.push((a.span, format!("\\{name} 多了參數「{}」", show(a)))),
                 }
             }
             let text = text.unwrap_or_else(|| {

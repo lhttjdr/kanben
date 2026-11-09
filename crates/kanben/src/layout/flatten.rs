@@ -26,11 +26,16 @@ pub enum Item {
         marker: bool,
     },
     /// 插圖：整段只有它就佔整行（原版 figure），否則浮在行上（fig-il）。
-    Figure { images: Vec<String> },
+    Figure {
+        images: Vec<String>,
+    },
     /// 字樣：字圖佔兩格。
     Glyph(String),
     /// 並行：兩行小字並排，右、左各一段，佔較長一段的格數。
-    Pair { right: Vec<Tok>, left: Vec<Tok> },
+    Pair {
+        right: Vec<Tok>,
+        left: Vec<Tok>,
+    },
     /// 兼行：排在當前行與後（前）`n` 行的正中。
     Span {
         toks: Vec<Tok>,
@@ -328,9 +333,11 @@ impl<'d> Flattener<'d> {
                     if r > 0 {
                         groups.push(&int[..r]);
                     }
-                    groups.extend(int.as_bytes()[r..].chunks(4).map(|c| {
-                        std::str::from_utf8(c).expect("ascii digits")
-                    }));
+                    groups.extend(
+                        int.as_bytes()[r..]
+                            .chunks(4)
+                            .map(|c| std::str::from_utf8(c).expect("ascii digits")),
+                    );
                     for g in groups {
                         cur.push(num_tok(g.into(), style.clone(), false));
                     }
