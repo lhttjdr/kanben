@@ -25,6 +25,10 @@ pub enum Item {
         toks: Vec<Tok>,
         marker: bool,
     },
+    /// 插圖：整段只有它就佔整行（原版 figure），否則浮在行上（fig-il）。
+    Figure { images: Vec<String> },
+    /// 字樣：字圖佔兩格。
+    Glyph(String),
     /// 並行：兩行小字並排，右、左各一段，佔較長一段的格數。
     Pair { right: Vec<Tok>, left: Vec<Tok> },
     /// 兼行：排在當前行與後（前）`n` 行的正中。
@@ -226,11 +230,27 @@ impl<'d> Flattener<'d> {
                 });
                 self.walk(&el.children, &c, out, cur);
             }
-            // TODO(SVG)：插圖還沒有畫。
-            ElementKind::Figure => self.walk(&el.children, ctx, out, cur),
+            ElementKind::Figure => {
+                // 電子地圖（原版內嵌網頁）畫不出，只留空框。
+                let images = el
+                    .children
+                    .iter()
+                    .filter_map(|n| match n {
+                        Inline::Element(Element {
+                            kind: ElementKind::Image(f),
+                            ..
+                        }) => Some(f.clone()),
+                        _ => None,
+                    })
+                    .collect();
+                flush(out, cur);
+                out.push(Item::Figure { images });
+            }
             ElementKind::Image(_) | ElementKind::Map(_) => {}
-            // TODO(SVG)：字樣還沒有用字圖。
-            ElementKind::Glyph(t) => self.text(t, el.span, ctx, cur),
+            ElementKind::Glyph(t) => {
+                flush(out, cur);
+                out.push(Item::Glyph(t.clone()));
+            }
             ElementKind::Inverse(s) => {
                 let c = styled(self, MarkKind::Inverse(*s));
                 self.walk(&el.children, &c, out, cur);
@@ -403,6 +423,17 @@ impl<'d> Flattener<'d> {
                     ElementKind::Side { .. } => "單側行",
                     _ => "旁注",
                 };
+                // 注裏的眉批照樣排到天頭。
+                if ctx.nested.is_some() && el.kind == ElementKind::HeadNote {
+                    let c = Ctx {
+                        style: Style::default(),
+                        nested: Some("眉批"),
+                    };
+                    let mut buf = Vec::new();
+                    self.walk(&el.children, &c, out, &mut buf);
+                    out.push(Item::Head(buf));
+                    return;
+                }
                 // 雙行夾注裏的單行小注（原版 .grebdriuo .dhgd）：仍按夾注逐格排，字小一半。
                 if ctx.nested == Some("雙行夾注") && el.kind == ElementKind::SingleNote {
                     let mut c = ctx.clone();

@@ -133,6 +133,17 @@ pub enum Deco {
     },
     /// 四聲圈發。
     Tone { col: i32, x: f32, y: f32, r: f32 },
+    /// 圖片（插圖、字樣），縮放到矩形內、保持比例。
+    Image {
+        col: i32,
+        x0: f32,
+        y0: f32,
+        x1: f32,
+        y1: f32,
+        href: String,
+        /// 取不到 `href` 時改取這張（原版字樣先取 .svg，再取 .png）。
+        fallback: Option<String>,
+    },
     /// 兼行处断开界行：用纸色盖住。
     Gap {
         col: i32,
@@ -207,7 +218,8 @@ impl Deco {
             | Deco::Line { col, .. }
             | Deco::Mark { col, .. }
             | Deco::Tone { col, .. }
-            | Deco::Gap { col, .. } => col,
+            | Deco::Gap { col, .. }
+            | Deco::Image { col, .. } => col,
         }
     }
 
@@ -220,7 +232,8 @@ impl Deco {
             | Deco::Line { col, .. }
             | Deco::Mark { col, .. }
             | Deco::Tone { col, .. }
-            | Deco::Gap { col, .. } => *col = c,
+            | Deco::Gap { col, .. }
+            | Deco::Image { col, .. } => *col = c,
         }
     }
 }

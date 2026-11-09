@@ -32,6 +32,13 @@ const RHYME_COLORS: [&str; 10] = [
     "#9ed900", "#b9dec9", "#f0ada0", "#93d5dc", "#fcb70a", "#d1c2d3", "#f97d1c", "#d2d97a",
     "#c6e6e8", "#e3bd8d",
 ];
+/// 整行插圖寬幾行（原版 figure：行寬 × 9）。
+const FIGURE_COLS: i32 = 9;
+/// 浮動插圖寬幾行、高幾格（原版 fig-il：16em × 8em）。
+const FLOAT_COLS: i32 = 10;
+const FLOAT_ROWS: i32 = 8;
+/// 字樣字圖邊長（48px）。
+const GLYPH_IMG: f32 = 1.6;
 /// 手寫目次的字色（原版鏈接色，正青）。
 const TOC_COLOR: &str = "rgb(16.27,51.37,147.9)";
 /// 集（分段單兒）段首小籤的半寬：字的內容區 15px 加左右內距 6px。
@@ -279,6 +286,14 @@ impl<'d> Engine<'d> {
                             (fmt, self.flatten(&l.content))
                         })
                         .collect();
+                    // 整段只有一幅插圖：佔整行（原版 figure）。
+                    if let [(_, items)] = lines.as_slice()
+                        && let [Item::Figure { images }] = items.as_slice()
+                    {
+                        let images = images.clone();
+                        self.block_figure(&images);
+                        continue;
+                    }
                     // 單兒：每行一條，照原版（flex，每條至少三分之一行高）。
                     if attrs.iter().any(|a| matches!(a.kind, AttrKind::List { .. })) {
                         let items: Vec<Vec<Item>> =
@@ -482,6 +497,124 @@ impl<'d> Engine<'d> {
             self.used = true;
             self.new_column();
         }
+    }
+
+    /// 整行的插圖（原版 figure）：寬九行，從字頂上 9px 到行底，紙色底、左右 1px 絲欄色邊，
+    /// 圖按比例放在框內。
+    fn block_figure(&mut self, images: &[String]) {
+        self.start_block();
+        let col = self.col;
+        let cw = self.o.column_width;
+        let (x1, x0) = (cw / 2.0, cw / 2.0 - FIGURE_COLS as f32 * cw);
+        let (y0, y1) = (-9.0 * PX, self.cells() as f32 + 0.2);
+        self.figure_box(col, x0, x1, y0, y1, "f-figure");
+        for (x0, x1) in [(x0, x0 + PX), (x1 - PX, x1)] {
+            self.shape(col, rect_fig(x0, x1, y0, y1), "f-tab crisp");
+        }
+        if let [img] = images {
+            self.decos.push(Deco::Image {
+                col,
+                x0: x0 + PX,
+                y0,
+                x1: x1 - PX,
+                y1,
+                href: img.clone(),
+                fallback: None,
+            });
+        }
+        self.col += FIGURE_COLS - 1;
+        self.used = true;
+    }
+
+    /// 不佔整行的插圖（原版 fig-il，向上浮）：寬十行、高八格，佔去這幾行的上八格，
+    /// 本行已排的字一併挪到圖下；右、下 1px 絲欄色邊。各圖自右而左排，高一格框高。
+    fn float_figure(&mut self, images: &[String]) {
+        let col = self.col;
+        let cw = self.o.column_width;
+        let h = FLOAT_ROWS;
+        // 本行已排的字挪到圖下。
+        let here: Vec<usize> = (0..self.glyphs.len())
+            .filter(|&i| self.glyphs[i].col == col)
+            .collect();
+        let d0 = self.decos.len();
+        for i in here {
+            self.glyphs[i].y += h as f32;
+        }
+        for d in &mut self.decos[..d0] {
+            if d.col() == col {
+                shift_deco(d, h as f32);
+            }
+        }
+        self.row += h;
+        for c in col..col + FLOAT_COLS {
+            self.reserved.entry(c).or_default().push((0, h));
+        }
+        let (x1, x0) = (cw / 2.0, cw / 2.0 - FLOAT_COLS as f32 * cw);
+        let (y0, y1) = (-9.0 * PX, h as f32 - 9.0 * PX);
+        self.figure_box(col, x0, x1, y0, y1, "f-figure");
+        self.shape(col, rect_fig(x1 - PX, x1, y0, y1), "f-tab crisp");
+        self.shape(col, rect_fig(x0, x1, y1 - PX, y1), "f-tab crisp");
+        self.shape(col, rect_fig(x0 - 0.5 * PX, x0, y0, y1), "f-tab");
+        let side = y1 - y0 - PX;
+        let mut right = x1 - PX;
+        for img in images {
+            self.decos.push(Deco::Image {
+                col,
+                x0: right - side,
+                y0,
+                x1: right,
+                y1: y0 + side,
+                href: img.clone(),
+                fallback: None,
+            });
+            right -= side;
+        }
+    }
+
+    fn figure_box(&mut self, col: i32, x0: f32, x1: f32, y0: f32, y1: f32, class: &'static str) {
+        self.shape(col, rect_fig(x0, x1, y0, y1), class);
+    }
+
+    /// 字樣（原版 dfn.字樣）：佔兩格，1.6 字見方的字圖居中；字本身透明，只供複製。
+    /// 照原版先取 圖/字.svg，取不到再取 .png。
+    fn glyph_image(&mut self, c: &str) {
+        if self.row + 2 > self.cells() {
+            self.col += 1;
+            self.row = self.cont;
+        }
+        self.ensure_room();
+        let (col, y) = (self.col, self.row as f32 + 1.0);
+        let half = GLYPH_IMG / 2.0;
+        self.decos.push(Deco::Image {
+            col,
+            x0: -half,
+            y0: y - half,
+            x1: half,
+            y1: y + half,
+            href: format!("圖/{c}.svg"),
+            fallback: Some(format!("圖/{c}.png")),
+        });
+        self.glyphs.push(Glyph {
+            col,
+            x: MAIN_X,
+            y,
+            size: 1.0,
+            stretch: 1.0,
+            text: c.to_string(),
+            compose: false,
+            rod: false,
+            color: None,
+            inverse: false,
+            hidden: true,
+            faded: false,
+            encl: false,
+            role: Role::Main,
+            level: 0,
+            paint: None,
+            extra: None,
+        });
+        self.row += 2;
+        self.main_anchor_after_note();
     }
 
     /// 文中的尾注編號（原版 pCmtN）：不佔格，在前一字那格的下半、行中綫左 0.56 字，
@@ -762,7 +895,8 @@ impl<'d> Engine<'d> {
                 Deco::Line { col, y0, y1, .. }
                 | Deco::Wave { col, y0, y1, .. }
                 | Deco::Box { col, y0, y1, .. }
-                | Deco::Gap { col, y0, y1, .. } => {
+                | Deco::Gap { col, y0, y1, .. }
+                | Deco::Image { col, y0, y1, .. } => {
                     *y0 = f(*col, *y0);
                     *y1 = f(*col, *y1);
                 }
@@ -1046,6 +1180,8 @@ impl<'d> Engine<'d> {
                 self.row = end;
                 self.main_anchor_after_note();
             }
+            Item::Figure { images } => self.float_figure(&images),
+            Item::Glyph(c) => self.glyph_image(&c),
             Item::Endnote {
                 anchor,
                 toks,
@@ -1937,6 +2073,33 @@ fn plain(t: &Tok) -> Tok {
 }
 
 /// 一段要佔多少格（用于靠底排）。
+fn rect_fig(x0: f32, x1: f32, y0: f32, y1: f32) -> Figure {
+    Figure::Rect {
+        x0,
+        y0,
+        x1,
+        y1,
+        rx: 0.0,
+        ry: 0.0,
+    }
+}
+
+/// 整個裝飾縱向挪 `dy`。
+fn shift_deco(d: &mut Deco, dy: f32) {
+    match d {
+        Deco::Mark { y, .. } | Deco::Tone { y, .. } | Deco::Ring { y, .. } => *y += dy,
+        Deco::Line { y0, y1, .. }
+        | Deco::Wave { y0, y1, .. }
+        | Deco::Box { y0, y1, .. }
+        | Deco::Gap { y0, y1, .. }
+        | Deco::Image { y0, y1, .. } => {
+            *y0 += dy;
+            *y1 += dy;
+        }
+        Deco::Shape { figure, .. } => figure.map_y(|y| y + dy),
+    }
+}
+
 /// 表格一列：按 `&` 切成各格。
 fn split_cells(items: Vec<Item>) -> Vec<Vec<Item>> {
     let mut cells: Vec<Vec<Item>> = vec![Vec::new()];

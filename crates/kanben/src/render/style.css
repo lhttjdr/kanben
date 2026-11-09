@@ -78,6 +78,7 @@
 .kb text.g-afn { font-family: var(--kb-f-heading4); font-weight: 400; fill: #1661ab; }
 .kb text.g-toc { font-family: var(--kb-f-heading4); font-weight: 400; }
 .kb .f-tab { fill: #7c1823; }
+.kb .f-figure { fill: var(--kb-paper-c); }
 .kb .f-tabrule { fill: rgba(221, 59, 68, 0.467); }
 .kb text.g-th { font-family: var(--kb-f-heading); font-weight: 400; }
 .kb text.g-td { font-family: var(--kb-f-heading4); font-weight: 400; }

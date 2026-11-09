@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="250"
+   height="250"
+   viewBox="0 0 66.145832 66.145835"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (0a00cf5, 2022-02-04)"
+   sodipodi:docname="并實圖.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="px"
+     showgrid="false"
+     units="px"
+     width="250px"
+     inkscape:zoom="1.9175014"
+     inkscape:cx="81.877385"
+     inkscape:cy="113.16811"
+     inkscape:window-width="1885"
+     inkscape:window-height="1045"
+     inkscape:window-x="540"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2" />
+  <defs
+     id="defs2" />
+  <style
+     id="style4">
+   text {writing-mode:vertical-rl}
+  </style>
+  <g
+     inkscape:label="廓"
+     inkscape:groupmode="layer"
+     id="layer1"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#ffd5d5;fill-opacity:1;fill-rule:evenodd;stroke-width:0.269779"
+       id="rect31"
+       width="60.854168"
+       height="60.854168"
+       x="2.6458333"
+       y="2.6458333" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="黃實">
+    <rect
+       style="fill:#de9518;fill-opacity:1;stroke-width:0.284911"
+       id="rect1089"
+       width="23.8125"
+       height="23.8125"
+       x="21.166666"
+       y="21.166666" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="朱實"
+     sodipodi:insensitive="true">
+    <path
+       style="fill:#d71722;fill-opacity:1;stroke:#000000;stroke-width:0.258684px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 2.6458333,42.333333 H 23.8125 V 2.6458333 Z"
+       id="path2146" />
+    <path
+       style="fill:#d71722;fill-opacity:1;stroke:#000000;stroke-width:0.258684px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 23.8125,2.6458333 V 23.8125 h 39.687501 z"
+       id="path2146-7" />
+    <path
+       style="fill:#d71722;fill-opacity:1;stroke:#000000;stroke-width:0.258684px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 42.333333,63.5 V 42.333333 H 2.6458333 Z"
+       id="path2146-5" />
+    <path
+       style="fill:#d71722;fill-opacity:1;stroke:#000000;stroke-width:0.258684px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 63.500001,23.8125 H 42.333334 V 63.5 Z"
+       id="path2146-3" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="文字">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05556px;line-height:1.25;font-family:楷体;-inkscape-font-specification:'楷体, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:tb-rl;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="33.084259"
+       y="24.430859"
+       id="text8285"><tspan
+         sodipodi:role="line"
+         id="tspan8283"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444px;font-family:楷体;-inkscape-font-specification:'楷体, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:tb-rl;stroke-width:0.264583"
+         x="32.45163"
+         y="25.063488">中黃實</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:7.05556px;line-height:1.25;font-family:楷体;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583;-inkscape-font-specification:'楷体, Normal';font-stretch:normal;font-variant:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:tb-rl"
+       x="18.234592"
+       y="18.536741"
+       id="text10501"><tspan
+         sodipodi:role="line"
+         id="tspan10499"
+         style="stroke-width:0.264583;-inkscape-font-specification:'楷体, Normal';font-family:楷体;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-size:7.05555995px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff"
+         x="17.752533"
+         y="19.018799">朱實</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="27.829002"
+       y="9.3010015"
+       id="text30072"><tspan
+         sodipodi:role="line"
+         id="tspan30070"
+         style="stroke-width:0.264583"
+         x="9.3010015"
+         y="27.829002" /></text>
+  </g>
+</svg>

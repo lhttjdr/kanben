@@ -802,6 +802,38 @@ fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
         }
         return;
     }
+    if let Deco::Image {
+        x0,
+        y0,
+        x1,
+        y1,
+        href,
+        fallback,
+        ..
+    } = d
+    {
+        if filled_pass {
+            let onerror = fallback
+                .as_ref()
+                .map(|f| {
+                    format!(
+                        r#" onerror="this.onerror=null;this.setAttribute('href','{}')""#,
+                        escape(&f.replace('\'', "%27"))
+                    )
+                })
+                .unwrap_or_default();
+            let _ = write!(
+                s,
+                r#"<image href="{}"{onerror} x="{}" y="{}" width="{}" height="{}" preserveAspectRatio="xMidYMid meet"/>"#,
+                escape(href),
+                n(cx + x0),
+                n(top + y0),
+                n(x1 - x0),
+                n(y1 - y0)
+            );
+        }
+        return;
+    }
     match *d {
         Deco::Box {
             x,
@@ -943,7 +975,7 @@ fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
                 );
             }
         }
-        Deco::Shape { .. } | Deco::Wave { .. } => {}
+        Deco::Shape { .. } | Deco::Wave { .. } | Deco::Image { .. } => {}
         _ if filled_pass => {}
         Deco::Line {
             x,

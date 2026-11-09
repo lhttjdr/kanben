@@ -36,6 +36,10 @@ for (const f of document.querySelectorAll("iframe[data-src]")) f.src = new URL(f
 if (document.readyState === "complete") window.onload?.();
 
 if (embed) {
+  // 文中圖片（插圖、字樣）的相對路徑以站點根目錄為準（web/圖/…），與 SVG 排法相同。
+  const base = document.createElement("base");
+  base.href = new URL("../../../", location.href).href;
+  document.head.prepend(base);
   window.addEventListener("message", (e) => {
     if (e.source !== window.parent || e.data?.type !== "kanben-classic") return;
     const ed = document.getElementById("編輯器");
