@@ -36,6 +36,10 @@ pub struct Glyph {
     pub inverse: bool,
     /// 透明：只为复制时文字完整（画成波綫的書名號的括號）。
     pub hidden: bool,
+    /// 淡（原版刪除的字 60% 不透明）。
+    pub faded: bool,
+    /// 在陰文、墨圍裏（原版是 `cite`，另用一套字體）。
+    pub encl: bool,
     pub role: Role,
     /// 標題級別（0 = 不是標題）；標題用原版的標題字體與字重。
     pub level: u8,
@@ -47,6 +51,8 @@ pub enum Role {
     Note,
     /// 單行小注（原版 `dhgd`）。
     NoteSingle,
+    /// 圈發（原版是「標點符號」字體裏的圈）。
+    Tone,
     Side,
     Head,
     Punct,
@@ -54,6 +60,15 @@ pub enum Role {
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Deco {
+    /// 照原版 CSS 畫的圖形（陰文底、墨圍綫、專名號、圈點、校勘底色等）。
+    Shape {
+        col: i32,
+        figure: Figure,
+        /// 填色的樣式類（見 style.css 的 `f-*`）。
+        class: &'static str,
+        /// 畫在字的上面（如刪除綫）；否則在字的下面。
+        over: bool,
+    },
     /// 陰文底或墨圍框。
     Box {
         col: i32,
@@ -106,10 +121,42 @@ pub enum Deco {
     },
 }
 
+/// 圖形，坐標相對行中綫與文字頂（單位：字）。
+#[derive(Clone, Debug, PartialEq)]
+pub enum Figure {
+    /// 矩形，可帶圓角（`rx` 橫向、`ry` 縱向半徑，同 CSS 的 `border-radius: rx/ry`）。
+    Rect {
+        x0: f32,
+        y0: f32,
+        x1: f32,
+        y1: f32,
+        rx: f32,
+        ry: f32,
+    },
+    Circle {
+        x: f32,
+        y: f32,
+        r: f32,
+    },
+    /// 圓環：內外半徑之間。
+    Ring {
+        x: f32,
+        y: f32,
+        r0: f32,
+        r1: f32,
+    },
+    Polygon(Vec<(f32, f32)>),
+    /// 前者減去後者（原版用內陰影畫的綫）。
+    Minus(Box<Figure>, Box<Figure>),
+    /// 前者只留在矩形 `(x0, y0, x1, y1)` 內。
+    Clip(Box<Figure>, [f32; 4]),
+}
+
 impl Deco {
     pub fn col(&self) -> i32 {
         match *self {
-            Deco::Box { col, .. }
+            Deco::Shape { col, .. }
+            | Deco::Box { col, .. }
             | Deco::Ring { col, .. }
             | Deco::Line { col, .. }
             | Deco::Mark { col, .. }

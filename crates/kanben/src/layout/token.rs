@@ -86,6 +86,7 @@ pub enum MarkKind {
     Inverse(Encl),
     Frame(Encl),
     Delete,
+    Insert,
 }
 
 /// 是否是附在前一个字上的组合字符（异体字选择符、ZWJ 等）。

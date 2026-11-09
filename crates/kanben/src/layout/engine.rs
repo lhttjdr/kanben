@@ -3,10 +3,10 @@
 use std::collections::HashMap;
 
 use super::flatten::{Flattener, Item};
-use super::token::{MarkKind, Tok, TokKind, Unit, group, is_hanging};
-use super::{Deco, Format, Glyph, Layout, Options, Role};
+use super::token::{MarkKind, Tok, TokKind, Tone, Unit, group, is_hanging};
+use super::{Deco, Figure, Format, Glyph, Layout, Options, Role};
 use crate::render::numerals::hanzi;
-use crate::syntax::ast::{AttrKind, Block, Color, Document, Inline, Shape};
+use crate::syntax::ast::{AttrKind, Block, Document, EmphMark, Inline, Shape};
 use crate::syntax::span::{Diagnostic, Span};
 
 // 尺寸（单位：字）。
@@ -27,7 +27,6 @@ const SIDE_STEP: f32 = 0.5;
 const SIDE_X: f32 = 0.85;
 const HEAD_SIZE: f32 = 0.46;
 const HEAD_STEP: f32 = 0.5;
-const LINE_GAP: f32 = 0.06;
 /// 挂在行末的標點，字心比最后一格低多少（挤进版框留白）。
 const HANG: f32 = 0.2;
 
@@ -86,6 +85,7 @@ struct Slot {
 
 /// 同一个标记在同一行、同一小行里连成的一段。
 struct Seg {
+    id: u32,
     kind: MarkKind,
     col: i32,
     x: f32,
@@ -719,6 +719,8 @@ impl<'d> Engine<'d> {
             color: Some(t.style.color.unwrap_or(self.o.punct_color)),
             inverse: false,
             hidden: t.hidden,
+            faded: false,
+            encl: false,
             role: Role::Punct,
             level: 0,
         });
@@ -728,36 +730,90 @@ impl<'d> Engine<'d> {
     /// 放一个字。返回是否真的画了字（空格不画）。
     fn put(&mut self, t: &Tok, s: Slot) -> bool {
         let mut inverse = false;
+        let mut faded = false;
+        let z = s.size;
         for m in &t.style.marks {
             match m.kind {
-                MarkKind::Emphasis(mark) => self.decos.push(Deco::Mark {
-                    col: s.col,
-                    x: s.x + s.half_w + s.size * 0.14,
-                    y: s.y,
-                    size: s.size,
-                    mark,
-                    color: Some(self.o.punct_color),
-                }),
+                // 圈點：照原版 strROO / strROF，在字右 0.604 處，半徑 0.096（空心圈內半徑 0.0384）。
+                MarkKind::Emphasis(EmphMark::Circle) => self.shape(
+                    s.col,
+                    Figure::Ring {
+                        x: s.x + 0.604 * z,
+                        y: s.y,
+                        r0: 0.0384 * z,
+                        r1: 0.096 * z,
+                    },
+                    "f-emph",
+                ),
+                MarkKind::Emphasis(EmphMark::Dot) => self.shape(
+                    s.col,
+                    Figure::Circle {
+                        x: s.x + 0.604 * z,
+                        y: s.y,
+                        r: 0.096 * z,
+                    },
+                    "f-emph",
+                ),
+                // 旁點（﹅﹆）：原版是字，排在字後、右 0.72、上提 0.84（18px 字）。
+                MarkKind::Emphasis(mark) => {
+                    let c = if mark == EmphMark::Sesame {
+                        "﹅"
+                    } else {
+                        "﹆"
+                    };
+                    self.glyphs.push(Glyph {
+                        col: s.col,
+                        x: s.x + 0.72 * z,
+                        y: s.y + 0.16 * z,
+                        size: 0.6 * z,
+                        stretch: 1.0,
+                        text: c.into(),
+                        compose: false,
+                        rod: false,
+                        color: None,
+                        inverse: false,
+                        hidden: false,
+                        faded: false,
+                        encl: false,
+                        role: Role::Punct,
+                        level: 0,
+                    });
+                }
                 MarkKind::Inverse(e) | MarkKind::Frame(e) if e.shape.is_each() => {
                     let filled = matches!(m.kind, MarkKind::Inverse(_));
                     inverse |= filled;
-                    let lantern = e.shape == Shape::Lantern;
-                    let r = if lantern {
-                        s.ext * 0.5 * s.stretch.max(1.0)
-                    } else {
-                        s.half_w.max(s.ext * 0.5 * s.size) * 0.98
+                    let (x, y) = (s.x, s.y);
+                    let fig = match (filled, e.shape == Shape::Lantern) {
+                        // 圓形陰文：每字一個實心圓，直徑一字。
+                        (true, false) => Figure::Circle { x, y, r: 0.5 * z },
+                        // 疊燈籠陰文：半徑 0.6 的圓，裁在本字一格內，上下相接。
+                        (true, true) => Figure::Clip(
+                            Box::new(Figure::Circle { x, y, r: 0.6 * z }),
+                            [x - 0.6 * z, y - 0.5, x + 0.6 * z, y + 0.5],
+                        ),
+                        // 帶圈字：半徑 0.45–0.5 的圓環。
+                        (false, false) => Figure::Ring {
+                            x,
+                            y,
+                            r0: 0.45 * z,
+                            r1: 0.5 * z,
+                        },
+                        // 疊燈籠墨圍：半徑 0.6 加 1px 的圓環，裁在本字一格內。
+                        (false, true) => Figure::Clip(
+                            Box::new(Figure::Ring {
+                                x,
+                                y,
+                                r0: 0.6 * z,
+                                r1: 0.6 * z + PX,
+                            }),
+                            [x - 0.7 * z, y - 0.5, x + 0.7 * z, y + 0.5],
+                        ),
                     };
-                    self.decos.push(Deco::Ring {
-                        col: s.col,
-                        x: s.x,
-                        y: s.y,
-                        r,
-                        filled,
-                        hex: lantern,
-                    });
+                    self.shape(s.col, fig, if filled { "f-red" } else { "f-frame" });
                 }
                 kind => {
                     inverse |= matches!(kind, MarkKind::Inverse(_));
+                    faded |= kind == MarkKind::Delete;
                     self.extend_seg(m.id, kind, s);
                 }
             }
@@ -766,15 +822,7 @@ impl<'d> Engine<'d> {
         if t.kind == TokKind::Space {
             return false;
         }
-        if let Some(tone) = t.tone {
-            let (dx, dy) = tone.corner();
-            self.decos.push(Deco::Tone {
-                col: s.col,
-                x: s.x + dx * s.half_w * 0.95,
-                y: s.y + dy * s.ext * 0.42,
-                r: s.size * 0.075,
-            });
-        }
+        let tone = t.tone;
         self.glyphs.push(Glyph {
             col: s.col,
             x: s.x,
@@ -787,10 +835,51 @@ impl<'d> Engine<'d> {
             color: t.style.color,
             inverse,
             hidden: false,
+            faded,
+            encl: t
+                .style
+                .marks
+                .iter()
+                .any(|m| matches!(m.kind, MarkKind::Inverse(_) | MarkKind::Frame(_))),
             role: s.role,
             level: 0,
         });
+        // 圈發：原版是「標點符號」字體裏的圈，排在字後，照原版實測的盒位。
+        if let Some(tone) = tone {
+            let (c, dx, dy) = match tone {
+                Tone::Level => ("〪", -0.6, 0.1),
+                Tone::Rising => ("〫", -0.6, -0.1),
+                Tone::Departing => ("〬", 0.1, -0.6),
+                Tone::Entering => ("〭", -0.4, 0.1),
+            };
+            self.glyphs.push(Glyph {
+                col: s.col,
+                x: s.x + dx * z,
+                y: s.y + dy * z,
+                size: if c == "〬" { z } else { 0.8 * z },
+                stretch: 1.0,
+                text: c.into(),
+                compose: false,
+                rod: false,
+                color: None,
+                inverse: false,
+                hidden: false,
+                faded: false,
+                encl: false,
+                role: Role::Tone,
+                level: 0,
+            });
+        }
         true
+    }
+
+    fn shape(&mut self, col: i32, figure: Figure, class: &'static str) {
+        self.decos.push(Deco::Shape {
+            col,
+            figure,
+            class,
+            over: false,
+        });
     }
 
     fn extend_seg(&mut self, id: u32, kind: MarkKind, s: Slot) {
@@ -805,6 +894,7 @@ impl<'d> Engine<'d> {
             None => {
                 self.seg_at.insert(key, self.segs.len());
                 self.segs.push(Seg {
+                    id,
                     kind,
                     col: s.col,
                     x: s.x,
@@ -817,60 +907,21 @@ impl<'d> Engine<'d> {
     }
 
     fn finish(mut self) -> Layout {
-        for s in std::mem::take(&mut self.segs) {
-            let deco = match s.kind {
-                // 專名號：照原版，朱色粗綫，在字心左 0.485，上缩 0.175、下缩 0.215。
-                MarkKind::Name | MarkKind::Title => Deco::Line {
-                    col: s.col,
-                    x: s.x - s.half_w * 0.97,
-                    y0: s.y0 + 0.175 * s.half_w * 2.0,
-                    y1: s.y1 - 0.215 * s.half_w * 2.0,
-                    wavy: s.kind == MarkKind::Title,
-                    color: Some(self.o.punct_color),
-                    width: if s.kind == MarkKind::Title {
-                        0.03
-                    } else {
-                        0.098 * s.half_w * 2.0
-                    },
-                },
-                MarkKind::Stroke => Deco::Line {
-                    col: s.col,
-                    x: s.x + s.half_w + LINE_GAP,
-                    y0: s.y0 + 0.04,
-                    y1: s.y1 - 0.04,
-                    wavy: false,
-                    color: Some(Color::Red),
-                    width: 0.035,
-                },
-                MarkKind::Delete => Deco::Line {
-                    col: s.col,
-                    x: s.x,
-                    y0: s.y0 + 0.1,
-                    y1: s.y1 - 0.1,
-                    wavy: false,
-                    color: Some(Color::Red),
-                    width: 0.035,
-                },
-                MarkKind::Inverse(e) | MarkKind::Frame(e) => {
-                    // 正文的框默认贴着界行；窄式和小字的框只包住字。
-                    let wide = !e.narrow && (s.x - MAIN_X).abs() < 1e-3 && s.half_w >= 0.5;
-                    Deco::Box {
-                        col: s.col,
-                        x: s.x,
-                        half_w: if wide {
-                            self.o.column_width / 2.0 - 0.03
-                        } else {
-                            s.half_w + 0.04
-                        },
-                        y0: s.y0 + 0.02,
-                        y1: s.y1 - 0.02,
-                        shape: e.shape,
-                        filled: matches!(s.kind, MarkKind::Inverse(_)),
-                    }
-                }
-                MarkKind::Emphasis(_) => continue,
-            };
-            self.decos.push(deco);
+        // 同一個標記的各段（跨行時每行一段）：專名號只在頭尾兩段縮進。
+        let segs = std::mem::take(&mut self.segs);
+        let mut first_last: HashMap<u32, (usize, usize)> = HashMap::new();
+        for (i, sg) in segs.iter().enumerate() {
+            let e = first_last.entry(sg.id).or_insert((i, i));
+            if (sg.col, sg.y0) < (segs[e.0].col, segs[e.0].y0) {
+                e.0 = i;
+            }
+            if (sg.col, sg.y1) > (segs[e.1].col, segs[e.1].y1) {
+                e.1 = i;
+            }
+        }
+        for (i, sg) in segs.iter().enumerate() {
+            let (fi, li) = first_last[&sg.id];
+            self.seg_figures(sg, i == fi, i == li);
         }
         let last_col = if self.used { self.col } else { self.col - 1 };
         Layout {
@@ -880,6 +931,216 @@ impl<'d> Engine<'d> {
             options: self.o,
         }
     }
+}
+
+/// 一個 CSS 像素（正文 30px），單位：字。
+const PX: f32 = 1.0 / 30.0;
+
+impl Engine<'_> {
+    /// 一段標記（同一行裏連續的字）照原版 CSS 畫成的圖形。`first`、`last`：是否整個標記的頭、尾一段。
+    fn seg_figures(&mut self, sg: &Seg, first: bool, last: bool) {
+        let z = sg.half_w * 2.0;
+        let (x, y0, y1) = (sg.x, sg.y0, sg.y1);
+        let note = z < 0.9;
+        let col = sg.col;
+        let rect = |x0: f32, x1: f32, y0: f32, y1: f32| Figure::Rect {
+            x0,
+            y0,
+            x1,
+            y1,
+            rx: 0.0,
+            ry: 0.0,
+        };
+        match sg.kind {
+            // 專名號：原版用 box-shadow 在字盒左沿畫 0.1 寬的朱綫，頭尾各縮 0.15。
+            MarkKind::Name if !note => {
+                let a = if first { 0.15 } else { 0.0 };
+                let b = if last { 0.15 } else { 0.0 };
+                self.shape(
+                    col,
+                    rect(x - 0.55 * z, x - 0.45 * z, y0 + a, y1 - b),
+                    "f-red",
+                );
+            }
+            // 夾注裏的專名號：字盒左沿內 0.2 字寬的半透明朱條，上縮 0.15、下縮 0.35（夾注字）。
+            MarkKind::Name => {
+                let a = if first { 0.15 * z } else { 0.0 };
+                let b = if last { 0.35 * z } else { 0.0 };
+                self.shape(
+                    col,
+                    rect(x - 0.5 * z, x - 0.3 * z, y0 + a, y1 - b),
+                    "f-red-t",
+                );
+            }
+            // 書名號（波綫）暫照舊。
+            MarkKind::Title => self.decos.push(Deco::Line {
+                col,
+                x: x - sg.half_w * 0.97,
+                y0: y0 + 0.175 * z,
+                y1: y1 - 0.215 * z,
+                wavy: true,
+                color: Some(self.o.punct_color),
+                width: 0.03,
+            }),
+            // 抹（原版 colateMS）：字盒中間 60% 寬的橙色底。
+            MarkKind::Stroke => self.shape(col, rect(x - 0.3 * z, x + 0.3 * z, y0, y1), "f-strike"),
+            // 刪（原版 del）：淺灰底、正赤刪除綫，整體 60% 不透明。
+            MarkKind::Delete => {
+                self.shape(col, rect(x - 0.5 * z, x + 0.5 * z, y0, y1), "f-del");
+                self.decos.push(Deco::Shape {
+                    col,
+                    figure: rect(x - 0.75 * PX, x + 0.75 * PX, y0, y1),
+                    class: "f-delline",
+                    over: true,
+                });
+            }
+            // 增（原版 ins）：半透明淺灰底。
+            MarkKind::Insert => self.shape(col, rect(x - 0.5 * z, x + 0.5 * z, y0, y1), "f-ins"),
+            MarkKind::Inverse(e) => {
+                // 陰文：字盒左右各加 (行寬 - 1)/2，正好一行寬（夾注同理用夾注行寬）。
+                let half = if note { 0.5 } else { self.o.column_width / 2.0 };
+                let (y0, y1) = if note { (y0 - 0.1, y1 - 0.1) } else { (y0, y1) };
+                let (x0, x1) = (x - half, x + half);
+                let fig = match e.shape {
+                    Shape::Round => Figure::Rect {
+                        x0,
+                        y0,
+                        x1,
+                        y1,
+                        rx: half,
+                        ry: half - 0.5 * z,
+                    },
+                    Shape::Hex => {
+                        let c = (if note { 0.14 * z } else { 0.2 }) * std::f32::consts::SQRT_2;
+                        cut_corners(x0, y0, x1, y1, c)
+                    }
+                    _ => rect(x0, x1, y0, y1),
+                };
+                self.shape(col, fig, "f-red");
+            }
+            MarkKind::Frame(e) => {
+                let half = if e.narrow {
+                    0.5 * z + 0.1
+                } else {
+                    self.o.column_width / 2.0
+                };
+                let (x0, x1) = (x - half, x + half);
+                match (e.shape, e.narrow) {
+                    // 窄圓頭（mhHiuanNR）：圓角 0.6/0.3 的框，四邊 1px。
+                    (Shape::Round, true) => {
+                        let outer = Figure::Rect {
+                            x0,
+                            y0,
+                            x1,
+                            y1,
+                            rx: 0.6,
+                            ry: 0.3,
+                        };
+                        let inner = Figure::Rect {
+                            x0: x0 + PX,
+                            y0: y0 + PX,
+                            x1: x1 - PX,
+                            y1: y1 - PX,
+                            rx: 0.6 - PX,
+                            ry: 0.3 - PX,
+                        };
+                        self.shape(
+                            col,
+                            Figure::Minus(Box::new(outer), Box::new(inner)),
+                            "f-frame",
+                        );
+                    }
+                    // 圓頭（mhHiuan）：圓角框的上下沿各 1px（內陰影）。
+                    (Shape::Round, false) => {
+                        let r = |dy: f32| Figure::Rect {
+                            x0,
+                            y0: y0 + dy,
+                            x1,
+                            y1: y1 + dy,
+                            rx: half,
+                            ry: half - 0.5,
+                        };
+                        self.shape(
+                            col,
+                            Figure::Minus(Box::new(r(0.0)), Box::new(r(PX))),
+                            "f-frame",
+                        );
+                        self.shape(
+                            col,
+                            Figure::Minus(Box::new(r(0.0)), Box::new(r(-PX))),
+                            "f-frame",
+                        );
+                    }
+                    // 六角（mh6grug、窄式 mh8grugNR）：上下沿居中 65% 寬的 1px 綫，四角斜切 1px 綫。
+                    (Shape::Hex, narrow) => {
+                        let (y0, y1) = if narrow {
+                            (y0 + 0.2, y1 - 0.2)
+                        } else {
+                            (y0, y1)
+                        };
+                        let d = if narrow { 0.14 } else { 0.2 };
+                        let w = (x1 - x0) * 0.65;
+                        let xm = (x0 + x1) / 2.0;
+                        self.shape(
+                            col,
+                            rect(xm - w / 2.0, xm + w / 2.0, y0, y0 + PX),
+                            "f-frame",
+                        );
+                        self.shape(
+                            col,
+                            rect(xm - w / 2.0, xm + w / 2.0, y1 - PX, y1),
+                            "f-frame",
+                        );
+                        let k = std::f32::consts::SQRT_2;
+                        for (cx, cy, sx, sy) in [
+                            (x1, y0, -1.0, 1.0),
+                            (x1, y1, -1.0, -1.0),
+                            (x0, y1, 1.0, -1.0),
+                            (x0, y0, 1.0, 1.0),
+                        ] {
+                            // 距角 d 到 d+1px 的斜帶。
+                            let (a, b) = (d * k, (d + PX) * k);
+                            self.shape(
+                                col,
+                                Figure::Polygon(vec![
+                                    (cx + sx * a, cy),
+                                    (cx + sx * b, cy),
+                                    (cx, cy + sy * b),
+                                    (cx, cy + sy * a),
+                                ]),
+                                "f-frame",
+                            );
+                        }
+                        if narrow {
+                            // 窄六角左右兩邊各 1px。
+                            self.shape(col, rect(x0, x0 + PX, y0 - 0.2, y1 + 0.2), "f-frame");
+                            self.shape(col, rect(x1 - PX, x1, y0 - 0.2, y1 + 0.2), "f-frame");
+                        }
+                    }
+                    // 平頭（mhVang）：上下沿各 1px，左右靠界行。
+                    _ => {
+                        self.shape(col, rect(x0, x1, y0, y0 + PX), "f-frame");
+                        self.shape(col, rect(x0, x1, y1 - PX, y1), "f-frame");
+                    }
+                }
+            }
+            MarkKind::Emphasis(_) => {}
+        }
+    }
+}
+
+/// 四角各切去一個等腰直角三角形（直角邊長 `c`）的矩形。
+fn cut_corners(x0: f32, y0: f32, x1: f32, y1: f32, c: f32) -> Figure {
+    Figure::Polygon(vec![
+        (x0 + c, y0),
+        (x1 - c, y0),
+        (x1, y0 + c),
+        (x1, y1 - c),
+        (x1 - c, y1),
+        (x0 + c, y1),
+        (x0, y1 - c),
+        (x0, y0 + c),
+    ])
 }
 
 /// 句讀相對所附字的盒心偏移（字），照原版 CSS：
@@ -1025,11 +1286,12 @@ mod tests {
 
     #[test]
     fn marks_become_one_line_per_column() {
+        // 專名號照原版畫成每行一條朱色矩形。
         let l = run(r"\name{甲乙丙}", 2);
         let lines = l
             .decos
             .iter()
-            .filter(|d| matches!(d, crate::layout::Deco::Line { .. }))
+            .filter(|d| matches!(d, crate::layout::Deco::Shape { class: "f-red", .. }))
             .count();
         assert_eq!(lines, 2);
     }
@@ -1113,7 +1375,6 @@ mod container_tests {
 #[cfg(test)]
 mod feature_tests {
     use crate::layout::{Deco, Options, Role, layout};
-    use crate::syntax::ast::Shape;
     use crate::syntax::parse;
 
     fn run(src: &str, o: Options) -> crate::layout::Layout {
@@ -1172,30 +1433,34 @@ mod feature_tests {
 
     #[test]
     fn frames_touch_rules_unless_narrow() {
+        use crate::layout::Figure;
+        // 平頭墨圍照原版是上下兩條綫：正文的與行同寬，窄式只寬出字 0.1。
+        let width = |l: &crate::layout::Layout| match &l.decos[0] {
+            Deco::Shape {
+                figure: Figure::Rect { x0, x1, .. },
+                ..
+            } => x1 - x0,
+            d => panic!("{d:?}"),
+        };
         let wide = run("\\frame{甲}", cells(10));
         let narrow = run("\\frame[narrow]{甲}", cells(10));
-        let hw = |l: &crate::layout::Layout| match l.decos[0] {
-            Deco::Box { half_w, .. } => half_w,
-            _ => panic!(),
-        };
-        assert!(hw(&wide) > 0.7 && hw(&narrow) < 0.6);
+        assert!((width(&wide) - 1.6).abs() < 1e-4 && (width(&narrow) - 1.2).abs() < 1e-4);
+        // 疊燈籠陰文：每字一個裁在本格的圓。
         let lantern = run("\\inv[lantern]{甲乙}", cells(10));
-        assert_eq!(
-            lantern
-                .decos
-                .iter()
-                .filter(|d| matches!(d, Deco::Ring { hex: true, .. }))
-                .count(),
-            2
-        );
-        let flower = run("\\frame[flower]{甲乙}", cells(10));
-        assert!(matches!(
-            flower.decos[0],
-            Deco::Box {
-                shape: Shape::Flower,
-                ..
-            }
-        ));
+        let clips = lantern
+            .decos
+            .iter()
+            .filter(|d| {
+                matches!(
+                    d,
+                    Deco::Shape {
+                        figure: Figure::Clip(..),
+                        ..
+                    }
+                )
+            })
+            .count();
+        assert_eq!(clips, 2);
     }
 
     #[test]

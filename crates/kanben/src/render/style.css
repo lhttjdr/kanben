@@ -9,6 +9,8 @@
   --kb-gray-c: var(--kb-gray, #8a8178);
   --kb-side-c: var(--kb-side, rgb(20, 74, 116));
   --kb-head-c: var(--kb-head, rgb(244, 62, 6));
+  --kb-tone-c: var(--kb-tone, #b49436);
+  --kb-emph-c: var(--kb-emph, #1661ab);
 }
 /* 字體：照原版排版器各類文字的字體棧（default，與原版逐像素相同）；
    也可選 mincho（明朝）、fangsong（仿宋）、system（系統字體），只換正文、標題、夾注的字體。
@@ -50,6 +52,8 @@
 .kb text.g-h4 { font-family: var(--kb-f-heading4); font-weight: 650; }
 .kb text.g-h5 { font-family: var(--kb-f-heading4); font-weight: 600; }
 .kb text.g-h6 { font-family: var(--kb-f-heading4); font-weight: 550; }
+/* 陰文、墨圍裏的字（原版 cite）。 */
+.kb text.g-encl { font-family: var(--kb-f-encl); font-weight: 400; }
 .kb text.g-note { font-family: var(--kb-f-note); font-weight: 240; font-stretch: 75%; }
 .kb text.g-note1 { font-family: var(--kb-f-note1); font-weight: 320; }
 .kb text.g-side { font-family: var(--kb-f-side); font-weight: 500; fill: var(--kb-side-c); }
@@ -67,6 +71,21 @@
 .kb text.rod-v { font-feature-settings: "ss01"; }
 .kb text.rod-h { font-feature-settings: "ss02"; }
 .kb text.rod-1 { font-variant-east-asian: full-width; }
+/* 圈發、旁點：原版「標點符號」字體裏的字。 */
+.kb text.g-tone { font-family: 標點符號; font-weight: 400; fill: var(--kb-tone-c); }
+.kb text.tone-h { writing-mode: horizontal-tb; }
+.kb text.p-em { font-family: var(--kb-f-p-tl); font-weight: 400; fill: var(--kb-emph-c); }
+/* 刪去的字：原版整體 60% 不透明。 */
+.kb text.o60 { opacity: 0.6; }
+/* 照原版 CSS 畫的圖形（陰文底、墨圍綫、專名號、圈點、校勘底色）。 */
+.kb .f-red { fill: var(--kb-red-c); }
+.kb .f-red-t { fill: #dd3b4477; }
+.kb .f-frame { fill: var(--kb-rule-c); }
+.kb .f-emph { fill: var(--kb-emph-c); }
+.kb .f-strike { fill: #fbb957; }
+.kb .f-del { fill: rgba(238, 238, 238, 0.7); opacity: 0.6; }
+.kb .f-delline { fill: rgb(153, 23, 34); opacity: 0.6; }
+.kb .f-ins { fill: #f3f3f37f; }
 /* 組字部件按橫排量墨迹，保持橫排。 */
 .kb text.idsp { writing-mode: horizontal-tb; }
 .kb .paper { fill: var(--kb-paper-c); }

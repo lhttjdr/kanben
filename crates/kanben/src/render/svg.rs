@@ -5,7 +5,7 @@ use std::fmt::Write;
 use super::ids;
 use super::numerals::hanzi;
 use super::page::{FRAME_PAD, Geometry, MARGIN};
-use crate::layout::{Deco, Format, Glyph, Layout, Role};
+use crate::layout::{Deco, Figure, Format, Glyph, Layout, Role};
 use crate::syntax::ast::{EmphMark, Shape};
 
 /// SVG 坐标：一个字 = 100。线宽直接用这个单位写。
@@ -251,9 +251,12 @@ fn letter_spacing_shift(g: &Glyph) -> f32 {
 fn x_shift(g: &Glyph) -> f32 {
     match g.role {
         Role::NoteSingle => X_SHIFT_SINGLE,
+        // 陰文、墨圍裏的字（原版 cite，換了字體）比正文偏右半個像素。
+        Role::Main if g.encl => X_SHIFT_ENCL,
         _ => 0.0,
     }
 }
+const X_SHIFT_ENCL: f32 = 0.5 / 30.0;
 const X_SHIFT_SINGLE: f32 = 0.0;
 
 fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
@@ -273,8 +276,20 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
         (Role::NoteSingle, _) => "g-note1",
         (Role::Side, _) => "g-side",
         (Role::Head, _) => "g-head",
+        // 平、上、入聲圈原版橫排（lrtb）、24px；去聲圈竪排、30px。
+        (Role::Tone, _) if g.text == "〬" => "g-tone",
+        (Role::Tone, _) => "g-tone tone-h",
         (Role::Punct, _) => punct_class(g),
     });
+    if g.encl && class.is_empty() {
+        class.push_str("g-encl");
+    }
+    if g.faded {
+        if !class.is_empty() {
+            class.push(' ');
+        }
+        class.push_str("o60");
+    }
     if let Some(c) = g.color
         && g.role != Role::Punct
     {
@@ -409,10 +424,104 @@ fn glyph(s: &mut String, g: &Glyph, cx: f32, top: f32) {
     }
 }
 
+/// 遮罩、裁切的編號，整頁唯一。
+static NEXT_ID: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0);
+
+fn next_id() -> u32 {
+    NEXT_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+}
+
+/// 圖形的 SVG 片段（不帶樣式），坐標換成頁面坐標。
+fn figure_geometry(f: &Figure, cx: f32, top: f32) -> String {
+    match f {
+        Figure::Rect {
+            x0,
+            y0,
+            x1,
+            y1,
+            rx,
+            ry,
+        } => {
+            let r = if *rx > 0.0 || *ry > 0.0 {
+                format!(r#" rx="{}" ry="{}""#, n(*rx), n(*ry))
+            } else {
+                String::new()
+            };
+            format!(
+                r#"<rect x="{}" y="{}" width="{}" height="{}"{r}/>"#,
+                n(cx + x0),
+                n(top + y0),
+                n(x1 - x0),
+                n(y1 - y0)
+            )
+        }
+        Figure::Circle { x, y, r } => {
+            format!(
+                r#"<circle cx="{}" cy="{}" r="{}"/>"#,
+                n(cx + x),
+                n(top + y),
+                n(*r)
+            )
+        }
+        Figure::Ring { x, y, r0, r1 } => {
+            let circle = |r: f32| {
+                format!(
+                    "M{} {} a{r} {r} 0 1 0 {d} 0 a{r} {r} 0 1 0 -{d} 0",
+                    n(cx + x - r),
+                    n(top + y),
+                    r = n(r),
+                    d = n(2.0 * r)
+                )
+            };
+            format!(
+                r#"<path fill-rule="evenodd" d="{} {}"/>"#,
+                circle(*r1),
+                circle(*r0)
+            )
+        }
+        Figure::Polygon(pts) => {
+            let p: Vec<String> = pts
+                .iter()
+                .map(|(x, y)| format!("{},{}", n(cx + x), n(top + y)))
+                .collect();
+            format!(r#"<polygon points="{}"/>"#, p.join(" "))
+        }
+        Figure::Minus(a, b) => {
+            let id = next_id();
+            format!(
+                r##"<mask id="kbm{id}" maskUnits="userSpaceOnUse"><g fill="#fff">{}</g><g fill="#000">{}</g></mask><g mask="url(#kbm{id})">{}</g>"##,
+                figure_geometry(a, cx, top),
+                figure_geometry(b, cx, top),
+                figure_geometry(a, cx, top)
+            )
+        }
+        Figure::Clip(a, [x0, y0, x1, y1]) => {
+            let id = next_id();
+            format!(
+                r#"<clipPath id="kbc{id}"><rect x="{}" y="{}" width="{}" height="{}"/></clipPath><g clip-path="url(#kbc{id})">{}</g>"#,
+                n(cx + x0),
+                n(top + y0),
+                n(x1 - x0),
+                n(y1 - y0),
+                figure_geometry(a, cx, top)
+            )
+        }
+    }
+}
+
+fn figure_svg(s: &mut String, f: &Figure, class: &str, cx: f32, top: f32) {
+    let _ = write!(
+        s,
+        r#"<g class="{class}">{}</g>"#,
+        figure_geometry(f, cx, top)
+    );
+}
+
 /// 標點用原版的哪一類字體（見 style.css）。
 fn punct_class(g: &Glyph) -> &'static str {
     let note = g.size < 0.9;
     match (note, g.text.chars().next().unwrap_or(' ')) {
+        (_, '﹅' | '﹆') => "p-em",
         (false, '：' | '；') => "p-md",
         (false, '？' | '！') => "p-tl",
         (false, '「' | '」' | '『' | '』' | '“' | '”' | '‘' | '’') => "p-q",
@@ -483,6 +592,18 @@ fn color_class(c: Option<crate::syntax::ast::Color>) -> &'static str {
 
 /// `filled_pass` 为真时只画填充的底，否则只画其余的。
 fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
+    if let Deco::Shape {
+        figure,
+        class,
+        over,
+        ..
+    } = d
+    {
+        if *over != filled_pass {
+            figure_svg(s, figure, class, cx, top);
+        }
+        return;
+    }
     match *d {
         Deco::Box {
             x,
@@ -624,6 +745,7 @@ fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
                 );
             }
         }
+        Deco::Shape { .. } => {}
         _ if filled_pass => {}
         Deco::Line {
             x,

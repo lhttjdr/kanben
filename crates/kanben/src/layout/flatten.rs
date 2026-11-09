@@ -183,14 +183,13 @@ impl<'d> Flattener<'d> {
                 let c = styled(self, MarkKind::Frame(*s));
                 self.walk(&el.children, &c, out, cur);
             }
+            // 照原版：刪字淡化、加刪除綫與淺灰底；增字加半透明淺灰底。
             ElementKind::Delete => {
-                let mut c = styled(self, MarkKind::Delete);
-                c.style.color = Some(Color::Gray);
+                let c = styled(self, MarkKind::Delete);
                 self.walk(&el.children, &c, out, cur);
             }
             ElementKind::Insert => {
-                let mut c = ctx.clone();
-                c.style.color = Some(Color::Blue);
+                let c = styled(self, MarkKind::Insert);
                 self.walk(&el.children, &c, out, cur);
             }
             ElementKind::Color(color) => {
