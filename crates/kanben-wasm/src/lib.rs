@@ -118,6 +118,12 @@ pub fn example() -> String {
     include_str!("../../../examples/通鑑.kb").to_string()
 }
 
+/// 各種版式的示例（插圖在 web/圖/ 下）。
+#[wasm_bindgen]
+pub fn showcase() -> String {
+    include_str!("../../../examples/版式一覽.kb").to_string()
+}
+
 fn parse_overrides(s: &str) -> Vec<(String, String)> {
     s.lines()
         .filter_map(|l| l.split_once(['=', '＝']))

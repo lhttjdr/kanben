@@ -47,7 +47,13 @@
   <label>字數 <input id="opt-cells" type="number" min="4" max="60"></label>
   <label title="按預覽區高度決定每行字數，窗口變了就重排"><input id="opt-fit" type="checkbox"> 字數隨窗口</label>
   <span class="spacer"></span>
-  <button id="btn-example" type="button">示例</button>
+  <select id="example-pick" title="換成示例文本">
+    <option value="">示例…</option>
+    <option value="通鑑">資治通鑑</option>
+    <option value="版式一覽">版式一覽</option>
+  </select>
+  <button id="btn-open" type="button" title="打開本機的 .kb 文件">打開</button>
+  <input id="file-open" type="file" accept=".kb,.txt,text/plain" hidden>
   <button id="btn-save" type="button">下載源碼</button>
   <button id="btn-html" type="button">導出 HTML</button>
   <button id="btn-print" type="button">打印</button>

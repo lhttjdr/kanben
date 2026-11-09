@@ -1,5 +1,5 @@
 // 刊本编辑器：排版全部由 wasm 完成，这里只负责界面。
-import init, { typeset, html, style, example, fitCells, plainText, toClassic } from "./pkg/kanben_wasm.js";
+import init, { typeset, html, style, example, showcase, fitCells, plainText, toClassic } from "./pkg/kanben_wasm.js";
 import { loadFonts } from "./fontload.js";
 
 // 语法改过一次，旧草稿用不了，换个键。
@@ -247,13 +247,33 @@ document.addEventListener("copy", (e) => {
   e.clipboardData.setData("text/plain", plainText(sel.toString()));
   e.preventDefault();
 });
-$("btn-example").addEventListener("click", () => {
-  if (source.value.trim() && source.value !== example() && !confirm("用示例替換當前文本？")) return;
-  source.value = example();
+const examples = { 通鑑: example, 版式一覽: showcase };
+const isExample = (text) => Object.values(examples).some((f) => f() === text);
+// 換掉當前文本（不是示例且非空時先問）。
+function replaceSource(text, what) {
+  if (source.value.trim() && !isExample(source.value) && source.value !== text && !confirm(`用${what}替換當前文本？`)) return false;
+  source.value = text;
   first = true;
   saveDraft(source.value);
   render();
+  return true;
+}
+$("example-pick").addEventListener("change", (e) => {
+  const f = examples[e.target.value];
+  if (f) replaceSource(f(), "示例");
+  e.target.value = "";
 });
+$("btn-open").addEventListener("click", () => $("file-open").click());
+$("file-open").addEventListener("change", async (e) => {
+  const file = e.target.files?.[0];
+  if (file) replaceSource(await file.text(), `「${file.name}」`);
+  e.target.value = "";
+});
+// 網址帶 ?example=版式一覽 時直接打開該示例。
+{
+  const name = new URLSearchParams(location.search).get("example");
+  if (examples[name]) replaceSource(examples[name](), "示例");
+}
 $("btn-save").addEventListener("click", () => download(`${baseName()}.kb`, source.value, "text/plain;charset=utf-8"));
 $("btn-html").addEventListener("click", () =>
   download(`${baseName()}.html`, html(source.value, overrides(), new URL("fontload.js", location.href).href), "text/html;charset=utf-8"),
