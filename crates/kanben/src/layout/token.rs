@@ -118,6 +118,8 @@ pub fn classify(c: char, style: PunctStyle) -> Option<(TokKind, char)> {
     if c == '　' {
         return Some((TokKind::Space, c));
     }
+    // 源碼裏直接寫的直排字形（︒︐︓……）與普通標點同樣處理。
+    let c = horizontal_form(c);
     if c.is_whitespace() || c.is_control() {
         return None;
     }
@@ -325,6 +327,15 @@ mod tests {
                 .collect::<String>(),
             "。」"
         );
+    }
+
+    #[test]
+    fn vertical_forms_in_source() {
+        // 維基文庫的「︰」、直接寫的直排字形，都按普通標點附在字旁。
+        let g = group(toks("曰︓天︒", PunctStyle::Judou));
+        let cells: String = g.units.iter().map(|u| u.cell.text.as_str()).collect();
+        assert_eq!(cells, "曰天");
+        assert_eq!(g.units[0].post[0].text, "：");
     }
 
     #[test]

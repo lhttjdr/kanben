@@ -109,7 +109,8 @@ impl<'d> Parser<'d> {
         if buf.text.is_empty() {
             buf.start = self.i;
         }
-        buf.text.push(c);
+        // 「︰」（U+FE30，維基文庫等常把它當冒號）按冒號排。
+        buf.text.push(if c == '︰' { '：' } else { c });
     }
 
     fn flush(&self, buf: &mut TextBuf, out: &mut Vec<Inline>) {
@@ -517,6 +518,12 @@ mod tests {
         let (r, d) = parse(r"曰\note{繫，戶計翻。}言");
         assert!(d.is_empty(), "{d:?}");
         assert_eq!(kinds(&r), ["T(曰)", "DoubleNoteT(繫，戶計翻。)", "T(言)"]);
+    }
+
+    #[test]
+    fn fe30_colon_is_colon() {
+        let (r, _) = parse("曰︰天");
+        assert_eq!(kinds(&r), ["T(曰：天)"]);
     }
 
     #[test]
