@@ -754,6 +754,7 @@ fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
         right,
         first,
         last,
+        size,
         ..
     } = d
     {
@@ -765,7 +766,7 @@ fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
                 if *right { " wave-r" } else { "" },
                 n(cx + x),
                 n(top + y0),
-                n(FONT),
+                n(FONT * size),
                 escape(text)
             );
             // 原版書名號頭尾用紙色小塊蓋去波綫端點（3px 高）。
@@ -775,17 +776,17 @@ fn deco(s: &mut String, d: &Deco, cx: f32, top: f32, filled_pass: bool) {
                     let _ = write!(
                         s,
                         r#"<rect class="paper" x="{}" y="{}" width="{}" height="{}"/>"#,
-                        n(cx + x - 0.8),
+                        n(cx + x - 0.8 * size),
                         n(top + ya),
-                        n(0.22),
-                        n(3.0 * px)
+                        n(0.22 * size),
+                        n(3.0 * px * size)
                     );
                 };
                 if *first {
                     cap(s, *y0);
                 }
                 if *last {
-                    cap(s, *y1 - 3.0 * px);
+                    cap(s, *y1 - 3.0 * px * size);
                 }
             }
         }

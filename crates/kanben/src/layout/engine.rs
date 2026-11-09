@@ -53,10 +53,8 @@ const SINGLE_SIZE: f32 = 28.0 / 30.0;
 const SIDE_SIZE: f32 = 0.5;
 const SIDE_STEP: f32 = 0.5;
 const SIDE_X: f32 = 0.85;
-/// 眉批照原版 #tentou：字 0.75、行高 1.4 倍（每行寬 1.05）。
-const HEAD_SIZE: f32 = 0.75;
-const HEAD_STEP: f32 = 0.75;
-const HEAD_PITCH: f32 = 1.05;
+/// 眉批照原版 #tentou：行高為字號的 1.4 倍（字號默認 0.75，每行寬 1.05）。
+const HEAD_LEADING: f32 = 1.4;
 /// 挂在行末的標點，字心比最后一格低多少（挤进版框留白）。
 const HANG: f32 = 0.2;
 
@@ -1426,8 +1424,9 @@ impl<'d> Engine<'d> {
         let g = group(toks);
         let cw = self.o.column_width;
         // 天頭從紙邊到版框外綫（字頂上 0.5）：字頂上方 head + 0.3。
-        let cap = (((self.o.head - 0.2) / HEAD_STEP).floor() as usize).max(1);
-        let step = HEAD_PITCH / cw;
+        let size = self.o.head_size;
+        let cap = (((self.o.head - 0.2) / size).floor() as usize).max(1);
+        let step = size * HEAD_LEADING / cw;
         let mut u = (self.col as f32 - 0.5 + step / 2.0).max(self.head_next);
         for (i, unit) in g.units.into_iter().enumerate() {
             let k = i % cap;
@@ -1438,11 +1437,11 @@ impl<'d> Engine<'d> {
             let slot = Slot {
                 col,
                 x: (col as f32 - u) * cw,
-                y: -self.o.head - 0.3 + (k as f32 + 0.5) * HEAD_STEP,
-                size: HEAD_SIZE,
+                y: -self.o.head - 0.3 + (k as f32 + 0.5) * size,
+                size,
                 stretch: 1.0,
-                half_w: HEAD_SIZE / 2.0,
-                ext: HEAD_STEP,
+                half_w: size / 2.0,
+                ext: size,
                 role: Role::Head,
             };
             self.place(unit, slot, false);
@@ -1885,6 +1884,7 @@ impl Engine<'_> {
                 right: sg.kind == MarkKind::TitleRight,
                 first,
                 last,
+                size: z,
             }),
             // 抹（原版 colateMS）：字盒中間 60% 寬的橙色底。
             MarkKind::Stroke => self.shape(col, rect(x - 0.3 * z, x + 0.3 * z, y0, y1), "f-strike"),
@@ -2325,6 +2325,26 @@ mod tests {
     fn head_note_goes_above_frame() {
         let l = run(r"甲\head{眉批文字}乙", 10);
         assert!(at(&l, Role::Head).iter().all(|g| g.2 < 0));
+    }
+
+    #[test]
+    fn head_note_size() {
+        // 天頭 4 字、眉批半字：每行排 (4 − 0.2) / 0.5 = 7 字，行寬 0.7 字。
+        let parsed = parse(r"甲\head{一二三四五六七八九十}乙");
+        let mut d = parsed.diagnostics;
+        let o = Options {
+            head: 4.0,
+            head_set: true,
+            head_size: 0.5,
+            ..Options::default()
+        };
+        let l = layout(&parsed.document, o, &mut d);
+        let head: Vec<_> = l.glyphs.iter().filter(|g| g.role == Role::Head).collect();
+        assert!(head.iter().all(|g| g.size == 0.5));
+        let ys: Vec<f32> = head.iter().map(|g| g.y).collect();
+        assert!(ys[6] > ys[7], "第八字另起一行");
+        let dx = (head[7].col as f32 * 1.6 - head[7].x) - (head[0].col as f32 * 1.6 - head[0].x);
+        assert!((dx - 0.7).abs() < 1e-3, "行寬 {dx}");
     }
 }
 

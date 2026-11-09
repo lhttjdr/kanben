@@ -81,6 +81,8 @@ pub struct Options {
     pub head: f32,
     /// 天頭是否由用户指定；没指定而又有眉批时自动加高。
     pub head_set: bool,
+    /// 眉批字號，以正文字為 1。
+    pub head_size: f32,
 }
 
 impl Default for Options {
@@ -101,6 +103,7 @@ impl Default for Options {
             column_width: 1.6,
             head: 1.0,
             head_set: false,
+            head_size: 0.75,
         }
     }
 }
@@ -143,7 +146,7 @@ impl Options {
     }
 }
 
-pub const KEYS: &str = "columns, cells, format, punct, punct-color, title-mark, font, engine, numbers, column-width, head";
+pub const KEYS: &str = "columns, cells, format, punct, punct-color, title-mark, font, engine, numbers, column-width, head, head-size";
 
 impl Options {
     pub fn from_meta(meta: &[MetaEntry], diags: &mut Vec<Diagnostic>) -> Options {
@@ -238,6 +241,7 @@ impl Options {
                 self.head = float(0.0, 10.0)?;
                 self.head_set = true;
             }
+            "head-size" => self.head_size = float(0.3, 1.0)?,
             k => return Err(format!("未知的設定 {k}（可用：{KEYS}）")),
         }
         Ok(())
