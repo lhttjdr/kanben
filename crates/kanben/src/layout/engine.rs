@@ -164,6 +164,8 @@ pub struct Engine<'d> {
     reserved: HashMap<i32, Vec<(i32, i32)>>,
     /// 目次内容（由上一遍排版得出）。
     toc: Vec<TocEntry>,
+    /// 本段的尾注，段後列出。
+    endnotes: Vec<(Option<String>, Vec<Tok>)>,
 }
 
 impl<'d> Engine<'d> {
@@ -183,6 +185,7 @@ impl<'d> Engine<'d> {
             last: None,
             pending: Vec::new(),
             head_next: f32::MIN,
+            endnotes: Vec::new(),
             side_end: [(-1, 0.0); 2],
             max_col: 0,
             head_col: 0,
@@ -295,6 +298,7 @@ impl<'d> Engine<'d> {
                     }
                     self.paragraph(lines);
                     self.widen_pitch(before, deco_before);
+                    self.endnote_list();
                     if pipa {
                         self.o.cells = saved;
                         self.stretch_rows(before, deco_before);
@@ -477,6 +481,147 @@ impl<'d> Engine<'d> {
             }
             self.used = true;
             self.new_column();
+        }
+    }
+
+    /// 文中的尾注編號（原版 pCmtN）：不佔格，在前一字那格的下半、行中綫左 0.56 字，
+    /// 淡綠圓角底、靛青字，半字大。
+    fn endnote_marker(&mut self, n: usize) {
+        let (col, r) = if self.row > 0 {
+            (self.col, self.row as f32)
+        } else {
+            (self.col - 1, self.cells() as f32)
+        };
+        let xc = -16.75 / 30.0;
+        let (w, h) = (21.0 / 30.0, 0.5);
+        self.shape(
+            col,
+            Figure::Rect {
+                x0: xc - w / 2.0,
+                y0: r - h,
+                x1: xc + w / 2.0,
+                y1: r,
+                rx: 0.15,
+                ry: 0.15,
+            },
+            "f-pcmtn",
+        );
+        self.ann_glyph(col, xc, r - h / 2.0, 0.5, crate::render::numerals::heji(n as u32), "g-pcmtn");
+    }
+
+    /// 段後的校勘記（原版 ol.pCmnt）：先一行「校勘記」（上空一格），每條一行：
+    /// 首格是加六角框的編號，其次所注之字（同單行小注），再是注文（同雙行夾注）；折行從第三格起。
+    fn endnote_list(&mut self) {
+        if self.endnotes.is_empty() {
+            return;
+        }
+        let notes = std::mem::take(&mut self.endnotes);
+        self.start_block();
+        self.row = 1;
+        self.cont = 1;
+        let title = self.plain_toks("校勘記");
+        let g0 = self.glyphs.len();
+        self.item(Item::Main(title));
+        for g in &mut self.glyphs[g0..] {
+            g.extra = Some("g-td");
+        }
+        for (k, (anchor, toks)) in notes.into_iter().enumerate() {
+            self.used = true;
+            self.new_column();
+            self.used = true;
+            let col = self.col;
+            self.afn_box(col, 1.0, 2.0);
+            let num = crate::render::numerals::heji(k as u32 + 1);
+            self.ann_glyph(col, 0.0, 1.5, 1.0, num, "g-afn");
+            self.row = 2;
+            self.cont = 2;
+            self.pending.clear();
+            self.last = None;
+            let bare = anchor.is_none();
+            if let Some(a) = anchor {
+                let t = self.plain_toks(&a);
+                self.item(Item::Single(t));
+            }
+            let (g0, d0) = (self.glyphs.len(), self.decos.len());
+            self.item(Item::Double(toks));
+            // 逐像素比對：沒有所注之字時，注文比一般夾注高 1px。
+            if bare {
+                self.remap_y(g0, d0, |_, y| y - PX);
+            }
+        }
+    }
+
+    /// 文字 → 正文字元。
+    fn plain_toks(&mut self, text: &str) -> Vec<Tok> {
+        let items = self.flatten(&[Inline::Text {
+            text: text.to_string(),
+            span: Span::default(),
+        }]);
+        items
+            .into_iter()
+            .flat_map(|i| match i {
+                Item::Main(t) => t,
+                _ => Vec::new(),
+            })
+            .collect()
+    }
+
+    /// 不佔格的小字（編號等）。
+    fn ann_glyph(&mut self, col: i32, x: f32, y: f32, size: f32, text: String, class: &'static str) {
+        self.glyphs.push(Glyph {
+            col,
+            x,
+            y,
+            size,
+            stretch: 1.0,
+            text,
+            compose: false,
+            rod: false,
+            color: None,
+            inverse: false,
+            hidden: false,
+            faded: false,
+            encl: false,
+            role: Role::Ann,
+            level: 0,
+            paint: None,
+            extra: Some(class),
+        });
+    }
+
+    /// 校勘記編號的六角框（原版 pCmtAfN，與六角墨圍同畫法）：寬 62px，高一格。
+    fn afn_box(&mut self, col: i32, y0: f32, y1: f32) {
+        let (x0, x1) = (-31.0 / 30.0, 31.0 / 30.0);
+        let rect = |x0: f32, x1: f32, y0: f32, y1: f32| Figure::Rect {
+            x0,
+            y0,
+            x1,
+            y1,
+            rx: 0.0,
+            ry: 0.0,
+        };
+        let d = 0.2;
+        let w = (x1 - x0) * 0.65;
+        self.shape(col, rect(-w / 2.0, w / 2.0, y0, y0 + PX), "f-afn");
+        self.shape(col, rect(-w / 2.0, w / 2.0, y1 - PX, y1), "f-afn");
+        let k = std::f32::consts::SQRT_2;
+        for (cx, cy, sx, sy) in [
+            (x1, y0, -1.0, 1.0),
+            (x1, y1, -1.0, -1.0),
+            (x0, y1, 1.0, -1.0),
+            (x0, y0, 1.0, 1.0),
+        ] {
+            let (a, b) = (d * k, (d + PX) * k);
+            self.shape(
+                col,
+                Figure::Polygon(vec![
+                    (cx + sx * a, cy),
+                    (cx + sx * b, cy),
+                    (cx, cy + sy * b),
+                    (cx, cy + sy * a),
+                ]),
+                "f-afn crisp",
+            );
         }
     }
 
@@ -900,6 +1045,16 @@ impl<'d> Engine<'d> {
                 }
                 self.row = end;
                 self.main_anchor_after_note();
+            }
+            Item::Endnote {
+                anchor,
+                toks,
+                marker,
+            } => {
+                self.endnotes.push((anchor, toks));
+                if marker {
+                    self.endnote_marker(self.endnotes.len());
+                }
             }
             Item::Span { toks, prev, n, at } => self.span(toks, prev, i32::from(n), at),
             Item::Double(toks) => self.double(toks),

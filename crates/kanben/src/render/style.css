@@ -70,6 +70,11 @@
 .kb text.g-ryme { font-family: HiraMinProN-W6, "Hiragino Mincho ProN", "Noto Serif CJK TC", 細明體, 宋体; }
 .kb text.g-rruby { font-family: "Noto Serif CJK TC", HiraMinProN-W6, "Hiragino Mincho ProN", 細明體, 宋体; fill: var(--kb-red-c); }
 .kb text.g-pitch { font-weight: 500; }
+/* 尾注：文中編號（pCmtN）、校勘記編號（pCmtAfN）。 */
+.kb .f-pcmtn { fill: rgba(198, 223, 200, 0.5); }
+.kb text.g-pcmtn { font-family: "Noto Sans CJK KR", sans-serif; font-weight: 500; fill: #1661ab; }
+.kb .f-afn { fill: #1661ab; }
+.kb text.g-afn { font-family: var(--kb-f-heading4); font-weight: 400; fill: #1661ab; }
 .kb text.g-toc { font-family: var(--kb-f-heading4); font-weight: 400; }
 .kb .f-tab { fill: #7c1823; }
 .kb .f-tabrule { fill: rgba(221, 59, 68, 0.467); }

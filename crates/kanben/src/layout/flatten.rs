@@ -19,6 +19,12 @@ pub enum Item {
         left: bool,
         line: bool,
     },
+    /// 尾注：文中（`marker`）只在行左標號，注文列到段後。
+    Endnote {
+        anchor: Option<String>,
+        toks: Vec<Tok>,
+        marker: bool,
+    },
     /// 並行：兩行小字並排，右、左各一段，佔較長一段的格數。
     Pair { right: Vec<Tok>, left: Vec<Tok> },
     /// 兼行：排在當前行與後（前）`n` 行的正中。
@@ -47,6 +53,8 @@ pub struct Flattener<'d> {
     /// 下一个标记编号。整篇文档里要唯一，所以由调用方传入并取回。
     pub next_id: u32,
     diags: &'d mut Vec<Diagnostic>,
+    /// 夾注等裏面的尾注：文中不標號，只列到段後。
+    nested_endnotes: Vec<Item>,
 }
 
 /// 当前所在的上下文。
@@ -69,6 +77,7 @@ impl<'d> Flattener<'d> {
             title_mark,
             next_id,
             diags,
+            nested_endnotes: Vec::new(),
         }
     }
 
@@ -83,6 +92,7 @@ impl<'d> Flattener<'d> {
         if !cur.is_empty() {
             out.push(Item::Main(cur));
         }
+        out.append(&mut self.nested_endnotes);
         out
     }
 
@@ -358,17 +368,35 @@ impl<'d> Flattener<'d> {
                 flush(out, cur);
                 out.push(Item::Break { raise: *raise });
             }
+            ElementKind::Endnote { anchor } => {
+                // 注文按夾注的樣子排在段後；夾注等裏面的尾注不在文中標號。
+                let c = Ctx {
+                    style: Style::default(),
+                    nested: Some("尾注"),
+                };
+                let mut buf = Vec::new();
+                self.walk(&el.children, &c, out, &mut buf);
+                let item = Item::Endnote {
+                    anchor: anchor.clone(),
+                    toks: buf,
+                    marker: ctx.nested.is_none(),
+                };
+                if ctx.nested.is_some() {
+                    self.nested_endnotes.push(item);
+                } else {
+                    flush(out, cur);
+                    out.push(item);
+                }
+            }
             ElementKind::DoubleNote
             | ElementKind::SingleNote
             | ElementKind::PairNote
-            | ElementKind::Endnote { .. }
             | ElementKind::HalfNote { .. }
             | ElementKind::Side { .. }
             | ElementKind::Comment { .. }
             | ElementKind::HeadNote => {
                 let name = match el.kind {
                     ElementKind::DoubleNote | ElementKind::PairNote => "雙行夾注",
-                    ElementKind::Endnote { .. } => "尾注",
                     ElementKind::SingleNote => "單行小注",
                     ElementKind::HalfNote { .. } => "側行小注",
                     ElementKind::HeadNote => "眉批",
@@ -404,7 +432,6 @@ impl<'d> Flattener<'d> {
                     return;
                 }
                 let mut buf = Vec::new();
-                // TODO(SVG)：尾注還沒有移到段後。
                 let children: Vec<Inline> = el
                     .children
                     .iter()
@@ -416,7 +443,7 @@ impl<'d> Flattener<'d> {
                 self.walk(&children, &c, out, &mut buf);
                 flush(out, cur);
                 out.push(match el.kind {
-                    ElementKind::DoubleNote | ElementKind::Endnote { .. } => Item::Double(buf),
+                    ElementKind::DoubleNote => Item::Double(buf),
                     ElementKind::SingleNote => Item::Single(buf),
                     ElementKind::HalfNote { left } => Item::Half {
                         toks: buf,
